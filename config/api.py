@@ -6,7 +6,7 @@ Erros sempre no formato {"detail": str, "erros"?: [...], "codigo"?: str} (FRONTE
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from ninja import NinjaAPI
-from ninja.errors import AuthenticationError, HttpError, ValidationError
+from ninja.errors import AuthenticationError, HttpError, Throttled, ValidationError
 from ninja.security import django_auth
 
 from apps.acoes.api import router as acoes_router
@@ -65,6 +65,18 @@ def _nao_autenticado(request, exc):
     return api.create_response(
         request, {"detail": "Faça login para continuar.", "codigo": "nao_autenticado"}, status=401
     )
+
+
+@api.exception_handler(Throttled)
+def _limite(request, exc: Throttled):
+    r = api.create_response(
+        request,
+        {"detail": "Muitas tentativas. Espere um minuto e tente de novo.", "codigo": "limite"},
+        status=429,
+    )
+    if exc.wait:
+        r["Retry-After"] = str(int(exc.wait) + 1)
+    return r
 
 
 @api.exception_handler(HttpError)

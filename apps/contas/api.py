@@ -6,6 +6,8 @@ from ninja import Router, Schema
 from ninja.errors import HttpError
 from ninja.utils import check_csrf
 
+from apps.core.limites import LimiteLoginIp, LimiteLoginUsuario
+
 from .models import Vinculo
 
 router = Router(tags=["Sessão"])
@@ -80,7 +82,12 @@ def csrf(request):
     return {"ok": True}
 
 
-@router.post("/auth/login", response=MeOut, auth=None)
+@router.post(
+    "/auth/login",
+    response=MeOut,
+    auth=None,
+    throttle=[LimiteLoginIp(), LimiteLoginUsuario()],
+)
 def entrar(request, payload: LoginIn):
     if check_csrf(request) is not None:
         raise HttpError(403, "Sessão expirada. Recarregue a página e tente de novo.")

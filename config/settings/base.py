@@ -105,10 +105,29 @@ CSRF_COOKIE_SAMESITE = "Lax"
 
 # IA opcional (§9): desligada por padrão; demo funciona sem internet
 MIDIA_IA_HABILITADA = env("MIDIA_IA_HABILITADA")
-MIDIA_IA_PROVEDOR = env("MIDIA_IA_PROVEDOR", default="offline")  # offline | claude
+MIDIA_IA_PROVEDOR = env("MIDIA_IA_PROVEDOR", default="offline")  # offline | claude | hermes
 MIDIA_IA_API_KEY = env("MIDIA_IA_API_KEY", default="")
-MIDIA_IA_MODELO = env("MIDIA_IA_MODELO", default="")
+# modelo rápido e barato basta: o agente só escolhe ferramenta e preenche campos
+MIDIA_IA_MODELO = env("MIDIA_IA_MODELO", default="claude-haiku-4-5")
+MIDIA_IA_TIMEOUT = env.float("MIDIA_IA_TIMEOUT", default=20.0)
+MIDIA_IA_MAX_TOKENS = env.int("MIDIA_IA_MAX_TOKENS", default=1024)
 MIDIA_AGENTE_MAX_PASSOS = 6
+MIDIA_AGENTE_HISTORICO = 6  # últimas falas (mascaradas) reenviadas ao LLM na mesma sessão
+
+# Hermes (GPT via OAuth na VPS): o container fala com a ponte do host por socket unix.
+# As credenciais ficam no perfil do Hermes; aqui não há chave nenhuma. Ver deploy/hermes/.
+MIDIA_HERMES_SOCKET = env(
+    "MIDIA_HERMES_SOCKET", default="/var/lib/midiacomercial-hermes/ponte.sock"
+)
+MIDIA_HERMES_TIMEOUT = env.float("MIDIA_HERMES_TIMEOUT", default=40.0)
+MIDIA_HERMES_MAX_RODADAS = env.int("MIDIA_HERMES_MAX_RODADAS", default=3)
+
+# Rate limit (apps/core/limites.py). Formato do Ninja: "10/m", "200/h".
+# Login por IP é folgado: numa apresentação, a banca inteira sai pelo mesmo IP do wifi.
+MIDIA_LIMITE_LOGIN_IP = env("MIDIA_LIMITE_LOGIN_IP", default="30/m")
+MIDIA_LIMITE_LOGIN_USUARIO = env("MIDIA_LIMITE_LOGIN_USUARIO", default="10/m")
+MIDIA_LIMITE_AGENTE = env("MIDIA_LIMITE_AGENTE", default="20/m")
+MIDIA_LIMITE_IMPORTACAO = env("MIDIA_LIMITE_IMPORTACAO", default="10/m")
 
 # Notificações (padrão Observer): na tela sempre; e-mail opcional
 NOTIFICACOES_EMAIL = env.bool("NOTIFICACOES_EMAIL", default=False)

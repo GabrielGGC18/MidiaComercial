@@ -11,3 +11,7 @@ STORAGES = {
 }
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
+
+# Rate limit folgado nos testes; test_rate_limit.py aperta com override_settings
+MIDIA_LIMITE_LOGIN_IP = MIDIA_LIMITE_LOGIN_USUARIO = "10000/m"
+MIDIA_LIMITE_AGENTE = MIDIA_LIMITE_IMPORTACAO = "10000/m"

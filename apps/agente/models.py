@@ -11,6 +11,19 @@ class SessaoAgente(ModeloDaLoja):
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+"
     )
     provedor = models.CharField(max_length=20, default="offline")
+    modelo = models.CharField(max_length=60, blank=True, help_text="Modelo do LLM, se usado")
+    canal = models.CharField(max_length=5, default="texto")  # texto | voz
+    # memória curta da conversa: só texto MASCARADO e respostas; nunca áudio nem dado bruto
+    historico = models.JSONField(default=list)
+    turnos = models.PositiveSmallIntegerField(default=0)
+    passos = models.PositiveSmallIntegerField(default=0)
+    tokens_entrada = models.PositiveIntegerField(default=0)
+    tokens_saida = models.PositiveIntegerField(default=0)
+    duracao_ms = models.PositiveIntegerField(default=0)
+    fallback = models.CharField(
+        max_length=200, blank=True, help_text="Por que caiu no provedor offline"
+    )
+    atualizado_em = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Sessão {self.pk}"

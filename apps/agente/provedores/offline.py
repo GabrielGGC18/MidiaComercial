@@ -252,8 +252,15 @@ def planejar(ctx, texto: str) -> list[tuple[str, dict]]:
 
 class ProvedorOffline:
     nome = "offline"
+    modelo = ""
 
-    def executar(self, ctx, texto: str, chamar) -> str:
+    def __init__(self):
+        from . import Uso
+
+        self.uso = Uso()
+
+    def executar(self, ctx, texto: str, chamar, historico: list | None = None) -> str:
+        # sem memória: cada frase é lida sozinha (o histórico é ganho do LLM)
         resultados = [(nome, chamar(nome, args)) for nome, args in planejar(ctx, texto)]
         return resposta_padrao(resultados)
 

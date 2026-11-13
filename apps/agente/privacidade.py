@@ -32,3 +32,11 @@ def restaurar(valor, mapa: dict[str, str]):
     if isinstance(valor, list):
         return [restaurar(v, mapa) for v in valor]
     return valor
+
+
+def ocultar(texto: str) -> str:
+    """Saída de ferramenta indo para o LLM: apaga qualquer dado pessoal que escapou.
+    Usa um marcador fixo (não reversível) para não colidir com os tokens da frase."""
+    for rotulo, padrao in PADROES:
+        texto = padrao.sub(f"[{rotulo}_OCULTO]", texto)
+    return texto

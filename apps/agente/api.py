@@ -5,6 +5,7 @@ from ninja import Field, Router, Schema
 from ninja.errors import HttpError
 
 from apps.core.faixas import FaixaEtaria
+from apps.core.limites import LimiteAgente
 from apps.core.permissoes import loja_com_papel, tem_papel
 
 from . import orquestrador, prospeccao, services
@@ -44,6 +45,7 @@ class PropostaOut(Schema):
 class MensagemIn(Schema):
     texto: str = Field(..., min_length=2, max_length=500)
     canal: Literal["texto", "voz"] = "texto"
+    sessao_id: int | None = Field(None, description="Continua a conversa (memória curta)")
 
 
 class MensagemOut(Schema):
@@ -67,6 +69,18 @@ class CampanhaOut(Schema):
     criado_em: datetime
     medicao: dict
     propostas: list[PropostaOut]
+
+
+class UsoOut(Schema):
+    dias: int
+    sessoes: int
+    mensagens: int
+    com_llm: int
+    caiu_no_offline: int
+    tokens_entrada: int
+    tokens_saida: int
+    tempo_medio_ms: int
+    modelo: str
 
 
 class FerramentaOut(Schema):
@@ -136,13 +150,16 @@ def ferramentas(request):
     ]
 
 
-@router.post("/mensagens", response=MensagemOut)
+@router.post("/mensagens", response=MensagemOut, throttle=[LimiteAgente()])
 def mensagem(request, payload: MensagemIn):
     loja = loja_com_papel(request, "atendente")
     try:
         r = orquestrador.processar(
-            loja=loja, usuario=request.user, papel=request.papel, texto=payload.texto
-        )
+            loja=loja, usuario=request.user, papel=request.papel, texto=payload.texto,
+            canal=payload.canal, sessao_id=payload.sessao_id,
+        )  # fmt: skip
+    except orquestrador.SessaoInvalida as exc:
+        raise HttpError(404, str(exc)) from exc
     except Exception as exc:  # noqa: BLE001
         from .ferramentas import FerramentaNegada
 
@@ -151,6 +168,41 @@ def mensagem(request, payload: MensagemIn):
         raise
     ver = tem_papel(request, "gerente")
     return r | {"propostas": [_p_out(p, ver) for p in r["propostas"]]}
+
+
+@router.get("/uso", response=UsoOut)
+def uso(request, dias: int = 30):
+    """Quanto o agente foi usado e quanto custou em tokens (para o dono decidir se liga o LLM)."""
+    from datetime import timedelta
+
+    from django.conf import settings
+    from django.db.models import Avg, Count, Q, Sum
+    from django.utils import timezone
+
+    loja = loja_com_papel(request, "gerente")
+    dias = max(1, min(dias, 90))
+    qs = SessaoAgente.objects.da_loja(loja).filter(
+        criado_em__gte=timezone.now() - timedelta(days=dias), turnos__gt=0
+    )
+    a = qs.aggregate(
+        sessoes=Count("id"), mensagens=Sum("turnos"),
+        com_llm=Count("id", filter=Q(provedor="claude")),
+        caiu=Count("id", filter=~Q(fallback="")),
+        te=Sum("tokens_entrada"), ts=Sum("tokens_saida"), tm=Avg("duracao_ms"),
+    )  # fmt: skip
+    return {
+        "dias": dias,
+        "sessoes": a["sessoes"],
+        "mensagens": a["mensagens"] or 0,
+        "com_llm": a["com_llm"],
+        "caiu_no_offline": a["caiu"],
+        "tokens_entrada": a["te"] or 0,
+        "tokens_saida": a["ts"] or 0,
+        "tempo_medio_ms": int(a["tm"] or 0),
+        "modelo": settings.MIDIA_IA_MODELO
+        if settings.MIDIA_IA_HABILITADA and settings.MIDIA_IA_PROVEDOR == "claude"
+        else "offline",
+    }
 
 
 @router.get("/propostas", response=list[PropostaOut])

@@ -8,6 +8,7 @@ from ninja import File, Form, Router, Schema
 from ninja.errors import HttpError
 from ninja.files import UploadedFile
 
+from apps.core.limites import LimiteImportacao
 from apps.core.permissoes import loja_com_papel
 
 from . import services
@@ -95,7 +96,7 @@ def _decimal_br(valor: str | None) -> Decimal | None:
         raise HttpError(422, "Total de origem inválido. Use o formato 18.432,90.") from exc
 
 
-@router.post("/preview", response=LoteOut)
+@router.post("/preview", response=LoteOut, throttle=[LimiteImportacao()])
 def preview(
     request,
     arquivo: UploadedFile = File(...),

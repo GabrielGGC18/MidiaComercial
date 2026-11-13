@@ -13,6 +13,19 @@ STORAGES = {
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 
+# Cache compartilhado entre os workers do gunicorn (contadores do rate limit).
+# Sem Redis: tabela no próprio Postgres, criada pelo entrypoint (createcachetable).
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "cache_midia",
+    }
+}
+
+# IP real para o rate limit. Cadeia na VPS: navegador → Vercel (rewrite) → nginx → container.
+# X-Forwarded-For chega como "cliente, ip-da-vercel": o cliente é o 2º da direita.
+NINJA_NUM_PROXIES = env.int("NINJA_NUM_PROXIES", default=2)  # noqa: F405
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
