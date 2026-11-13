@@ -136,3 +136,16 @@ def test_conta_demo_nao_tem_limite_global(client):
     demo = USUARIOS_DEMO[0]
     for i in range(5):  # senha pública: bloquear globalmente só tiraria a banca da demo
         assert _login(client, token, demo, "errada", ip=f"10.2.0.{i}").status_code == 401
+
+
+@override_settings(MIDIA_LOGIN_MAX_FALHAS=100, MIDIA_LOGIN_MAX_FALHAS_CONTA=2)
+def test_desbloqueio_imediato_da_conta(client, gerente, caplog):
+    from django.core.management import call_command
+
+    token = _csrf(client)
+    for i in range(2):
+        _login(client, token, "limite", "errada", ip=f"10.3.0.{i}")
+    assert "Login bloqueado" in caplog.text  # admin é avisado no log
+    assert _login(client, token, "limite", SENHA_DEMO, ip="10.3.0.50").status_code == 429
+    call_command("desbloquear_login", "limite")
+    assert _login(client, token, "limite", SENHA_DEMO, ip="10.3.0.50").status_code == 200

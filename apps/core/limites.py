@@ -27,11 +27,14 @@ from __future__ import annotations
 import hashlib
 import hmac
 import ipaddress
+import logging
 from functools import lru_cache
 
 from django.conf import settings
 from django.core.cache import cache
 from ninja.throttling import AnonRateThrottle, UserRateThrottle
+
+log = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=8)
@@ -143,7 +146,22 @@ def _incrementar(chave: str, janela: int) -> None:
 def registrar_falha_login(usuario: str, request) -> None:
     _incrementar(_chave_falhas(usuario, request), settings.MIDIA_LOGIN_JANELA_FALHAS)
     if not _conta_demo(usuario):
-        _incrementar(_chave_falhas_conta(usuario), settings.MIDIA_LOGIN_JANELA_CONTA)
+        chave = _chave_falhas_conta(usuario)
+        _incrementar(chave, settings.MIDIA_LOGIN_JANELA_CONTA)
+        if cache.get(chave, 0) == settings.MIDIA_LOGIN_MAX_FALHAS_CONTA:
+            # Troca consciente: o limite global trava a conta por MIDIA_LOGIN_JANELA_CONTA
+            # (sem CAPTCHA/2FA não há como separar o dono do atacante). Aviso no log e
+            # desbloqueio imediato: `manage.py desbloquear_login <usuario>`.
+            log.warning(
+                "Login bloqueado por excesso de falhas (todas as origens): conta %s. "
+                "Desbloqueio: manage.py desbloquear_login",
+                _hash(usuario.strip().lower())[:8],
+            )
+
+
+def desbloquear_conta(usuario: str) -> bool:
+    """Zera o contador global da conta (o por usuário + IP expira sozinho em minutos)."""
+    return bool(cache.delete(_chave_falhas_conta(usuario)))
 
 
 def limpar_falhas_login(usuario: str, request) -> None:
