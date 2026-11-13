@@ -36,6 +36,54 @@ Dia 3  P1-06 ─ P1-07           P2-04 ─ P2-05 ─ P2-06   P3-04 (precisa da P
 | P2-05 (tela do dono) | P3-02 (menu sanduíche), para pôr o item no menu. Se o menu ainda não existir, ponha no menu atual |
 | P1-06 (paginação) | Combine com a P3-03 antes de mexer em `ClientesPage.tsx` |
 
+## Melhoria 2: pós-venda e usabilidade (pesquisa com lojistas)
+
+Base: [docs/10](../10-POS-VENDA-E-ADEQUACAO-A-PESQUISA.md). Foco: a pequena loja de moda que tem dificuldade de preencher dados, fazer pós-venda e manter contato. **PV** = dados e pós-venda. **UX** = usabilidade para o usuário final (vendedor no balcão, gerente e dono).
+
+| Pessoa | Tasks |
+| --- | --- |
+| **Pessoa 1** | [PV-02](PV-02-mapeamento-de-colunas.md) · [PV-03](PV-03-catalogo-cor-tamanho.md) · [PV-04](PV-04-correcao-e-cancelamento-de-vendas.md) · [PV-09](PV-09-avisar-quando-chegar.md) (back) · [UX-02](UX-02-linguagem-de-loja.md) · [UX-04](UX-04-importacao-guiada.md) |
+| **Pessoa 2** | [PV-01](PV-01-mensagem-honesta.md) · [PV-05](PV-05-vinculo-de-cliente.md) · [PV-06](PV-06-relacoes-de-catalogo.md) (back) · [PV-07](PV-07-recomendacao-por-compra-recente.md) · [PV-10](PV-10-desfecho-e-medicao.md) (back) · [PV-11](PV-11-aceitacao-e-cenario-de-demo.md) · [UX-05](UX-05-primeiro-uso-e-estados-vazios.md) |
+| **Pessoa 3** | [PV-06](PV-06-relacoes-de-catalogo.md) (tela) · [PV-08](PV-08-cartoes-de-sugestao-e-historico.md) · [PV-10](PV-10-desfecho-e-medicao.md) (tela) · [UX-01](UX-01-inicio-hoje-e-menu-pela-rotina.md) · [UX-03](UX-03-balcao-em-tres-toques.md) |
+| **Gabriel + todos** | [PV-12](PV-12-conector-loja-piloto.md) (levantamento do sistema da loja) · [UX-06](UX-06-teste-com-lojista.md) (teste com lojista) |
+
+**Corte do hackathon:**
+
+1. **Bloqueios:** P1-01, P1-08, P1-02, P3-01 e **PV-01**.
+2. **Cenário completo do boné preto:** PV-02, PV-03, PV-06, PV-07, PV-08, UX-01, UX-02 e PV-11.
+3. **Se sobrar tempo:** PV-04, PV-05, UX-03, UX-04 e PV-09.
+4. **Depois do hackathon:** PV-10, UX-05, UX-06 e PV-12.
+
+**Prioridade em relação às tasks P:** as tasks do cenário passam na frente de P2-02, P2-03, P2-04, P2-06 e P3-04 (chat). O chat continua importante, mas o usuário final ganha mais com a rotina (UX-01) e com a fila de sugestões (PV-08).
+
+```
+Dia 1  P1: PV-02 ─ PV-03          P2: PV-01 ─ PV-06(back) ─ PV-07 ──┐   P3: P3-01 ─ P3-02 ─ UX-01
+Dia 2  P1: UX-02 ─ PV-04          P2: PV-07 ─ PV-11                  │   P3: PV-06(tela) ─ PV-08
+Dia 3  P1: UX-04 ─ PV-09(back)    P2: PV-05 ─ PV-10(back)            └─▶ P3: UX-03 ─ PV-10(tela)
+```
+
+| Task | Depende de |
+| --- | --- |
+| PV-03 | PV-02 |
+| PV-06 | PV-03 |
+| PV-07 | PV-03 e PV-06 (PV-05 desejável) |
+| PV-04, parte 4 (invalidar propostas) | PV-07 |
+| PV-08 | PV-07 e UX-01 |
+| PV-09 | PV-03 e PV-07; a tela entra na UX-03 |
+| PV-10 | PV-07 e PV-08 |
+| UX-01 | P3-01 e P3-02 |
+| UX-04 | PV-02 |
+| UX-05 | UX-01 |
+
+**Princípios que valem para todas** (resumo do docs/10 §4):
+
+- **Fato ≠ hipótese.** Compra é fato; tamanho e consentimento têm origem própria; sugestão nunca vira preferência do cliente.
+- **Clientes:** nunca unir por nome parecido.
+- **Mensagens:** não prometem reserva nem tamanho não confirmado.
+- **Envio:** abrir o WhatsApp não é envio confirmado.
+- **Processamento:** todo processamento tem chave e não duplica.
+- **Celular:** tudo funciona com uma mão em 375 px, com palavras de loja (UX-02).
+
 ## Como trabalhar
 
 1. **Branch por task:** `git checkout -b p1-01-clone-novo` a partir da `main` atualizada.
@@ -52,7 +100,7 @@ Dia 3  P1-06 ─ P1-07           P2-04 ─ P2-05 ─ P2-06   P3-04 (precisa da P
    ```
 5. Abra um PR com o título `P1-01: clone novo sobe sem .env` e marque o checklist "Pronto quando" da task.
 6. **Nunca** commite `.env`, banco, CSV ou chave. O pre-commit e o CI barram, mas não conte com eles.
-7. **Dados da VPS ficam fora do git:** `Deploy.md`, `deploy/`, `frontend/vercel.json` e `deploy-funcionamento-vps.md` estão no `.gitignore`. Neles há IP, domínios de produção, porta interna, usuário de serviço e caminhos. Nas tasks e nos PRs, use marcadores (`<RAIZ>`, `<usuario-servico>`, `<dominio-api>`).
+7. **Dados da VPS ficam fora do git:** `Deploy.md`, `deploy/` e `deploy-funcionamento-vps.md` estão no `.gitignore`. Neles há IP, domínios de produção, porta interna, usuário de serviço e caminhos. Nas tasks e nos PRs, use marcadores (`<RAIZ>`, `<usuario-servico>`, `<dominio-api>`).
 
 ## Regras do projeto (resumo)
 
@@ -91,5 +139,23 @@ Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `
 | P3-02 | Pessoa 3 | ⬜ |
 | P3-03 | Pessoa 3 | ⬜ |
 | P3-04 | Pessoa 3 | ⬜ |
+| PV-01 | Pessoa 2 | ⬜ |
+| PV-02 | Pessoa 1 | ⬜ |
+| PV-03 | Pessoa 1 | ⬜ |
+| PV-04 | Pessoa 1 | ⬜ |
+| PV-05 | Pessoa 2 | ⬜ |
+| PV-06 | Pessoa 2 + 3 | ⬜ |
+| PV-07 | Pessoa 2 | ⬜ |
+| PV-08 | Pessoa 3 | ⬜ |
+| PV-09 | Pessoa 1 + 3 | ⬜ |
+| PV-10 | Pessoa 2 + 3 | ⬜ |
+| PV-11 | Pessoa 2 + todos | ⬜ |
+| PV-12 | Gabriel + todos | ⬜ |
+| UX-01 | Pessoa 3 | ⬜ |
+| UX-02 | Pessoa 1 | ⬜ |
+| UX-03 | Pessoa 3 | ⬜ |
+| UX-04 | Pessoa 1 | ⬜ |
+| UX-05 | Pessoa 2 | ⬜ |
+| UX-06 | Todos | ⬜ |
 
 Legenda: ⬜ a fazer · 🟨 fazendo · 🟦 em revisão (PR aberto) · ✅ feito
