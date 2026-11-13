@@ -30,15 +30,23 @@ export default function middleware(request: Request): Response {
     );
   }
   const url = new URL(request.url);
-  const cabecalhos = new Headers(request.headers);
-  // o cliente não escolhe estes valores: sempre sobrescritos (ou removidos) aqui
-  cabecalhos.delete("x-midia-proxy");
-  cabecalhos.delete("x-midia-cliente-ip");
-  const segredo = process.env.API_SEGREDO;
-  const ip = request.headers.get("x-real-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  if (segredo && ip) {
-    cabecalhos.set("x-midia-proxy", segredo);
-    cabecalhos.set("x-midia-cliente-ip", ip);
+  const destino = new URL(url.pathname + url.search, origem.trim());
+  try {
+    const cabecalhos = new Headers(request.headers);
+    // o cliente não escolhe estes valores: sempre sobrescritos (ou removidos) aqui
+    cabecalhos.delete("x-midia-proxy");
+    cabecalhos.delete("x-midia-cliente-ip");
+    // trim: variável colada do terminal costuma vir com quebra de linha no fim
+    const segredo = (process.env.API_SEGREDO ?? "").trim();
+    const ip = (request.headers.get("x-real-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0] ?? "").trim();
+    // só caracteres válidos em cabeçalho HTTP (ASCII visível)
+    if (/^[\x21-\x7e]{16,}$/.test(segredo) && /^[0-9a-fA-F.:]{3,45}$/.test(ip)) {
+      cabecalhos.set("x-midia-proxy", segredo);
+      cabecalhos.set("x-midia-cliente-ip", ip);
+    }
+    return rewrite(destino, { request: { headers: cabecalhos } });
+  } catch {
+    // nunca derruba o site: sem o segredo o rate limit ainda funciona (por IP da conexão)
+    return rewrite(destino);
   }
-  return rewrite(new URL(url.pathname + url.search, origem), { request: { headers: cabecalhos } });
 }
