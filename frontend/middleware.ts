@@ -30,7 +30,18 @@ export default function middleware(request: Request): Response {
     );
   }
   const url = new URL(request.url);
-  const destino = new URL(url.pathname + url.search, origem.trim());
+  let destino: URL;
+  try {
+    // aceita valor colado com aspas ou espaços; exige http(s)://dominio
+    const base = new URL(origem.trim().replace(/^["']|["']$/g, ""));
+    if (!/^https?:$/.test(base.protocol)) throw new Error("protocolo");
+    destino = new URL(url.pathname + url.search, base);
+  } catch {
+    return new Response(
+      JSON.stringify({ detail: "API_ORIGEM inválida na Vercel: use o formato https://dominio-da-api (sem barra no fim)." }),
+      { status: 503, headers: { "content-type": "application/json; charset=utf-8" } },
+    );
+  }
   try {
     const cabecalhos = new Headers(request.headers);
     // o cliente não escolhe estes valores: sempre sobrescritos (ou removidos) aqui
