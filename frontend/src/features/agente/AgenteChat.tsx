@@ -29,16 +29,28 @@ export default function AgenteChat({ className }: { className?: string }) {
   const [texto, setTexto] = useState("");
   const [itens, setItens] = useState<Item[]>([]);
   const fim = useRef<HTMLDivElement>(null);
-  useEffect(() => fim.current?.scrollIntoView({ behavior: "smooth", block: "end" }), [itens]);
+  // memória curta: a conversa continua no servidor enquanto o painel está aberto
+  const sessao = useRef<number | null>(null);
+  useEffect(() => {
+    fim.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [itens]);
 
   const enviar = useMutation({
-    mutationFn: (t: string) => api<RespostaAgente>("/api/agente/mensagens", { method: "POST", body: json({ texto: t }) }),
-    onMutate: (t) => setItens((xs) => [...xs, { de: "voce", texto: t }]),
+    mutationFn: ({ t, canal }: { t: string; canal: "texto" | "voz" }) =>
+      api<RespostaAgente>("/api/agente/mensagens", {
+        method: "POST",
+        body: json({ texto: t, canal, sessao_id: sessao.current }),
+      }),
+    onMutate: ({ t }) => setItens((xs) => [...xs, { de: "voce", texto: t }]),
     onSuccess: (r) => {
+      sessao.current = r.sessao_id;
       setItens((xs) => [...xs, { de: "agente", texto: r.resposta, propostas: r.propostas, provedor: r.provedor }]);
       if (r.propostas.some((p) => p.tipo === "contato")) void qc.invalidateQueries({ queryKey: ["agente"] });
     },
-    onError: (e) => setItens((xs) => [...xs, { de: "agente", texto: mensagemErro(e) }]),
+    onError: (e) => {
+      sessao.current = null; // trocou de loja ou a conversa sumiu: recomeça
+      setItens((xs) => [...xs, { de: "agente", texto: mensagemErro(e) }]);
+    },
   });
 
   const decidir = useMutation({
@@ -54,13 +66,13 @@ export default function AgenteChat({ className }: { className?: string }) {
     onError: (e) => toast.error(mensagemErro(e)),
   });
 
-  const mandar = (t: string) => {
+  const mandar = (t: string, canal: "texto" | "voz" = "texto") => {
     const v = t.trim();
     if (v.length < 2 || enviar.isPending) return;
     setTexto("");
-    enviar.mutate(v);
+    enviar.mutate({ t: v, canal });
   };
-  const voz = useVoz((t) => t && mandar(t));
+  const voz = useVoz((t) => t && mandar(t, "voz"));
   const exemplos = temPapel(me?.papel, "gerente") ? EXEMPLOS_GERENTE : EXEMPLOS_ATENDENTE;
 
   return (

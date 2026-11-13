@@ -168,6 +168,80 @@
 .efeito-desfoque { animation: desfoque 600ms ease-out both; }
 @keyframes desfoque { from { filter: blur(8px); opacity: 0; transform: translateY(6px); } to { filter: none; opacity: 1; transform: none; } }
 
+.efeito-texto-rotativo { display: inline-grid; max-width: 100%; vertical-align: bottom; }
+.efeito-texto-rotativo > span { grid-area: 1 / 1; padding-bottom: 0.14em; } /* não corta descendentes com background-clip */
+.efeito-texto-rotativo-item { opacity: 0; animation: texto-rotativo 16s ease-in-out infinite; }
+@keyframes texto-rotativo {
+  0%, 20% { opacity: 1; transform: translateY(0); }
+  24%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+.efeito-texto-gradiente {
+  background: linear-gradient(90deg, var(--color-violeta-700), var(--color-coral-700));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.dark .efeito-texto-gradiente { background-image: linear-gradient(90deg, var(--color-violeta-300), var(--color-coral-500)); }
+
+/* Logo animada (login): barras crescem, alternam como gráfico ao vivo e voltam à pose da marca.
+   Sem movimento reduzido: o componente não aplica estas classes (useMenosMovimento). */
+.logo-barra { transform-box: fill-box; transform-origin: 50% 100%; }
+.logo-barra-1 { animation: logo-cresce 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) 0ms both, logo-oscila-1 4.8s ease-in-out 1.4s infinite; }
+.logo-barra-2 { animation: logo-cresce 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) 140ms both, logo-oscila-2 4.8s ease-in-out 1.4s infinite; }
+.logo-barra-3 { animation: logo-cresce 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) 280ms both, logo-oscila-3 4.8s ease-in-out 1.4s infinite; }
+@keyframes logo-cresce { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes logo-oscila-1 { 0%, 100% { transform: scaleY(1); } 25% { transform: scaleY(1.5); } 50% { transform: scaleY(0.7); } 75% { transform: scaleY(1.2); } }
+@keyframes logo-oscila-2 { 0%, 100% { transform: scaleY(1); } 25% { transform: scaleY(0.6); } 50% { transform: scaleY(1.25); } 75% { transform: scaleY(0.85); } }
+@keyframes logo-oscila-3 { 0%, 100% { transform: scaleY(1); } 25% { transform: scaleY(0.8); } 50% { transform: scaleY(0.9); } 75% { transform: scaleY(1.08); } }
+.logo-tendencia { stroke-dasharray: 1; stroke-dashoffset: 1; animation: logo-traco 900ms ease-out 700ms forwards; }
+@keyframes logo-traco { to { stroke-dashoffset: 0; } }
+.logo-ponto { transform-box: fill-box; transform-origin: center; opacity: 0; animation: logo-ponto 2.4s ease-out 1.5s infinite; }
+@keyframes logo-ponto { 0% { opacity: 1; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(2.6); } }
+
+/* Nome: revela da esquerda para a direita junto com as barras; depois, brilho a cada 7 s.
+   O gradiente fica na própria palavra (que não anima transform), seguro no Chrome. */
+.logo-nome-revela { animation: logo-revela 900ms cubic-bezier(0.4, 0, 0.2, 1) 200ms both; }
+@keyframes logo-revela { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.logo-brilho {
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: logo-brilho 7s ease-in-out 1.6s infinite;
+}
+.logo-brilho-midia { background-image: linear-gradient(110deg, var(--color-violeta-500) 40%, var(--color-coral-500) 50%, var(--color-violeta-500) 60%); }
+.logo-brilho-comercial { background-image: linear-gradient(110deg, var(--color-foreground) 40%, var(--color-violeta-300) 50%, var(--color-foreground) 60%); }
+.dark .logo-brilho-midia { background-image: linear-gradient(110deg, var(--color-violeta-300) 40%, var(--color-coral-500) 50%, var(--color-violeta-300) 60%); }
+@keyframes logo-brilho { 0% { background-position: 100% 0; } 18%, 100% { background-position: -100% 0; } }
+
+/* Aurora sem WebGL (components/efeitos/Aurora): manchas radiais derivando */
+.efeito-aurora { position: absolute; width: 60vmax; height: 60vmax; border-radius: 9999px; opacity: 0.55; }
+.efeito-aurora-1 { top: -25vmax; left: -15vmax; background: radial-gradient(closest-side, color-mix(in oklab, var(--color-violeta-500) 45%, transparent), transparent); }
+.efeito-aurora-2 { top: -10vmax; right: -20vmax; background: radial-gradient(closest-side, color-mix(in oklab, var(--color-coral-500) 35%, transparent), transparent); }
+.efeito-aurora-3 { bottom: -30vmax; left: 25%; background: radial-gradient(closest-side, color-mix(in oklab, var(--color-turquesa) 22%, transparent), transparent); }
+.dark .efeito-aurora { opacity: 0.4; }
+.efeito-aurora-anima.efeito-aurora-1 { animation: aurora-a 22s ease-in-out infinite alternate; }
+.efeito-aurora-anima.efeito-aurora-2 { animation: aurora-b 26s ease-in-out infinite alternate; }
+.efeito-aurora-anima.efeito-aurora-3 { animation: aurora-a 30s ease-in-out infinite alternate-reverse; }
+@keyframes aurora-a { to { transform: translate3d(8vmax, 6vmax, 0) scale(1.12); } }
+@keyframes aurora-b { to { transform: translate3d(-10vmax, 8vmax, 0) scale(0.9); } }
+
+/* Marquee (LogoLoop) */
+.efeito-marquee { mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.efeito-marquee-trilho { animation: marquee 38s linear infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Etiquetas flutuando ao lado da pilha de cards */
+.efeito-flutua { animation: flutua 5s ease-in-out infinite; }
+.efeito-flutua-2 { animation: flutua 6s ease-in-out 1.2s infinite; }
+@keyframes flutua { 50% { transform: translateY(-8px); } }
+
+/* Sublinhado de destaque no título (como marca-texto) */
+.destaque-titulo {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--color-violeta-500) 28%, transparent), color-mix(in oklab, var(--color-coral-500) 28%, transparent)) no-repeat 0 88% / 100% 0.28em;
+}
+
 @utility tabular { font-variant-numeric: tabular-nums; }
 @utility sobretitulo {
   font-size: 11px; line-height: 16px; font-weight: 600;

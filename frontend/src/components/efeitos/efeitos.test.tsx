@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { CountUp } from "./CountUp";
+import { RotatingText } from "./RotatingText";
 import { ShinyText } from "./ShinyText";
 import { StarBorder } from "./StarBorder";
 
@@ -35,5 +36,24 @@ describe("Efeitos respeitam prefers-reduced-motion (docs/08 §8)", () => {
     menosMovimento(false);
     render(<ShinyText>Processando…</ShinyText>);
     expect(screen.getByRole("status")).toHaveTextContent("Processando…");
+  });
+
+  it("RotatingText mostra frase estática quando há menos movimento", () => {
+    menosMovimento(true);
+    const { container } = render(<RotatingText frases={["o que vendeu", "o que faltou", "o que parou", "quem voltou"]} />);
+    expect(screen.getByText("o que vendeu")).toBeInTheDocument();
+    expect(container.querySelectorAll(".efeito-texto-rotativo-item")).toHaveLength(0);
+    expect(container).not.toHaveTextContent("o que faltou");
+  });
+
+  it("RotatingText aplica classeItem em cada frase (gradiente no elemento que anima)", () => {
+    menosMovimento(false);
+    const { container } = render(
+      <RotatingText frases={["a", "b", "c", "d"]} classeItem="efeito-texto-gradiente" />,
+    );
+    const itens = container.querySelectorAll(".efeito-texto-rotativo-item");
+    expect(itens).toHaveLength(4);
+    itens.forEach((el) => expect(el).toHaveClass("efeito-texto-gradiente"));
+    expect(container.firstElementChild).not.toHaveClass("efeito-texto-gradiente");
   });
 });

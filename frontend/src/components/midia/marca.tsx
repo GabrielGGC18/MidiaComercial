@@ -2,6 +2,7 @@
 import { Check, ChevronsUpDown, Store } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { LojaResumo } from "@/api/types";
+import { useMenosMovimento } from "@/lib/movimento";
 import { PAPEL_ROTULO } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,46 @@ export function Logo({ compacto, className }: { compacto?: boolean; className?: 
           <span className="text-foreground">Comercial</span>
         </span>
       )}
+      <span className="sr-only">MidiaComercial</span>
+    </span>
+  );
+}
+
+/**
+ * Logo de abertura (login): as barras crescem, alternam como um gráfico ao vivo e terminam em alta;
+ * a linha de tendência é desenhada por cima e o ponto final "pulsa" (sinal chegando).
+ * Com movimento reduzido, mostra a logo estática.
+ */
+export function LogoAnimado({ className, compacto }: { className?: string; compacto?: boolean }) {
+  const menos = useMenosMovimento();
+  const a = (c: string) => (menos ? undefined : c);
+  return (
+    <span className={cn("inline-flex items-center", compacto ? "gap-2" : "gap-3", className)}>
+      <svg viewBox="0 0 24 24" className={cn("overflow-visible", compacto ? "size-8" : "size-12 sm:size-14")} aria-hidden>
+        <rect className={cn("logo-barra", a("logo-barra-1"))} x="2" y="12" width="5" height="10" rx="1" fill="var(--color-violeta-300)" />
+        <rect className={cn("logo-barra", a("logo-barra-2"))} x="9.5" y="7" width="5" height="15" rx="1" fill="var(--color-violeta-500)" />
+        <rect className={cn("logo-barra", a("logo-barra-3"))} x="17" y="2" width="5" height="20" rx="1" fill="var(--color-coral-500)" />
+        {!menos && (
+          <>
+            <polyline
+              className="logo-tendencia"
+              pathLength={1}
+              points="1,15 4.5,10 9,12.5 12,5.5 15.5,7.5 21.5,0.5"
+              fill="none"
+              stroke="var(--color-foreground)"
+              strokeOpacity={0.55}
+              strokeWidth={0.9}
+              strokeLinecap="square"
+              strokeLinejoin="miter"
+            />
+            <circle className="logo-ponto" cx="21.5" cy="0.5" r="1.2" fill="var(--color-coral-500)" />
+          </>
+        )}
+      </svg>
+      <span className={cn("font-display font-extrabold tracking-tight", compacto ? "text-xl" : "text-2xl sm:text-3xl", a("logo-nome-revela"))} aria-hidden>
+        <span className={menos ? "text-violeta-500 dark:text-violeta-300" : "logo-brilho logo-brilho-midia"}>Mídia</span>
+        <span className={menos ? "text-foreground" : "logo-brilho logo-brilho-comercial"}>Comercial</span>
+      </span>
       <span className="sr-only">MidiaComercial</span>
     </span>
   );
