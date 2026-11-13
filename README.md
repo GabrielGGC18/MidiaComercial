@@ -26,7 +26,7 @@
 </p>
 
 <p align="center">
-  <strong>Inteligência comercial para o pequeno lojista.</strong> Uma camada ao lado do PDV que junta o que vendeu, o que o cliente
+  <strong>Inteligência comercial para lojistas de shopping.</strong> Uma camada ao lado do PDV que junta o que vendeu, o que o cliente
   <em>procurou e não tinha</em>, o estoque, o público (período, horário e faixa de idade) e a base de clientes, entrega no máximo
   3 decisões com evidência e limitação e tem um <strong>agente que encontra clientes quando um produto está em baixa</strong>.
   Ele propõe; uma pessoa confirma e envia.
@@ -42,6 +42,31 @@
 
 ---
 
+## 🎯 O desafio: Hackrun, tema 06 · Inteligência comercial para lojistas
+
+> **Contexto:** o shopping reúne estabelecimentos de diferentes segmentos, que atendem públicos com interesses e comportamentos variados.
+>
+> **Problemática:** os lojistas precisam compreender melhor o comportamento dos consumidores, as oportunidades comerciais e os fatores que influenciam o desempenho de seus estabelecimentos.
+>
+> **Objetivo:** melhorar a compreensão sobre o público consumidor e as oportunidades de negócio para os lojistas.
+
+**Para quem é:** o **lojista do shopping**, seja dono, gerente ou atendente de uma loja dentro do mall. Ele tem caixa e estoque, mas não tem
+equipe de BI. Ele também não sabe quem passou pelo balcão e saiu sem comprar. O MidiaComercial é a ferramenta **dessa loja**: cada loja vê
+só os próprios dados, com isolamento por loja. Não é um painel da administração do shopping.
+
+**Como respondemos a cada ponto do desafio:**
+
+| O desafio pede | Como o MidiaComercial responde | Onde |
+| --- | --- | --- |
+| Diferentes **segmentos** | O contrato de dados usa produto, categoria e variante, sem campo exclusivo de um ramo. Cada loja tem o seu `segmento`. A demo usa lojas de moda, mas o mesmo fluxo serve para calçados, acessórios, eletrônicos, presentes e outros | `apps/importacao`, `Loja.segmento` |
+| Públicos com **interesses e comportamentos variados** | Quem compra, o quê e quando: período e horário fortes **por categoria**, fase do mês (efeito salário) e faixa etária que mais compra | **Meu público** |
+| Entender o **comportamento do consumidor** | Mede também o que o cliente **procurou e não levou** (sem estoque, caro, sem tamanho), registrado no balcão em até 4 toques ou por voz | **Balcão** · **Procuraram e não tinha** |
+| Encontrar **oportunidades comerciais** | No máximo 3 oportunidades priorizadas, cada uma com evidência, amostra e limitação. Para produto parado, o agente propõe quais clientes contatar | **Oportunidades** · **Agente de vendas** |
+| Mostrar os **fatores que influenciam o desempenho** | Venda perdida, estoque parado ou desatualizado, queda por categoria e horário de pico × escala da equipe. Cada fator aparece com a origem do dado | **Oportunidades** · **Sino de avisos** |
+| **Melhorar** a compreensão e o negócio | Ciclo fechado: sinal → decisão → plano de ação → medição antes/depois e conversão do contato em 14 dias | **Plano de ação** · **Agente** |
+
+---
+
 ## 🚀 Nosso diferencial
 
 > **O caixa só mostra o que vendeu. O MidiaComercial mostra também o que o cliente procurou e não levou, e transforma isso em venda.**
@@ -53,7 +78,7 @@
 | 3 | **Agente que vende o produto parado.** Encontra clientes com chance real, explica o motivo e prepara a mensagem; a pessoa aprova e envia | Ferramentas de campanha disparam para todos; aqui é por motivo, com consentimento (LGPD) | Agente: *"Já comprou Camisas · veste G (tem em estoque)"* |
 | 4 | **Ciclo fechado.** Sinal → decisão → ação → medição: avisa quando o cliente contatado comprou | Relatório termina no gráfico | Sino: *"Cliente comprou depois do contato"* |
 
-**Em uma frase para a banca:** *observar compras e não compras, decidir com evidência e medir o resultado.*
+**Em uma frase para a banca:** *para o lojista do shopping, observar compras e não compras, decidir com evidência e medir o resultado.*
 
 ---
 
@@ -262,7 +287,12 @@ Os testes cobrem:
 - **Planilha:** CSV e XLSX com colunas alternativas.
 - **Interface:** balcão em ≤ 4 toques e cartões sempre com evidência e limitação.
 
-## Deploy (Hostinger VPS)
+## Deploy
+
+Plano oficial em **[`Deploy.md`](Deploy.md)**: frontend na Vercel e backend na VPS Hostinger (gunicorn + nginx + Postgres). Os
+próximos passos de design estão em **[`planejamento.md`](planejamento.md)**.
+
+Alternativa com Docker (tudo na VPS):
 
 1. VPS Ubuntu com Docker; registro `A` do domínio apontando para o IP; firewall só 22/80/443.
 2. `.env` de produção: `DEBUG=False`, `SECRET_KEY`, `DOMINIO`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS=https://<domínio>`, `POSTGRES_PASSWORD`, `DATABASE_URL`. Opcional: `MIDIA_IA_HABILITADA`, `MIDIA_IA_PROVEDOR=claude`, `MIDIA_IA_API_KEY`, `MIDIA_IA_MODELO`.

@@ -102,3 +102,11 @@ frontend/coverage/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Runbook local da VPS (IP, usuários, comandos reais). Repo é público: NUNCA versionar.
+deploy-funcionamento-vps.md
+
+# Infra da VPS (domínios de produção, porta interna, usuário de serviço, caminhos e
+# subdomínios de outros sites da mesma máquina). Fica só local; ver docs/tasks/README.md.
+Deploy.md
+deploy/

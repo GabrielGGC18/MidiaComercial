@@ -14,6 +14,7 @@ Esta pasta reúne a **primeira entrega** do Hackrun: planejamento e definição 
 | 6 | Como a tecnologia ou prática sorteada será incorporada | [06-TECNOLOGIA-SORTEADA.md](06-TECNOLOGIA-SORTEADA.md) |
 | 7 | Evolução: período por nicho, faixa etária, voz, base de clientes e agente de vendas | [07-EVOLUCAO-AGENTE-PUBLICO.md](07-EVOLUCAO-AGENTE-PUBLICO.md) |
 | 8 | Design: geometria reta, efeitos React Bits e telas mais intuitivas (proposta) | [08-DESIGN-GEOMETRIA-E-EFEITOS-REACT-BITS.md](08-DESIGN-GEOMETRIA-E-EFEITOS-REACT-BITS.md) |
+| 9 | Decisão: framework de IA (LangChain/LangGraph × SDK direto) e modelo do agente | [09-DECISAO-FRAMEWORK-IA.md](09-DECISAO-FRAMEWORK-IA.md) |
 
 ## Resumo em uma tela
 
