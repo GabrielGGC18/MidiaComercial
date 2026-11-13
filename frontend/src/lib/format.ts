@@ -22,11 +22,12 @@ export const hora = (d: string | Date) => format(asDate(d), "HH:mm", { locale: p
 export const relativo = (d: string | Date) =>
   formatDistanceToNowStrict(asDate(d), { locale: ptBR, addSuffix: true });
 
-/** "06–12/11" ou "28/10–03/11" */
+/** "13/11" (mesmo dia), "06–12/11" (mesmo mês) ou "28/10–03/11" */
 export function periodo(ini: string, fim: string) {
   const a = asDate(ini);
   const b = asDate(fim);
-  if (format(a, "MM") === format(b, "MM")) return `${format(a, "dd")}–${format(b, "dd/MM")}`;
+  if (format(a, "yyyy-MM-dd") === format(b, "yyyy-MM-dd")) return format(b, "dd/MM");
+  if (format(a, "yyyy-MM") === format(b, "yyyy-MM")) return `${format(a, "dd")}–${format(b, "dd/MM")}`;
   return `${format(a, "dd/MM")}–${format(b, "dd/MM")}`;
 }
 

@@ -1,11 +1,25 @@
 // EvidenceList · OpportunityCard · BlockedRuleRow (§5.3)
-import { ArrowRight, CheckCircle2, Lock, Plus } from "lucide-react";
+import { ArrowRight, CheckCircle2, ListChecks, Lock, Plus } from "lucide-react";
 import type { Bloqueio, Evidencia, Oportunidade } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { numero, periodo } from "@/lib/format";
+import { rotuloRegra } from "@/lib/termos";
 import { cn } from "@/lib/utils";
 import { CartaoExploravel } from "./destaques";
 import { corBordaStatus, LimitationNote, SignalBadge, SourceChip } from "./sinais";
+
+/** "O que fazer": a decisão vem antes da evidência (UX-07). */
+export function ProximoPasso({ texto, className }: { texto: string; className?: string }) {
+  return (
+    <div className={cn("flex gap-2.5 rounded-md bg-violeta-50 px-3.5 py-3 dark:bg-violeta-900/30", className)}>
+      <ListChecks className="mt-0.5 size-4 shrink-0 text-violeta-700 dark:text-violeta-100" aria-hidden />
+      <p className="text-sm">
+        <span className="font-semibold text-violeta-700 dark:text-violeta-100">O que fazer: </span>
+        {texto}
+      </p>
+    </div>
+  );
+}
 
 export function EvidenceList({ evidencias }: { evidencias: Evidencia[] }) {
   return (
@@ -56,7 +70,6 @@ export function OpportunityCard({
   indice?: number;
   total?: number;
 }) {
-  const sku = typeof o.alvo.sku === "string" ? o.alvo.sku : null;
   return (
     <CartaoExploravel
       role="article"
@@ -79,7 +92,7 @@ export function OpportunityCard({
             {o.prioridade}
           </span>
           <Barras nivel={4 - Math.min(3, o.prioridade)} />
-          {o.regra_nome}
+          {rotuloRegra(o.regra_nome)}
         </p>
         <SignalBadge status={o.status} />
       </header>
@@ -87,16 +100,13 @@ export function OpportunityCard({
       <h3 id={`op-${o.id}`} className="mt-3 font-display text-h3 font-semibold">
         {o.titulo}
       </h3>
-      {sku && <p className="font-mono text-xs font-medium text-muted-foreground">{sku}</p>}
 
-      <p className="sobretitulo mt-4 mb-2 text-muted-foreground">Evidência</p>
+      <ProximoPasso texto={o.acao_sugerida} className="mt-3" />
+
+      <p className="sobretitulo mt-4 mb-2 text-muted-foreground">Por quê</p>
       <EvidenceList evidencias={o.evidencias} />
 
       <LimitationNote texto={o.limitacao} className="mt-4" />
-
-      <p className="mt-4 text-sm">
-        <span className="font-semibold">Sugestão:</span> {o.acao_sugerida}
-      </p>
 
       <footer className="mt-5 flex flex-wrap items-center gap-2">
         {o.plano_id ? (

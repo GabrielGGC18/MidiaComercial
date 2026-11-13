@@ -6,9 +6,9 @@ import { pct } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const STATUS = {
-  suficiente: { rotulo: "Dados suficientes", tom: "ok", Icone: SignalHigh },
-  amostra_limitada: { rotulo: "Amostra limitada", tom: "atencao", Icone: SignalMedium },
-  bloqueada: { rotulo: "Cálculo bloqueado", tom: "bloqueado", Icone: Lock },
+  suficiente: { rotulo: "Dados confiáveis", tom: "ok", Icone: SignalHigh, dica: "Há registros suficientes e o estoque está dentro do prazo da loja." },
+  amostra_limitada: { rotulo: "Confira antes de agir", tom: "atencao", Icone: SignalMedium, dica: "Poucos registros ou estoque desatualizado: trate como pista." },
+  bloqueada: { rotulo: "Cálculo bloqueado", tom: "bloqueado", Icone: Lock, dica: "Falta dado para calcular." },
 } as const;
 
 export const corBordaStatus: Record<StatusDados, string> = {
@@ -21,7 +21,7 @@ export const corBordaStatus: Record<StatusDados, string> = {
 export function SignalBadge({ status, motivo }: { status: StatusDados; motivo?: string | null }) {
   const s = STATUS[status];
   return (
-    <Badge tom={s.tom} title={motivo ?? undefined}>
+    <Badge tom={s.tom} title={motivo ?? s.dica}>
       <s.Icone aria-hidden />
       {s.rotulo}
     </Badge>
@@ -34,6 +34,9 @@ const FONTES: Record<Fonte, { rotulo: string; Icone: typeof Store; cls: string }
   vendas: { rotulo: "Vendas", Icone: Receipt, cls: "bg-violeta-50 text-violeta-700 dark:bg-violeta-900/50 dark:text-violeta-100" },
   acao: { rotulo: "Ação", Icone: Users, cls: "bg-info-bg text-info-tx dark:bg-info/15 dark:text-info" },
 };
+
+/** Nome da fonte em palavras de loja ("demanda" → "Balcão"). */
+export const rotuloFonte = (fonte: Fonte) => FONTES[fonte]?.rotulo ?? fonte;
 
 export function SourceChip({ fonte }: { fonte: Fonte }) {
   const f = FONTES[fonte];

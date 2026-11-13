@@ -9,11 +9,9 @@ STATUS_TXT = {
 
 
 class ExplicadorTemplate:
+    """Só o "por quê". A ação sugerida e a limitação têm bloco próprio na tela (UX-07):
+    repetir aqui fazia a limitação aparecer duas vezes no detalhe."""
+
     def explicar(self, op: OportunidadeCandidata, status: str) -> str:
         evid = "; ".join(e.descricao.lower() for e in op.evidencias)
-        return (
-            f"Sugerimos isso porque {evid}. "
-            f"{STATUS_TXT.get(status, '')} "
-            f"Próximo passo: {op.acao_sugerida[0].lower()}{op.acao_sugerida[1:]} "
-            f"Atenção: {op.limitacao[0].lower()}{op.limitacao[1:]}"
-        ).strip()
+        return f"Sugerimos isso porque {evid}. {STATUS_TXT.get(status, '')}".strip()

@@ -16,15 +16,16 @@ const op: Oportunidade = {
 describe("Mídia UI", () => {
   it("SignalBadge mostra rótulo escrito, não só cor", () => {
     render(<SignalBadge status="amostra_limitada" />);
-    expect(screen.getByText("Amostra limitada")).toBeInTheDocument();
+    expect(screen.getByText("Confira antes de agir")).toBeInTheDocument();
   });
 
   it("OpportunityCard sempre exibe evidência, amostra, status e limitação", async () => {
     const criar = vi.fn();
     render(<OpportunityCard oportunidade={op} onCriarAcao={criar} onDescartar={vi.fn()} onDetalhes={vi.fn()} />);
     expect(screen.getByRole("heading", { name: op.titulo })).toBeInTheDocument();
-    expect(screen.getByText("CAM-AZ-M")).toBeInTheDocument();
-    expect(screen.getByText("Dados suficientes")).toBeInTheDocument();
+    expect(screen.queryByText("CAM-AZ-M")).not.toBeInTheDocument(); // código interno só no detalhe técnico (UX-07)
+    expect(screen.getByText(op.acao_sugerida)).toBeInTheDocument(); // "O que fazer" no cartão
+    expect(screen.getByText("Dados confiáveis")).toBeInTheDocument();
     expect(screen.getByText(/9 registros/)).toBeInTheDocument();
     expect(screen.getByText(op.limitacao)).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: /Criar ação/ }));

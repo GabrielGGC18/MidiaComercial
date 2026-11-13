@@ -1,19 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Lightbulb } from "lucide-react";
+import { ChevronRight, Lightbulb, Upload } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import { api, json, mensagemErro } from "@/api/client";
 import type { Oportunidade, Painel, Plano } from "@/api/types";
-import { EvidenceList } from "@/components/midia/oportunidade";
-import { LimitationNote, SignalBadge } from "@/components/midia/sinais";
-import { Button } from "@/components/ui/button";
+import { EvidenceList, ProximoPasso } from "@/components/midia/oportunidade";
+import { LimitationNote, rotuloFonte, SignalBadge } from "@/components/midia/sinais";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { isoDaqui, isoHoje } from "@/lib/format";
+import { rotuloRegra } from "@/lib/termos";
 
 type Chave = readonly unknown[];
 
@@ -145,40 +146,67 @@ export function DetalheDialog({
         {o && (
           <>
             <DialogHeader className="mb-0">
-              <p className="sobretitulo text-muted-foreground">{o.regra_nome}</p>
+              <p className="sobretitulo text-muted-foreground">{rotuloRegra(o.regra_nome)}</p>
               <DialogTitle className="text-h2">{o.titulo}</DialogTitle>
               <div><SignalBadge status={o.status} /></div>
             </DialogHeader>
 
-            <section className="rounded-md bg-violeta-50 p-4 dark:bg-violeta-900/30">
-              <p className="sobretitulo mb-2 flex items-center gap-1.5 text-violeta-700 dark:text-violeta-100">
-                <Lightbulb className="size-3.5" aria-hidden /> Por que estamos sugerindo isso
-              </p>
-              <p className="text-sm leading-relaxed">{o.explicacao}</p>
-            </section>
+            {/* Ordem de decisão (UX-07): o que fazer → por quê → limitação → ações → detalhes */}
+            <ProximoPasso texto={o.acao_sugerida} />
 
             <section>
-              <p className="sobretitulo mb-2 text-muted-foreground">Evidência</p>
+              <p className="sobretitulo mb-2 flex items-center gap-1.5 text-muted-foreground">
+                <Lightbulb className="size-3.5" aria-hidden /> Por que estamos sugerindo isso
+              </p>
+              {/* Texto gerado antes do "Recalcular" ainda traz passo e limitação colados: corta para não repetir */}
+              <p className="mb-3 text-sm leading-relaxed">{o.explicacao.split(" Próximo passo:")[0]}</p>
               <EvidenceList evidencias={o.evidencias} />
             </section>
 
             <LimitationNote texto={o.limitacao} />
 
-            <section className="text-sm">
-              <p className="sobretitulo mb-1 text-muted-foreground">Como medir</p>
-              <p>{o.medicao_sugerida || "—"}</p>
-            </section>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              {!o.plano_id && (
+                <Button className="flex-1" onClick={() => onCriarAcao(o)}>Criar ação</Button>
+              )}
+              {o.evidencias.some((e) => e.fonte === "estoque") && (
+                <Link to="/importar" className={buttonVariants({ variant: "secondary", className: "flex-1" })}>
+                  <Upload aria-hidden /> Estoque mudou? Atualizar
+                </Link>
+              )}
+            </div>
 
-            <dl className="grid grid-cols-2 gap-3 rounded-md border border-border p-3 text-xs">
-              <div><dt className="text-muted-foreground">Regra</dt><dd className="font-mono font-medium">{o.regra}</dd></div>
-              <div><dt className="text-muted-foreground">Versão</dt><dd className="font-mono font-medium">{o.versao_regra}</dd></div>
-              <div><dt className="text-muted-foreground">Prioridade</dt><dd className="font-medium">{o.prioridade}º</dd></div>
-              <div><dt className="text-muted-foreground">Origem</dt><dd className="font-medium">{[...new Set(o.evidencias.map((e) => e.fonte))].join(", ")}</dd></div>
-            </dl>
-
-            {!o.plano_id && (
-              <Button className="mt-auto" onClick={() => onCriarAcao(o)}>Criar ação</Button>
-            )}
+            <details className="group rounded-md border border-border text-sm">
+              <summary className="flex cursor-pointer list-none items-center gap-1.5 px-3 py-2.5 font-medium text-muted-foreground hover:text-foreground">
+                <ChevronRight className="size-4 transition-transform group-open:rotate-90" aria-hidden /> Ver detalhes
+              </summary>
+              <div className="flex flex-col gap-3 border-t border-border p-3">
+                <div>
+                  <p className="sobretitulo mb-1 text-muted-foreground">Como vamos medir</p>
+                  <p>{o.medicao_sugerida || "—"}</p>
+                </div>
+                <dl className="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <dt className="text-muted-foreground">De onde veio</dt>
+                    <dd className="font-medium">{[...new Set(o.evidencias.map((e) => rotuloFonte(e.fonte)))].join(", ")}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">Ordem na lista</dt>
+                    <dd className="font-medium">{o.prioridade}º</dd>
+                  </div>
+                  {typeof o.alvo.sku === "string" && (
+                    <div>
+                      <dt className="text-muted-foreground">Código do produto</dt>
+                      <dd className="font-mono font-medium">{o.alvo.sku}</dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt className="text-muted-foreground">Regra (técnico)</dt>
+                    <dd className="font-mono font-medium">{o.regra} · v{o.versao_regra}</dd>
+                  </div>
+                </dl>
+              </div>
+            </details>
           </>
         )}
       </DialogContent>
