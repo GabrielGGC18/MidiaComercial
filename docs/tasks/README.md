@@ -129,7 +129,7 @@ Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `
 | P1-05 | Pessoa 1 | ⬜ |
 | P1-06 | Pessoa 1 | ⬜ |
 | P1-07 | Pessoa 1 | ⬜ |
-| P1-08 | Pessoa 1 | ⬜ |
+| P1-08 | Pessoa 1 | ✅ (Sair volta para a página inicial; teste em `api/sessao.test.tsx`) |
 | P2-01 | Pessoa 2 | ⬜ |
 | P2-02 | Pessoa 2 | ⬜ |
 | P2-03 | Pessoa 2 | ⬜ |
@@ -158,6 +158,6 @@ Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `
 | UX-04 | Pessoa 1 | ⬜ |
 | UX-05 | Pessoa 2 | ⬜ |
 | UX-06 | Todos | ⬜ |
-| UX-07 | Pessoa 3 + 2 | ⬜ |
+| UX-07 | Pessoa 3 + 2 | 🟡 tela feita (data, ordem de decisão, sem SKU/regra fora de "Ver detalhes", selos novos, template sem repetição); falta o backend de `numeros`/`alternativas`/`adiar` |
 
 Legenda: ⬜ a fazer · 🟨 fazendo · 🟦 em revisão (PR aberto) · ✅ feito
