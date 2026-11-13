@@ -38,7 +38,7 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
   {
     titulo: "Analisar",
     itens: [
-      { to: "/", rotulo: "Oportunidades", Icone: LayoutDashboard, fim: true },
+      { to: "/oportunidades", rotulo: "Oportunidades", Icone: LayoutDashboard },
       { to: "/publico", rotulo: "Meu público", Icone: Users },
       { to: "/demanda", rotulo: "Procuraram e não tinha", Icone: SearchX },
     ],
@@ -62,7 +62,7 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
 const NAV = GRUPOS.flatMap((g) => g.itens);
 
 const NAV_MOBILE: Item[] = [
-  { to: "/", rotulo: "Início", Icone: LayoutDashboard, fim: true },
+  { to: "/oportunidades", rotulo: "Início", Icone: LayoutDashboard },
   { to: "/agente", rotulo: "Agente", Icone: Bot },
   { to: "/demanda", rotulo: "Demanda", Icone: SearchX },
   { to: "/acoes", rotulo: "Ações", Icone: ListChecks },
@@ -91,7 +91,7 @@ export default function AppShell() {
   };
   const logout = async () => {
     await sair();
-    nav("/login", { replace: true });
+    nav("/", { replace: true });
   };
 
   const linkCls = ({ isActive }: { isActive: boolean }) =>

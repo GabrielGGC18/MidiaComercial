@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { CardSkeleton } from "@/components/midia/estado";
 import { RequireLoja, RequireLogin } from "@/features/auth/guards";
 import LoginPage from "@/features/auth/LoginPage";
+import HomePage from "@/features/home/HomePage";
 import LojasPage from "@/features/auth/LojasPage";
 import AppShell from "./layouts/AppShell";
 import BalcaoShell from "./layouts/BalcaoShell";
@@ -23,6 +24,8 @@ const s = (el: React.ReactNode) => (
 );
 
 export const router = createBrowserRouter([
+  // Públicas: página inicial em "/" e login em "/login"
+  { path: "/", element: <HomePage /> },
   { path: "/login", element: <LoginPage /> },
   {
     element: <RequireLogin />,
@@ -39,7 +42,7 @@ export const router = createBrowserRouter([
       {
         element: <AppShell />,
         children: [
-          { path: "/", element: s(<OportunidadesPage />) },
+          { path: "/oportunidades", element: s(<OportunidadesPage />) },
           { path: "/importar", element: s(<ImportarPage />) },
           { path: "/publico", element: s(<PublicoPage />) },
           { path: "/demanda", element: s(<DemandaPage />) },

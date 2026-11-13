@@ -79,7 +79,7 @@ export default function AcoesPage() {
                 className="py-8"
                 titulo={c.s === "aberta" ? "Nenhuma ação aberta" : `Nenhuma ação ${c.rotulo.toLowerCase().slice(0, -1)}`}
                 descricao={c.s === "aberta" ? "Crie uma ação a partir de uma oportunidade." : undefined}
-                acao={c.s === "aberta" ? <Link to="/" className={buttonVariants({ size: "sm" })}>Ver oportunidades</Link> : undefined}
+                acao={c.s === "aberta" ? <Link to="/oportunidades" className={buttonVariants({ size: "sm" })}>Ver oportunidades</Link> : undefined}
               />
             )}
           </section>

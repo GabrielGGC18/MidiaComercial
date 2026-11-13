@@ -1,8 +1,7 @@
-// Página pública (login): hero com pilha de telas alternando, faixa de funcionalidades, cards com foto,
+// Página pública (/): hero com a demonstração de uma venda (features/apresentacao), faixa de funcionalidades, cards com foto,
 // segmentos do shopping, como funciona e rodapé. Fotos: public/fotos (Unsplash, ver CREDITOS.md).
 // Prints: public/telas (demo com dados sintéticos).
 import {
-  ArrowDown,
   ArrowRight,
   BadgeCheck,
   Bot,
@@ -15,10 +14,11 @@ import {
   ShieldCheck,
   Smartphone,
   Users,
+  Play,
+  Receipt,
 } from "lucide-react";
-import { useState } from "react";
-import { CountUp } from "./numeros";
-import { AcaoPrincipal, CartaoExploravel, Entrada, FaixaRolante, PilhaAlternada, TextoEmRotacaoGradiente, TituloAnimado } from "./destaques";
+import { Link } from "react-router";
+import { AcaoPrincipal, CartaoExploravel, Entrada, FaixaRolante, TextoEmRotacaoGradiente, TituloAnimado } from "./destaques";
 import { cn } from "@/lib/utils";
 
 /* ───────────────────────── peças ───────────────────────── */
@@ -83,88 +83,74 @@ function CabecalhoSecao({ sobre, titulo, texto, id }: { sobre: string; titulo: s
 
 /* ───────────────────────── hero ───────────────────────── */
 
-const TELAS = [
-  { titulo: "Oportunidades da semana", src: "/telas/oportunidades.webp", alt: "Tela de Oportunidades com indicadores e cartão priorizado" },
-  { titulo: "Meu público", src: "/telas/publico.webp", alt: "Painel Meu público com vendas por categoria e horários" },
-  { titulo: "Agente de vendas", src: "/telas/agente.webp", alt: "Agente de vendas com campanha e clientes sugeridos" },
-  { titulo: "Procuraram e não tinha", src: "/telas/demanda.webp", alt: "Ranking de produtos procurados e não encontrados" },
-];
-
-export function Hero() {
-  const [frente, setFrente] = useState(0);
+/**
+ * Primeira dobra (ANIMACAO-Tela §4.2): título curto + CTA; a demonstração (palco) vem em `children`,
+ * carregada sob demanda pela HomePage. O texto renderiza antes do palco.
+ */
+export function Hero({ onComecar, children }: { onComecar: () => void; children?: React.ReactNode }) {
   return (
-    <section className="mx-auto grid w-full max-w-6xl items-center gap-14 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:pb-24 lg:pt-16">
-      <div>
+    <section className="mx-auto w-full max-w-[1280px] px-5 pb-16 pt-10 sm:px-8 lg:px-10 lg:pt-14">
+      <div className="mx-auto max-w-3xl text-center">
         <p className="inline-flex items-center gap-2 rounded-md border border-border bg-card/80 px-3 py-1.5 text-xs font-medium shadow-xs backdrop-blur">
-          <span className="relative flex size-2" aria-hidden>
-            <span className="absolute inset-0 animate-ping rounded-full bg-coral-500 opacity-60" />
-            <span className="relative size-2 rounded-full bg-coral-500" />
-          </span>
+          <span className="size-2 rounded-full bg-coral-500" aria-hidden />
           <span className="text-violeta-700 dark:text-violeta-100">Inteligência comercial</span>
-          <span className="text-muted-foreground">· para lojistas de shopping</span>
+          <span className="text-muted-foreground">· para lojas de moda e acessórios</span>
         </p>
-
-        <h1 className="mt-6 font-display text-[clamp(2.3rem,5.4vw,4rem)] font-extrabold leading-[1.04] tracking-tight">
-          <TituloAnimado texto="Seus sinais de venda, em" />{" "}
+        <h1 className="mt-5 font-display text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold leading-[1.05] tracking-tight">
+          <TituloAnimado texto="Da venda ao" />{" "}
           <span className="destaque-titulo text-violeta-600 dark:text-violeta-300">
-            <TituloAnimado texto="uma só mídia." atraso={140} />
+            <TituloAnimado texto="próximo contato." atraso={140} />
           </span>
         </h1>
-
-        <p className="mt-6 max-w-xl text-[17px] leading-8 text-muted-foreground">
-          O MidiaComercial cruza <strong className="text-foreground">o que você vendeu</strong>,{" "}
-          <strong className="text-foreground">o que o cliente procurou e não encontrou</strong>, o <strong className="text-foreground">estoque parado</strong> e o{" "}
-          <strong className="text-foreground">seu público</strong>, e entrega até <strong className="text-foreground">3 decisões por semana</strong>, cada uma
-          com a evidência. O agente de vendas indica <strong className="text-foreground">quais clientes chamar e por quê</strong> e deixa a mensagem pronta:
-          você revisa e envia pelo WhatsApp.
+        <p className="mx-auto mt-4 max-w-2xl text-[17px] leading-7 text-muted-foreground">
+          Acompanhe como o MídiaComercial organiza uma venda, atualiza as informações da loja e prepara uma sugestão de pós-venda.
         </p>
-
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <AcaoPrincipal>
-            <a href="#entrar" className="inline-flex h-12 items-center gap-2 rounded-md bg-violeta-500 px-6 text-sm font-semibold text-white shadow-md hover:bg-violeta-600">
-              Entrar na demo <ArrowRight className="size-4" aria-hidden />
-            </a>
+            <button
+              type="button"
+              onClick={onComecar}
+              className="inline-flex h-12 items-center gap-2 rounded-md bg-violeta-500 px-6 text-sm font-semibold text-white shadow-md hover:bg-violeta-600"
+            >
+              <Play className="size-4" aria-hidden /> Ver uma venda acontecer
+            </button>
           </AcaoPrincipal>
-          <a href="#como-funciona" className="inline-flex h-12 items-center gap-2 rounded-md bg-tinta-900 px-6 text-sm font-semibold text-white hover:bg-tinta-800 dark:bg-card dark:hover:bg-muted">
-            <ArrowDown className="size-4" aria-hidden /> Ver como funciona
-          </a>
+          <Link
+            to="/login"
+            className="inline-flex h-12 items-center gap-2 rounded-md bg-tinta-900 px-6 text-sm font-semibold text-white hover:bg-tinta-800 dark:bg-card dark:hover:bg-muted"
+          >
+            Entrar na sua loja <ArrowRight className="size-4" aria-hidden />
+          </Link>
         </div>
-
-        <dl className="mt-10 grid max-w-lg grid-cols-3 divide-x divide-border">
-          {[
-            { v: 4, suf: " toques", r: "para registrar no balcão" },
-            { v: 3, suf: " decisões", r: "por semana, com evidência" },
-            { v: 14, suf: " dias", r: "medindo quem comprou" },
-          ].map((s) => (
-            <div key={s.r} className="px-3 first:pl-0 sm:px-4">
-              <dt className="sr-only">{s.r}</dt>
-              <dd className="whitespace-nowrap font-display text-[clamp(1.35rem,3vw,2.2rem)] font-extrabold text-violeta-600 tabular dark:text-violeta-300">
-                <CountUp para={s.v} />
-                <span className="text-xs font-bold sm:text-base">{s.suf}</span>
-              </dd>
-              <p className="mt-1 text-xs leading-5 text-muted-foreground">{s.r}</p>
-            </div>
-          ))}
-        </dl>
       </div>
+      <div className="mt-10">{children}</div>
+    </section>
+  );
+}
 
-      {/* Pilha de telas reais alternando (CardSwap) + etiquetas flutuantes */}
-      <div className="relative mx-auto w-full max-w-[640px] pr-10 pt-24 sm:pr-20">
-        <PilhaAlternada className="aspect-[16/10] w-full" onTroca={setFrente}>
-          {TELAS.map((t) => (
-            <JanelaPrint key={t.src} {...t} />
-          ))}
-        </PilhaAlternada>
-        <p className="efeito-flutua absolute right-0 top-10 z-20 inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs font-semibold shadow-md">
-          <Bot className="size-4 text-violeta-500" aria-hidden /> Agente propõe, você aprova
-        </p>
-        <p className="efeito-flutua-2 absolute -bottom-5 left-2 z-20 inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs font-semibold shadow-md sm:-left-6">
-          <SearchX className="size-4 text-coral-500" aria-hidden /> Venda perdida, medida
-        </p>
-        <p className="absolute -bottom-5 right-0 z-20 hidden rounded-md bg-tinta-900 px-3 py-2 font-mono text-[11px] text-tinta-100 shadow-md sm:block" aria-live="polite">
-          tela: {TELAS[frente]?.titulo}
-        </p>
-      </div>
+/** Resumo estático do percurso, lido no próprio ritmo (substitui a faixa rolante, §2). */
+export function ResumoPercurso() {
+  const passos = [
+    { Icone: Receipt, t: "Recebe a venda", d: "Do arquivo ou do sistema da loja." },
+    { Icone: Users, t: "Liga ao cliente", d: "Só quando o código existe e confere." },
+    { Icone: LayoutDashboard, t: "Atualiza os números", d: "Histórico, receita e ticket médio." },
+    { Icone: Bot, t: "Sugere a próxima oferta", d: "Por combinação cadastrada pela loja." },
+    { Icone: ShieldCheck, t: "Vendedor decide", d: "Nada é enviado sem revisão." },
+  ];
+  return (
+    <section aria-label="Resumo do percurso" className="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
+      <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {passos.map(({ Icone, t, d }, i) => (
+          <li key={t} className="rounded-lg border border-border bg-card p-4">
+            <p className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <span className="grid size-5 place-items-center rounded-sm bg-violeta-50 text-[11px] font-bold text-violeta-700 dark:bg-violeta-900/60 dark:text-violeta-100">{i + 1}</span>
+              <Icone className="size-4 text-violeta-500" aria-hidden />
+            </p>
+            <p className="mt-2 font-semibold">{t}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{d}</p>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }

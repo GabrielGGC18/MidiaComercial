@@ -406,9 +406,10 @@ frontend/
 
 | Rota | Tela | Papéis |
 | --- | --- | --- |
-| `/login` | Login | público |
+| `/` | Página inicial pública (o que é, quem somos, como funciona); botão Entrar → `/login` | público |
+| `/login` | Login (só o formulário e a demonstração) | público |
 | `/lojas` | Escolher loja (se tiver mais de uma) | todos |
-| `/` | Oportunidades (início) | gerente, dono |
+| `/oportunidades` | Oportunidades (início depois do login) | gerente, dono |
 | `/importar` | Importação e qualidade | gerente, dono |
 | `/publico` | Meu público | gerente, dono |
 | `/demanda` | Ranking de demanda + formulário | gerente, dono |

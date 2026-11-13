@@ -34,7 +34,7 @@ export default function LojasPage() {
       <div className="mx-auto w-full max-w-lg">
         <div className="flex items-center justify-between">
           <Logo />
-          <Button variant="ghost" size="sm" onClick={() => sair().then(() => nav("/login"))}>
+          <Button variant="ghost" size="sm" onClick={() => sair().then(() => nav("/", { replace: true }))}>
             <LogOut aria-hidden /> Sair
           </Button>
         </div>

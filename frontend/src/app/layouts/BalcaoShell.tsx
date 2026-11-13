@@ -25,7 +25,7 @@ export default function BalcaoShell() {
         </div>
         <button
           type="button"
-          onClick={() => sair().then(() => nav("/login", { replace: true }))}
+          onClick={() => sair().then(() => nav("/", { replace: true }))}
           className="grid size-10 place-items-center rounded-md text-muted-foreground hover:bg-muted"
           aria-label="Sair"
         >

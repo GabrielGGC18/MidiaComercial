@@ -323,3 +323,16 @@ Regra mantida do `FRONTEND.md` §3.2: padrão de uso vem de produto real; estét
 | Correção encontrada | A classe `overline` colidia com a utilidade nativa do Tailwind (`text-decoration: overline`) e desenhava um traço sobre os rótulos. Renomeada para `sobretitulo` |
 | Não feito | Stepper de 3 etapas novo na importação: o `ImportStepper` atual (Arquivo → Prévia → Confirmar) foi mantido com geometria reta |
 | Verificação | Screenshots logado em 1280 e 375 px, claro e escuro; 12 testes de frontend (incluindo *reduced motion*) |
+
+## 13. Apresentação animada da página inicial (v0.4)
+
+A página inicial (`/`) ganhou um palco que mostra uma venda fictícia em 6 capítulos: Receber, Preencher, Validar, Visualizar, Sugerir e Revisar (`frontend/src/features/apresentacao/`).
+
+| Decisão | Por quê |
+| --- | --- |
+| **Motion, não GSAP** | A especificação sugeria GSAP Timeline. A regra deste documento (§4) continua: `gsap` não entra. O percurso é por capítulo, então um relógio único (`usePercurso`, um `setTimeout` por capítulo) e as transições do `motion` bastam para pausa, voltar, pular e recomeçar |
+| **Estado = função pura** | `estadoNo(cenário, capítulo, escolhas)` em `seletores.ts`. Voltar ou pular capítulo nunca soma a venda de novo; os indicadores e o gráfico saem do mesmo estado (testes em `apresentacao.test.tsx`) |
+| **Recharts sem animação interna** | `isAnimationActive={false}`: um só motor de movimento por elemento |
+| **Carregamento sob demanda** | O palco é `lazy`; o título e o CTA aparecem antes, com a área do palco reservada |
+| **Sem backend** | Dados fictícios em `cenario.ts`. Nada é gravado nem enviado; "Aprovar sugestão" só muda o estado local |
+| **Movimento reduzido e celular** | Avanço manual por padrão; no celular, abas "Resultado" e "Conversa" |

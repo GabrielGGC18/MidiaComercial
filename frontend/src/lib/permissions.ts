@@ -8,7 +8,7 @@ export function temPapel(papel: string | null | undefined, minimo: Papel) {
 }
 
 export const rotaInicial = (papel: string | null | undefined) =>
-  temPapel(papel, "gerente") ? "/" : "/balcao";
+  temPapel(papel, "gerente") ? "/oportunidades" : "/balcao";
 
 export const PAPEL_ROTULO: Record<string, string> = {
   atendente: "Atendente",

@@ -216,7 +216,7 @@ export default function ImportarPage() {
                   </p>
                   <p className="text-sm">O arquivo não ficou guardado: só o resumo e os totais. Recalcule as oportunidades para usar os dados novos.</p>
                   <div className="flex flex-wrap gap-2">
-                    <Link to="/" className={buttonVariants({ size: "sm" })}>Ver oportunidades</Link>
+                    <Link to="/oportunidades" className={buttonVariants({ size: "sm" })}>Ver oportunidades</Link>
                     <Button size="sm" variant="secondary" onClick={reiniciar}>Importar outro arquivo</Button>
                   </div>
                 </div>

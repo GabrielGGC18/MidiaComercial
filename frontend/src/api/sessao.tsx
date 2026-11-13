@@ -26,10 +26,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["me"], queryFn: buscarMe, staleTime: 60_000 });
 
-  // Trocar de loja/usuário limpa todo o cache: nunca mistura dados de lojas (§6.3)
-  const reiniciar = (me: Me | null) => {
-    qc.clear();
+  // Trocar de loja/usuário limpa o cache dos dados: nunca mistura lojas (§6.3).
+  // Não use qc.clear(): ele desliga o useQuery(["me"]) daqui e a tela não fica sabendo
+  // que o usuário saiu (bug P1-08: o Sair deixava a pessoa presa na mesma tela).
+  const reiniciar = async (me: Me | null) => {
+    await qc.cancelQueries();
     qc.setQueryData(["me"], me);
+    qc.removeQueries({ predicate: (q) => q.queryKey[0] !== "me" });
   };
 
   const login = useMutation({
@@ -47,11 +50,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       entrar: (u, p) => login.mutateAsync({ u, p }),
       sair: async () => {
         await api("/api/auth/logout", { method: "POST" }).catch(() => undefined);
-        reiniciar(null);
+        await reiniciar(null);
       },
       trocarLoja: async (lojaId) => {
         const me = await api<Me>("/api/me/loja", { method: "POST", body: json({ loja_id: lojaId }) });
-        reiniciar(me);
+        await reiniciar(me);
         return me;
       },
     }),
