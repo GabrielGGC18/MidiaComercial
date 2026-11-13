@@ -1,0 +1,64 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  segredos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Bloquear arquivos sensíveis versionados
+        run: |
+          if git ls-files | grep -E '(^|/)\.env|\.(sqlite3?|db|dump|sql|csv|xlsx|pem|key)$'; then
+            echo "::error::Arquivo sensível versionado (veja acima)"; exit 1
+          fi
+
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: midia
+          POSTGRES_USER: midia
+          POSTGRES_PASSWORD: midia
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U midia" --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://midia:midia@localhost:5432/midia
+      SECRET_KEY: ci-only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: python manage.py makemigrations --check --dry-run
+      - run: pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

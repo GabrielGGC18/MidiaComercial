@@ -1,0 +1,45 @@
+# Hostinger VPS: docker compose -f docker-compose.prod.yml up -d --build
+services:
+  db:
+    image: postgres:16
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-midia}
+      POSTGRES_USER: ${POSTGRES_USER:-midia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-midia}"]
+      interval: 5s
+      retries: 10
+
+  web:
+    build: { context: ., target: web }
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
+  caddy:
+    build: { context: ., target: caddy }
+    environment:
+      DOMINIO: ${DOMINIO:?defina DOMINIO no .env (ex.: midiacomercial.seudominio.com.br)}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    depends_on:
+      - web
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

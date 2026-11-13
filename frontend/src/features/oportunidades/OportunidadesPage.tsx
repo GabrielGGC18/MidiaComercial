@@ -1,0 +1,156 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Boxes, RefreshCw, Search, Wallet } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router";
+import { toast } from "sonner";
+import { api, mensagemErro } from "@/api/client";
+import { useChaveLoja } from "@/api/sessao";
+import type { Oportunidade, Painel } from "@/api/types";
+import { CardSkeleton, EmptyState, ErrorState, PageHeader } from "@/components/midia/estado";
+import { KpiTile } from "@/components/midia/KpiTile";
+import { BlockedRuleRow, OpportunityCard } from "@/components/midia/oportunidade";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { numero, pct, periodo, relativo } from "@/lib/format";
+import { CriarAcaoDialog, DescartarDialog, DetalheDialog } from "./dialogs";
+
+export default function OportunidadesPage() {
+  const qc = useQueryClient();
+  const chave = useChaveLoja("oportunidades");
+  const q = useQuery({ queryKey: chave, queryFn: () => api<Painel>("/api/oportunidades/") });
+  const [criar, setCriar] = useState<Oportunidade | null>(null);
+  const [descartar, setDescartar] = useState<Oportunidade | null>(null);
+  const [detalhe, setDetalhe] = useState<Oportunidade | null>(null);
+
+  const recalcular = useMutation({
+    mutationFn: () => api<Painel>("/api/oportunidades/gerar", { method: "POST" }),
+    onSuccess: (p) => {
+      qc.setQueryData(chave, p);
+      toast.success("Oportunidades recalculadas com os dados mais recentes.");
+    },
+    onError: (e) => toast.error(mensagemErro(e)),
+  });
+
+  const p = q.data;
+  const qual = p?.qualidade;
+  const janela = p ? periodo(p.execucao.janela_inicio, p.execucao.janela_fim) : "";
+
+  return (
+    <>
+      <PageHeader
+        titulo="Oportunidades da semana"
+        subtitulo={
+          p ? (
+            <>
+              Janela {janela} · calculado {relativo(p.execucao.executado_em)}
+            </>
+          ) : (
+            "Até 3 decisões priorizadas, cada uma com evidência e limitação."
+          )
+        }
+        acoes={
+          <Button variant="secondary" onClick={() => recalcular.mutate()} carregando={recalcular.isPending}>
+            {!recalcular.isPending && <RefreshCw aria-hidden />} Recalcular
+          </Button>
+        }
+      />
+
+      {q.isError && <ErrorState mensagem={mensagemErro(q.error)} onTentar={() => q.refetch()} />}
+
+      {/* Faixa de KPIs */}
+      <section aria-label="Resumo da janela" className="grid gap-4 sm:grid-cols-3">
+        {q.isLoading || !qual ? (
+          [0, 1, 2].map((i) => <CardSkeleton key={i} linhas={1} />)
+        ) : (
+          <>
+            <KpiTile
+              rotulo="Procuraram e não tinha"
+              valor={qual.demandas_na_janela}
+              periodo={janela}
+              amostra="registros do balcão"
+              destaque="coral"
+              icone={<Search />}
+            />
+            <KpiTile
+              rotulo="Receita da janela"
+              valor={qual.receita_janela}
+              formato="moeda"
+              periodo={janela}
+              amostra={`${numero(qual.pedidos_na_janela)} pedidos`}
+              destaque="violeta"
+              icone={<Wallet />}
+            />
+            <KpiTile
+              rotulo="Ticket médio"
+              valor={qual.ticket_medio}
+              formato="moeda"
+              periodo={janela}
+              amostra="pedidos concluídos"
+              icone={<Boxes />}
+            />
+          </>
+        )}
+      </section>
+
+      {/* Qualidade dos dados */}
+      {qual && (
+        <div className="mt-4 flex flex-wrap gap-2 text-xs">
+          <Badge tom={qual.estoque_atualizado ? "ok" : "atencao"}>
+            Estoque {qual.idade_estoque_horas === null ? "não importado" : `atualizado há ${Math.round(qual.idade_estoque_horas)} h`}
+          </Badge>
+          <Badge tom={qual.cobertura_cliente_pct >= 30 ? "ok" : "bloqueado"}>
+            {pct(qual.cobertura_cliente_pct)} dos pedidos com cliente identificado
+          </Badge>
+          <Badge tom="neutro">{numero(qual.itens_na_janela)} itens vendidos</Badge>
+        </div>
+      )}
+
+      {/* Cartões */}
+      <section aria-label="Oportunidades" className="mt-6 grid gap-4">
+        {q.isLoading && [0, 1].map((i) => <CardSkeleton key={i} linhas={4} />)}
+        {p?.cartoes.map((o, i) => (
+          <OpportunityCard
+            key={o.id}
+            indice={i}
+            oportunidade={o}
+            onCriarAcao={() => setCriar(o)}
+            onDescartar={() => setDescartar(o)}
+            onDetalhes={() => setDetalhe(o)}
+          />
+        ))}
+        {p && p.cartoes.length === 0 && (
+          <EmptyState
+            titulo="Nenhuma oportunidade nesta janela"
+            descricao="Isso pode ser bom sinal. Para a análise ficar mais rica, importe vendas recentes e peça ao balcão para registrar o que os clientes procuram e não encontram."
+            acao={
+              <div className="flex flex-wrap justify-center gap-2">
+                <Link to="/importar" className={buttonVariants({ variant: "secondary", size: "sm" })}>Importar dados</Link>
+                <Link to="/balcao" className={buttonVariants({ size: "sm" })}>Abrir balcão</Link>
+              </div>
+            }
+          />
+        )}
+      </section>
+
+      {p && p.bloqueios.length > 0 && (
+        <section aria-label="Regras bloqueadas" className="mt-6 flex flex-col gap-2">
+          <p className="overline text-muted-foreground">O que não dá para calcular agora</p>
+          {p.bloqueios.map((b) => (
+            <BlockedRuleRow key={b.regra} bloqueio={b} />
+          ))}
+        </section>
+      )}
+
+      <CriarAcaoDialog oportunidade={criar} onClose={() => setCriar(null)} chavePainel={chave} />
+      <DescartarDialog oportunidade={descartar} onClose={() => setDescartar(null)} chavePainel={chave} />
+      <DetalheDialog
+        oportunidade={detalhe}
+        onClose={() => setDetalhe(null)}
+        onCriarAcao={(o) => {
+          setDetalhe(null);
+          setCriar(o);
+        }}
+      />
+    </>
+  );
+}

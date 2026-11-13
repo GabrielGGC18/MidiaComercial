@@ -1,0 +1,29 @@
+# Nada sensível entra na imagem
+.env
+.env.*
+**/.env*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials*.json
+db.sqlite3*
+*.sqlite3
+*.dump
+*.sql
+backups/
+media/
+uploads/
+*.csv
+*.xlsx
+*.log
+.claude/
+# build/dev
+.venv
+.git
+**/__pycache__
+staticfiles
+frontend/node_modules
+frontend/dist

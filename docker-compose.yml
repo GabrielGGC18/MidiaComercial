@@ -1,0 +1,51 @@
+# Desenvolvimento: docker compose up  →  http://localhost:5173
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: midia
+      POSTGRES_USER: midia
+      POSTGRES_PASSWORD: midia
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U midia"]
+      interval: 3s
+      retries: 10
+
+  web:
+    build: { context: ., target: web }
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.dev
+      DATABASE_URL: postgres://midia:midia@db:5432/midia
+      SECRET_KEY: dev-only-not-secret
+      DEBUG: "True"
+      ALLOWED_HOSTS: localhost,127.0.0.1,web
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    image: node:22-alpine
+    working_dir: /front
+    command: sh -c "npm ci --no-audit --no-fund && npx vite --host 0.0.0.0 --port 5173"
+    environment:
+      VITE_API_TARGET: http://web:8000
+    volumes:
+      - ./frontend:/front
+      - front_node_modules:/front/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - web
+
+volumes:
+  pgdata:
+  front_node_modules:

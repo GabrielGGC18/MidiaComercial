@@ -1,0 +1,104 @@
+# ════════════════════════════════════════════════════════════════════
+# MidiaComercial · NADA SENSÍVEL SOBE PARA O GIT
+# ════════════════════════════════════════════════════════════════════
+
+# ── Variáveis de ambiente e segredos ─────────────────────────────────
+.env
+.env.*
+*.env
+**/.env
+**/.env.*
+frontend/.env*
+secrets/
+.secrets/
+*.secret
+*.secrets
+credentials*.json
+service-account*.json
+*-key.json
+.netrc
+.pypirc
+.npmrc
+
+# ── Chaves e certificados ────────────────────────────────────────────
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+*.jks
+id_rsa*
+id_ed25519*
+*.ppk
+
+# ── Bancos de dados, backups e dumps ─────────────────────────────────
+db.sqlite3
+db.sqlite3-journal
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql
+*.sql.gz
+*.bak
+backups/
+pgdata/
+
+# ── Dados de clientes e arquivos enviados (LGPD) ─────────────────────
+media/
+uploads/
+# planilhas e CSVs exportados/importados (podem ter nome e WhatsApp)
+*.csv
+*.xlsx
+*.xls
+*.ods
+exports/
+
+# ── Logs ─────────────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Configuração local de ferramentas (pode guardar tokens) ──────────
+.claude/settings.local.json
+.claude/*.local.*
+.vscode/
+.idea/
+*.code-workspace
+
+# ── Volumes/dados do Caddy (certificados TLS) ────────────────────────
+caddy_data/
+caddy_config/
+
+# ── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+staticfiles/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# ── Frontend ─────────────────────────────────────────────────────────
+frontend/node_modules/
+node_modules/
+frontend/dist/
+frontend/coverage/
+*.tsbuildinfo
+.vite/
+
+# ── Sistema operacional ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
