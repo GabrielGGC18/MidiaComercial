@@ -28,7 +28,7 @@ from django.conf import settings
 from ..ferramentas import ArgumentoInvalido, FerramentaNegada, disponiveis
 from ..privacidade import ocultar
 from . import Uso
-from .claude import SISTEMA, contexto_da_loja
+from .prompts import SISTEMA, contexto_da_loja
 
 PROTOCOLO = """Formato da sua resposta: SOMENTE um objeto JSON, sem texto fora dele, sem markdown.
 {"chamadas": [{"ferramenta": "<nome>", "argumentos": {...}}], "resposta": "<texto ou null>"}

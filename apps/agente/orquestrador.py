@@ -29,19 +29,36 @@ class SessaoInvalida(Exception):
     pass
 
 
+def _hermes():
+    from .provedores.hermes import ProvedorHermes  # sem SDK: só o socket da ponte
+
+    return ProvedorHermes()
+
+
+def _claude():
+    from .provedores.claude import ProvedorClaude  # importa o SDK só se for usar
+
+    return ProvedorClaude()
+
+
+# MIDIA_IA_PROVEDOR → fábrica. Provedor novo = uma classe em provedores/ + uma linha aqui.
+FABRICAS = {"hermes": _hermes, "claude": _claude}
+
+
 def escolher_provedor():
-    if settings.MIDIA_IA_HABILITADA and settings.MIDIA_IA_PROVEDOR == "hermes":
-        from .provedores.hermes import ProvedorHermes  # sem SDK: só socket da ponte
-
-        return ProvedorHermes()
-    if settings.MIDIA_IA_HABILITADA and settings.MIDIA_IA_PROVEDOR == "claude":
-        try:
-            from .provedores.claude import ProvedorClaude
-
-            return ProvedorClaude()
-        except Exception as exc:  # noqa: BLE001
-            log.warning("Provedor Claude indisponível (%s); usando offline.", exc)
-    return ProvedorOffline()
+    """Provedor configurado; qualquer problema para montá-lo cai no offline (nunca trava)."""
+    nome = settings.MIDIA_IA_PROVEDOR
+    if not settings.MIDIA_IA_HABILITADA or nome == "offline":
+        return ProvedorOffline()
+    fabrica = FABRICAS.get(nome)
+    if fabrica is None:
+        log.warning("MIDIA_IA_PROVEDOR=%r desconhecido; usando offline.", nome)
+        return ProvedorOffline()
+    try:
+        return fabrica()
+    except Exception as exc:  # noqa: BLE001
+        log.warning("Provedor %s indisponível (%s); usando offline.", nome, exc)
+        return ProvedorOffline()
 
 
 def _sessao(loja, usuario, sessao_id: int | None) -> SessaoAgente:

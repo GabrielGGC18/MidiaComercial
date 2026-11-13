@@ -170,6 +170,15 @@ def mensagem(request, payload: MensagemIn):
     return r | {"propostas": [_p_out(p, ver) for p in r["propostas"]]}
 
 
+def _modelo_configurado(settings) -> str:
+    if not settings.MIDIA_IA_HABILITADA:
+        return "offline"
+    return {
+        "claude": settings.MIDIA_IA_MODELO,
+        "hermes": "hermes:midiacomercial",  # GPT pelo OAuth do Hermes (não informa tokens)
+    }.get(settings.MIDIA_IA_PROVEDOR, "offline")
+
+
 @router.get("/uso", response=UsoOut)
 def uso(request, dias: int = 30):
     """Quanto o agente foi usado e quanto custou em tokens (para o dono decidir se liga o LLM)."""
@@ -186,7 +195,7 @@ def uso(request, dias: int = 30):
     )
     a = qs.aggregate(
         sessoes=Count("id"), mensagens=Sum("turnos"),
-        com_llm=Count("id", filter=Q(provedor="claude")),
+        com_llm=Count("id", filter=~Q(provedor="offline")),  # claude ou hermes
         caiu=Count("id", filter=~Q(fallback="")),
         te=Sum("tokens_entrada"), ts=Sum("tokens_saida"), tm=Avg("duracao_ms"),
     )  # fmt: skip
@@ -199,9 +208,7 @@ def uso(request, dias: int = 30):
         "tokens_entrada": a["te"] or 0,
         "tokens_saida": a["ts"] or 0,
         "tempo_medio_ms": int(a["tm"] or 0),
-        "modelo": settings.MIDIA_IA_MODELO
-        if settings.MIDIA_IA_HABILITADA and settings.MIDIA_IA_PROVEDOR == "claude"
-        else "offline",
+        "modelo": _modelo_configurado(settings),
     }
 
 
