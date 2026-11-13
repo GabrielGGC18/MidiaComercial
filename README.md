@@ -3,6 +3,16 @@
 </p>
 
 <p align="center">
+  <strong>📂 Entrega do Hackrun</strong><br>
+  <a href="docs/01-PROPOSTA-E-ESTRUTURA-DAS-TELAS.md">01 · Proposta e estrutura das telas</a> ·
+  <a href="docs/02-DOCUMENTACAO-INICIAL.md">02 · Documentação inicial</a> ·
+  <a href="docs/03-LINGUAGEM-DE-PROGRAMACAO.md">03 · Linguagem de programação</a><br>
+  <a href="docs/04-ARQUITETURA-PROPOSTA.md">04 · Arquitetura proposta</a> ·
+  <a href="docs/05-PLATAFORMA-E-TECNOLOGIAS.md">05 · Plataforma e tecnologias</a> ·
+  <a href="docs/06-TECNOLOGIA-SORTEADA.md">06 · Tecnologia sorteada</a>
+</p>
+
+<p align="center">
   <img alt="Python 3.12" src="https://img.shields.io/badge/python-3.12-6D4AFF?style=for-the-badge&logo=python&logoColor=white&labelColor=0B1020">
   <img alt="Django 5.2" src="https://img.shields.io/badge/django-5.2-6D4AFF?style=for-the-badge&logo=django&logoColor=white&labelColor=0B1020">
   <img alt="Django Ninja 1.8" src="https://img.shields.io/badge/ninja-1.8-6D4AFF?style=for-the-badge&logo=fastapi&logoColor=white&labelColor=0B1020">
@@ -29,6 +39,57 @@
   <a href="docs/07-EVOLUCAO-AGENTE-PUBLICO.md">Agente e público (v0.2)</a> ·
   <a href="#api">API</a> <sub>(Swagger em <code>/api/docs</code>)</sub>
 </p>
+
+---
+
+## 🚀 Nosso diferencial
+
+> **O caixa só mostra o que vendeu. O MidiaComercial mostra também o que o cliente procurou e não levou, e transforma isso em venda.**
+
+| # | O que inovamos | Por que ninguém faz | Na demo |
+| --- | --- | --- | --- |
+| 1 | **Mede a venda perdida.** O atendente registra em ≤ 4 toques ou por voz o que o cliente procurou e não tinha | PDV e ERP só enxergam o que passou no caixa | Balcão: *"procurou calça 42, uns 40 anos, não tinha"* |
+| 2 | **Decisão com evidência.** No máximo 3 oportunidades, cada uma com origem, amostra e limitação | Painéis mostram gráfico; não dizem o que fazer nem o quanto confiar | Oportunidades: *"9 procuraram e não tinha · saldo 0"* |
+| 3 | **Agente que vende o produto parado.** Encontra clientes com chance real, explica o motivo e prepara a mensagem; a pessoa aprova e envia | Ferramentas de campanha disparam para todos; aqui é por motivo, com consentimento (LGPD) | Agente: *"Já comprou Camisas · veste G (tem em estoque)"* |
+| 4 | **Ciclo fechado.** Sinal → decisão → ação → medição: avisa quando o cliente contatado comprou | Relatório termina no gráfico | Sino: *"Cliente comprou depois do contato"* |
+
+**Em uma frase para a banca:** *observar compras e não compras, decidir com evidência e medir o resultado.*
+
+---
+
+<p align="center">
+  <img src="docs/assets/equipe-nidoqueen.svg" alt="Desenvolvido pela Equipe NidoQueen" width="900">
+</p>
+
+## 👑 Equipe NidoQueen
+
+<table align="center">
+  <tr>
+    <td align="center" width="170">
+      <a href="https://github.com/joaocrosara"><img src="https://github.com/joaocrosara.png?size=160" width="96" height="96" alt="joaocrosara"><br><sub><b>joaocrosara</b></sub></a><br><sub>Colaborador</sub>
+    </td>
+    <td align="center" width="170">
+      <a href="https://github.com/ArthurGuedesBrito"><img src="https://github.com/ArthurGuedesBrito.png?size=160" width="96" height="96" alt="ArthurGuedesBrito"><br><sub><b>ArthurGuedesBrito</b></sub></a><br><sub>Colaborador</sub>
+    </td>
+    <td align="center" width="170">
+      <a href="https://github.com/danielmiyke"><img src="https://github.com/danielmiyke.png?size=160" width="96" height="96" alt="danielmiyke"><br><sub><b>danielmiyke</b></sub></a><br><sub>Colaborador</sub>
+    </td>
+    <td align="center" width="170">
+      <a href="https://github.com/MarioMatheusPombal"><img src="https://github.com/MarioMatheusPombal.png?size=160" width="96" height="96" alt="Mario Matheus Pombal"><br><sub><b>Mario Matheus Pombal</b></sub></a><br><sub>🎓 Orientador</sub>
+    </td>
+  </tr>
+</table>
+
+**Orientador:** [Mario Matheus Pombal](https://github.com/MarioMatheusPombal)
+
+### Contribuintes
+
+[@joaocrosara](https://github.com/joaocrosara) ·
+[@ArthurGuedesBrito](https://github.com/ArthurGuedesBrito) ·
+[@danielmiyke](https://github.com/danielmiyke) ·
+[@MarioMatheusPombal](https://github.com/MarioMatheusPombal)
+
+<sub>Nidoqueen e Pokémon são marcas de Nintendo, Creatures e Game Freak. Ilustração usada apenas como mascote da equipe, sem fins comerciais (imagem: PokeAPI/sprites).</sub>
 
 ---
 
