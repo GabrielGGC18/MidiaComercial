@@ -66,6 +66,9 @@
 <table align="center">
   <tr>
     <td align="center" width="170">
+      <a href="https://github.com/GabrielGGC18"><img src="https://github.com/GabrielGGC18.png?size=160" width="96" height="96" alt="Gabriel Mendes"><br><sub><b>Gabriel Mendes</b></sub></a><br><sub>Colaborador</sub>
+    </td>
+    <td align="center" width="170">
       <a href="https://github.com/joaocrosara"><img src="https://github.com/joaocrosara.png?size=160" width="96" height="96" alt="joaocrosara"><br><sub><b>joaocrosara</b></sub></a><br><sub>Colaborador</sub>
     </td>
     <td align="center" width="170">
@@ -84,6 +87,7 @@
 
 ### Contribuintes
 
+[@GabrielGGC18](https://github.com/GabrielGGC18) ·
 [@joaocrosara](https://github.com/joaocrosara) ·
 [@ArthurGuedesBrito](https://github.com/ArthurGuedesBrito) ·
 [@danielmiyke](https://github.com/danielmiyke) ·
