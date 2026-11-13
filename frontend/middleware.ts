@@ -52,6 +52,16 @@ export function normalizarOrigem(bruto: string | undefined): URL | null {
   }
 }
 
+/** Mesmo cuidado do API_ORIGEM: tira espaços, quebra de linha, aspas e "API_SEGREDO=" colados. */
+export function limparSegredo(bruto: string | undefined): string {
+  return (bruto ?? "")
+    .trim()
+    .replace(/^API_SEGREDO\s*=\s*/i, "")
+    .trim()
+    .replace(/^["'`]+|["'`]+$/g, "")
+    .trim();
+}
+
 export default function middleware(request: Request): Response {
   const base = normalizarOrigem(process.env.API_ORIGEM);
   if (!base) {
@@ -64,14 +74,19 @@ export default function middleware(request: Request): Response {
     // o cliente não escolhe estes valores: sempre sobrescritos (ou removidos) aqui
     cabecalhos.delete("x-midia-proxy");
     cabecalhos.delete("x-midia-cliente-ip");
-    // trim: variável colada do terminal costuma vir com quebra de linha no fim
-    const segredo = (process.env.API_SEGREDO ?? "").trim();
+    cabecalhos.delete("x-midia-via");
+    const segredo = limparSegredo(process.env.API_SEGREDO);
     const ip = (request.headers.get("x-real-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0] ?? "").trim();
     // só caracteres válidos em cabeçalho HTTP (ASCII visível)
-    if (/^[!-~]{16,}$/.test(segredo) && /^[0-9a-fA-F.:]{3,45}$/.test(ip)) {
+    const segredoOk = /^[!-~]{16,}$/.test(segredo);
+    const ipOk = /^[0-9a-fA-F.:]{3,45}$/.test(ip);
+    if (segredoOk && ipOk) {
       cabecalhos.set("x-midia-proxy", segredo);
       cabecalhos.set("x-midia-cliente-ip", ip);
     }
+    // diagnóstico para a API (nunca contém o segredo): o middleware rodou? o segredo está configurado?
+    const estado = !process.env.API_SEGREDO ? "ausente" : segredoOk ? "ok" : "formato";
+    cabecalhos.set("x-midia-via", `mw; segredo=${estado}; ip=${ipOk ? "ok" : "ausente"}`);
     return rewrite(destino, { request: { headers: cabecalhos } });
   } catch (e) {
     console.error("[midiacomercial] falha ao montar cabeçalhos do proxy; seguindo sem eles", e);

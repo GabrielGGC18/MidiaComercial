@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { normalizarOrigem } from "../../middleware";
+import { limparSegredo, normalizarOrigem } from "../../middleware";
 import { ApiError, api } from "./client";
 
 describe("normalizarOrigem (API_ORIGEM da Vercel)", () => {
@@ -18,6 +18,16 @@ describe("normalizarOrigem (API_ORIGEM da Vercel)", () => {
   it.each([undefined, "", "   ", "ftp://x.com", "localhost", "https://"])("recusa %j", (bruto) => {
     expect(normalizarOrigem(bruto)).toBeNull();
   });
+});
+
+describe("limparSegredo (API_SEGREDO da Vercel)", () => {
+  it.each([
+    "abc123XYZ-_abc123XYZ",
+    " abc123XYZ-_abc123XYZ\n",
+    '"abc123XYZ-_abc123XYZ"',
+    "API_SEGREDO=abc123XYZ-_abc123XYZ",
+  ])("limpa %j", (bruto) => expect(limparSegredo(bruto)).toBe("abc123XYZ-_abc123XYZ"));
+  it("vazio continua vazio", () => expect(limparSegredo(undefined)).toBe(""));
 });
 
 describe("api: erros do servidor viram mensagem amigável", () => {
