@@ -22,9 +22,8 @@ CACHES = {
     }
 }
 
-# IP real para o rate limit. Cadeia na VPS: navegador → Vercel (rewrite) → nginx → container.
-# X-Forwarded-For chega como "cliente, ip-da-vercel": o cliente é o 2º da direita.
-NINJA_NUM_PROXIES = env.int("NINJA_NUM_PROXIES", default=2)  # noqa: F405
+# IP do cliente para o rate limit: apps/core/limites.ip_cliente (segredo do proxy da
+# Vercel ou X-Real-IP do nginx). O X-Forwarded-For não é usado: o cliente pode forjá-lo.
 
 LOGGING = {
     "version": 1,

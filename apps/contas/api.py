@@ -6,7 +6,12 @@ from ninja import Router, Schema
 from ninja.errors import HttpError
 from ninja.utils import check_csrf
 
-from apps.core.limites import LimiteLoginIp, LimiteLoginUsuario
+from apps.core.limites import (
+    LimiteLoginIp,
+    limpar_falhas_login,
+    login_bloqueado,
+    registrar_falha_login,
+)
 
 from .models import Vinculo
 
@@ -86,14 +91,18 @@ def csrf(request):
     "/auth/login",
     response=MeOut,
     auth=None,
-    throttle=[LimiteLoginIp(), LimiteLoginUsuario()],
+    throttle=[LimiteLoginIp()],
 )
 def entrar(request, payload: LoginIn):
     if check_csrf(request) is not None:
         raise HttpError(403, "Sessão expirada. Recarregue a página e tente de novo.")
+    if login_bloqueado(payload.username, request):
+        raise HttpError(429, "Muitas tentativas. Espere alguns minutos e tente de novo.")
     user = authenticate(request, username=payload.username, password=payload.password)
     if user is None or not user.is_active:
+        registrar_falha_login(payload.username, request)  # só falha conta
         raise HttpError(401, "Usuário ou senha inválidos.")
+    limpar_falhas_login(payload.username, request)
     login(request, user)  # signal user_logged_in grava loja_id se houver só uma
     return montar_me(request)
 

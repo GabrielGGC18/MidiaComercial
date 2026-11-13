@@ -125,7 +125,12 @@ MIDIA_HERMES_MAX_RODADAS = env.int("MIDIA_HERMES_MAX_RODADAS", default=3)
 # Rate limit (apps/core/limites.py). Formato do Ninja: "10/m", "200/h".
 # Login por IP é folgado: numa apresentação, a banca inteira sai pelo mesmo IP do wifi.
 MIDIA_LIMITE_LOGIN_IP = env("MIDIA_LIMITE_LOGIN_IP", default="30/m")
-MIDIA_LIMITE_LOGIN_USUARIO = env("MIDIA_LIMITE_LOGIN_USUARIO", default="10/m")
+# Falhas de senha por usuário + IP (só erro conta; acerto zera): evita trancar a demo pública
+MIDIA_LOGIN_MAX_FALHAS = env.int("MIDIA_LOGIN_MAX_FALHAS", default=10)
+MIDIA_LOGIN_JANELA_FALHAS = env.int("MIDIA_LOGIN_JANELA_FALHAS", default=300)  # segundos
+# Segredo compartilhado com o middleware da Vercel (API_SEGREDO lá). Só com ele o IP do
+# cliente repassado pela Vercel é aceito; vazio = nunca confiar em IP repassado.
+MIDIA_PROXY_SEGREDO = env("MIDIA_PROXY_SEGREDO", default="")
 MIDIA_LIMITE_AGENTE = env("MIDIA_LIMITE_AGENTE", default="20/m")
 MIDIA_LIMITE_IMPORTACAO = env("MIDIA_LIMITE_IMPORTACAO", default="10/m")
 

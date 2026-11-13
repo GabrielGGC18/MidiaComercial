@@ -10,6 +10,12 @@
  *
  * NUNCA coloque segredo aqui nem em variável VITE_*: o front é público. A chave da IA
  * (MIDIA_IA_API_KEY) fica só no .env do backend, na VPS.
+ *
+ * IP real do visitante para o rate limit: a Vercel informa o IP em `x-real-ip` (ela
+ * sobrescreve o valor do cliente). Repassamos em `x-midia-cliente-ip` junto com
+ * `x-midia-proxy` = API_SEGREDO (variável da Vercel, igual a MIDIA_PROXY_SEGREDO no .env
+ * da VPS). Sem o segredo certo, o backend ignora o IP repassado (apps/core/limites.py).
+ * Este código roda no servidor da Vercel: o segredo não vai para o navegador.
  */
 import { rewrite } from "@vercel/functions/middleware";
 
@@ -24,5 +30,15 @@ export default function middleware(request: Request): Response {
     );
   }
   const url = new URL(request.url);
-  return rewrite(new URL(url.pathname + url.search, origem));
+  const cabecalhos = new Headers(request.headers);
+  // o cliente não escolhe estes valores: sempre sobrescritos (ou removidos) aqui
+  cabecalhos.delete("x-midia-proxy");
+  cabecalhos.delete("x-midia-cliente-ip");
+  const segredo = process.env.API_SEGREDO;
+  const ip = request.headers.get("x-real-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  if (segredo && ip) {
+    cabecalhos.set("x-midia-proxy", segredo);
+    cabecalhos.set("x-midia-cliente-ip", ip);
+  }
+  return rewrite(new URL(url.pathname + url.search, origem), { request: { headers: cabecalhos } });
 }
