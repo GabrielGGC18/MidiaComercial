@@ -358,7 +358,7 @@ def registrar_demanda(*, loja, usuario, dados) -> DemandaNaoAtendida:
             and not (dados.tamanho or dados.cor)
         ):
             variante = produto.variantes.first()
-    return DemandaNaoAtendida.objects.create(
+    d = DemandaNaoAtendida.objects.create(
         loja=loja,
         variante=variante,
         produto_texto="" if variante else (produto.nome if produto else dados.produto_texto or ""),
@@ -371,6 +371,42 @@ def registrar_demanda(*, loja, usuario, dados) -> DemandaNaoAtendida:
         registrado_por=usuario,
         registrado_em=timezone.now(),
     )
+    _avisar_limiar(loja, d)
+    return d
+
+
+def _avisar_limiar(loja, d: DemandaNaoAtendida) -> None:
+    """Publica DEMANDA_LIMIAR quando o item chega a N procuras sem estoque na janela."""
+    from apps.notificacoes.eventos import DEMANDA_LIMIAR, publicar
+
+    cfg = configuracao(loja)
+    qs = DemandaNaoAtendida.objects.da_loja(loja).filter(
+        registrado_em__gte=timezone.now() - timedelta(days=cfg.janela_dias)
+    )
+    saldo = None
+    if d.variante_id:
+        saldo = saldos_atuais(loja).get(d.variante_id, (None,))[0]
+        if saldo:  # tem estoque: não é falta
+            return
+        qs = qs.filter(variante_id=d.variante_id)
+    else:
+        qs = qs.filter(
+            variante__isnull=True,
+            produto_texto__iexact=d.produto_texto,
+            tamanho=d.tamanho,
+            cor=d.cor,
+        )
+    n = qs.count()
+    if n >= cfg.a_min_demandas:
+        rotulo, sku = rotulo_demanda(d)
+        publicar(
+            DEMANDA_LIMIAR,
+            loja,
+            chave=f"demanda:{sku or rotulo.lower()}",
+            n=n,
+            rotulo=rotulo,
+            saldo=saldo,
+        )
 
 
 def rotulo_demanda(d: DemandaNaoAtendida) -> tuple[str, str | None]:

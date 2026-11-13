@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import type { Reconciliacao } from "@/api/types";
 import { moeda, pct } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { ListaAoVivo } from "./lista-ao-vivo";
 
 const ETAPAS = ["Arquivo", "Prévia", "Confirmar"];
 
@@ -18,7 +19,7 @@ export function ImportStepper({ etapa }: { etapa: 1 | 2 | 3 }) {
           <li key={nome} className="flex items-center gap-2" aria-current={atual ? "step" : undefined}>
             <span
               className={cn(
-                "grid size-7 place-items-center rounded-full text-xs font-bold transition-colors",
+                "grid size-7 place-items-center rounded-sm text-xs font-bold transition-colors",
                 feito && "bg-sinal-ok text-white",
                 atual && "bg-primary text-primary-foreground",
                 !feito && !atual && "bg-muted text-muted-foreground",
@@ -122,8 +123,8 @@ export function ReconciliationBar({ r }: { r: Reconciliacao }) {
           diferença {moeda(r.diferenca)} ({pct(r.percentual)})
         </span>
       </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-muted" role="img" aria-label={`Importado ${pct(larg)} do total de origem`}>
-        <div className={cn("h-full rounded-full transition-all duration-500", cor)} style={{ width: `${larg}%` }} />
+      <div className="h-2.5 overflow-hidden bg-muted" role="img" aria-label={`Importado ${pct(larg)} do total de origem`}>
+        <div className={cn("h-full transition-all duration-500", cor)} style={{ width: `${larg}%` }} />
       </div>
       {r.nivel !== "ok" && (
         <p className={cn("text-xs", txt)}>
@@ -142,17 +143,21 @@ export function RejectedRowsTable({
   linhas: { numero_linha: number; erros: { campo: string | null; mensagem: string }[] }[];
 }) {
   return (
-    <ul className="divide-y divide-border rounded-md border border-border">
-      {linhas.map((l) => (
-        <li key={l.numero_linha} className="flex flex-col gap-1 px-4 py-2.5 text-sm sm:flex-row sm:gap-4">
+    <ListaAoVivo
+      className="divide-y divide-border rounded-md border border-border"
+      rotulo="Linhas rejeitadas"
+      itens={linhas}
+      chave={(l) => l.numero_linha}
+      render={(l) => (
+        <div className="flex flex-col gap-1 px-4 py-2.5 text-sm sm:flex-row sm:gap-4">
           <span className="w-20 shrink-0 font-mono text-xs font-medium text-muted-foreground">
             Linha {l.numero_linha}
           </span>
           <span className="text-erro-tx dark:text-erro">
             {l.erros.map((e) => (e.campo ? `${e.campo}: ${e.mensagem}` : e.mensagem)).join(" · ")}
           </span>
-        </li>
-      ))}
-    </ul>
+        </div>
+      )}
+    />
   );
 }

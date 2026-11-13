@@ -236,6 +236,15 @@ def rodar(ctx, termo: str | None = None) -> list[Campanha]:
             )
             ctx.propostas.append(p)
         campanhas.append(camp)
+        from apps.notificacoes.eventos import CAMPANHA_PROPOSTA, publicar
+
+        publicar(
+            CAMPANHA_PROPOSTA,
+            loja,
+            chave=f"camp:{alvo['rotulo']}",
+            n=len(achados),
+            rotulo=alvo["rotulo"],
+        )
     return campanhas
 
 
@@ -264,3 +273,41 @@ def medir(campanha: Campanha) -> dict:
         "convertidos": convertidos,
         "limitacao": "Compra após o contato mostra associação, não prova que a mensagem causou a venda.",
     }
+
+
+def verificar_conversoes(loja, refs: set[str]) -> int:
+    """Pedidos novos de clientes contatados: publica CLIENTE_COMPROU (uma vez por contato)."""
+    from apps.notificacoes.eventos import CLIENTE_COMPROU, publicar
+
+    if not refs:
+        return 0
+    limite = timezone.now() - timedelta(days=14)
+    n = 0
+    for p in (
+        PropostaAgente.objects.da_loja(loja)
+        .filter(status="enviada", enviado_em__gte=limite, cliente__ref__in=refs)
+        .select_related("cliente", "campanha")
+    ):
+        cat = p.campanha.alvo.get("categoria") if p.campanha else None
+        compra = (
+            ItemPedido.objects.da_loja(loja)
+            .filter(
+                pedido__cliente_ref=p.cliente.ref, pedido__status="concluida",
+                pedido__data_hora__gte=p.enviado_em, variante__produto__categoria=cat,
+            )
+            .order_by("pedido__data_hora")
+            .select_related("pedido")
+            .first()
+        )  # fmt: skip
+        if compra:
+            dias = max(0, (compra.pedido.data_hora - p.enviado_em).days)
+            publicar(
+                CLIENTE_COMPROU,
+                loja,
+                chave=f"conv:{p.id}",
+                ref=p.cliente.ref,
+                categoria=cat,
+                dias=dias,
+            )
+            n += 1
+    return n

@@ -3,6 +3,7 @@ import { CircleAlert, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { FundoGrade } from "./destaques";
 
 /** Ilustração em linhas: ondas de sinal (conceito "Mídia"). */
 function Ondas() {
@@ -29,10 +30,11 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center gap-3 rounded-lg border border-dashed border-border bg-card/60 px-6 py-10 text-center",
+        "relative isolate flex flex-col items-center gap-3 overflow-hidden rounded-lg border border-dashed border-border bg-card/60 px-6 py-10 text-center",
         className,
       )}
     >
+      <FundoGrade className="-z-10" />
       <Ondas />
       <p className="font-display text-h3 font-semibold">{titulo}</p>
       {descricao && <p className="max-w-md text-sm text-muted-foreground">{descricao}</p>}
@@ -59,18 +61,29 @@ export function PageHeader({
   titulo,
   subtitulo,
   acoes,
+  destaque,
 }: {
   titulo: string;
   subtitulo?: React.ReactNode;
   acoes?: React.ReactNode;
+  /** "O que mudou?": uma frase calculada a partir dos dados já carregados (docs/08 §6). */
+  destaque?: React.ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 className="font-display text-h2 font-bold sm:text-h1">{titulo}</h1>
-        {subtitulo && <p className="mt-1 text-sm text-muted-foreground">{subtitulo}</p>}
+    <div className="mb-6 border-b border-border pb-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="font-display text-h2 font-bold sm:text-h1">{titulo}</h1>
+          {subtitulo && <p className="mt-1 text-sm text-muted-foreground">{subtitulo}</p>}
+        </div>
+        {acoes && <div className="flex flex-wrap items-center gap-2 max-sm:[&>*]:flex-1">{acoes}</div>}
       </div>
-      {acoes && <div className="flex flex-wrap items-center gap-2">{acoes}</div>}
+      {destaque && (
+        <p className="mt-3 flex items-start gap-2 border-l-2 border-violeta-500 bg-violeta-50/60 px-3 py-1.5 text-[13px] dark:bg-violeta-900/25">
+          <span aria-hidden className="font-bold text-violeta-500">▸</span>
+          <span><span className="font-semibold">Destaque:</span> {destaque}</span>
+        </p>
+      )}
     </div>
   );
 }

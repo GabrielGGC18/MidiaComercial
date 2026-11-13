@@ -218,12 +218,12 @@ def confirmar(*, loja, usuario, lote_id: int) -> LoteImportacao:
         raise ImportacaoErro("Este lote já foi confirmado ou cancelado.")
 
     if lote.tipo == LoteImportacao.Tipo.VENDAS:
-        cache, pedidos, extras_dup = {}, {}, 0
+        cache, pedidos, extras_dup, refs_novos = {}, {}, 0, set()
         for d in lote.linhas_pendentes:
             variante = _variante_para(loja, d["sku"], d["categoria"], d.get("variante"), cache)
             pedido = pedidos.get(d["pedido_id"])
             if pedido is None:
-                pedido, _ = Pedido.objects.get_or_create(
+                pedido, novo = Pedido.objects.get_or_create(
                     loja=loja,
                     sistema_origem=SISTEMA_ORIGEM,
                     pedido_id_origem=d["pedido_id"],
@@ -237,6 +237,8 @@ def confirmar(*, loja, usuario, lote_id: int) -> LoteImportacao:
                     },
                 )
                 pedidos[d["pedido_id"]] = pedido
+                if novo and pedido.cliente_ref and pedido.status == "concluida":
+                    refs_novos.add(pedido.cliente_ref)
             _, criado = ItemPedido.objects.get_or_create(
                 pedido=pedido,
                 item_id=d["item_id"],
@@ -274,6 +276,19 @@ def confirmar(*, loja, usuario, lote_id: int) -> LoteImportacao:
     lote.confirmado_em = timezone.now()
     lote.linhas_pendentes = []
     lote.save()
+    from apps.notificacoes.eventos import IMPORTACAO_DIVERGENTE, publicar
+
+    rec = reconciliacao(lote)
+    if rec and rec["nivel"] == "alto":
+        publicar(
+            IMPORTACAO_DIVERGENTE, loja, chave=f"lote:{lote.pk}", lote=lote.pk,
+            percentual=str(rec["percentual"]).replace(".", ","),
+            importado=rec["importado"], origem=rec["origem"],
+        )  # fmt: skip
+    if lote.tipo == LoteImportacao.Tipo.VENDAS:
+        from apps.agente.prospeccao import verificar_conversoes
+
+        verificar_conversoes(loja, refs_novos)
     registrar_evento(
         loja, usuario, "importacao_confirmada", f"lote:{lote.pk}",
         tipo=lote.tipo, linhas=lote.linhas_ok, total=str(lote.total_importado),

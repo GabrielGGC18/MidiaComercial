@@ -15,12 +15,12 @@ export function BeforeAfter({ medicao, unidade }: { medicao?: Medicao | null; un
   return (
     <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-md bg-muted/60 p-3">
       <div>
-        <p className="overline text-muted-foreground">Antes · {periodo(medicao.periodo_antes_inicio, medicao.periodo_antes_fim)}</p>
+        <p className="sobretitulo text-muted-foreground">Antes · {periodo(medicao.periodo_antes_inicio, medicao.periodo_antes_fim)}</p>
         <p className="font-display text-h2 font-bold tabular">{numero(antes)}</p>
       </div>
       <ArrowRight className="size-4 text-muted-foreground" aria-hidden />
       <div>
-        <p className="overline text-muted-foreground">Depois · {periodo(medicao.periodo_depois_inicio, medicao.periodo_depois_fim)}</p>
+        <p className="sobretitulo text-muted-foreground">Depois · {periodo(medicao.periodo_depois_inicio, medicao.periodo_depois_fim)}</p>
         <p className="font-display text-h2 font-bold tabular">
           {depois === null ? "—" : numero(depois)}
           {delta !== null && delta !== 0 && (
@@ -73,7 +73,7 @@ export function ActionCard({ acao, rodape }: { acao: Plano; rodape?: React.React
           </dd>
         </div>
         <div>
-          <dt className="overline mt-1 text-muted-foreground">Indicador</dt>
+          <dt className="sobretitulo mt-1 text-muted-foreground">Indicador</dt>
           <dd>{acao.indicador}</dd>
         </div>
       </dl>

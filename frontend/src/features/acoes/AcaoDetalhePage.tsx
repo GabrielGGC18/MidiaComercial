@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router";
 import { api, mensagemErro } from "@/api/client";
 import type { Plano } from "@/api/types";
 import { AvisoAssociacao, BeforeAfter } from "@/components/midia/acao";
+import { Confirmacao } from "@/components/midia/destaques";
 import { CardSkeleton, ErrorState } from "@/components/midia/estado";
 import { SignalBadge } from "@/components/midia/sinais";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +32,7 @@ export default function AcaoDetalhePage() {
       {q.isError && <ErrorState mensagem={mensagemErro(q.error)} onTentar={() => q.refetch()} />}
       {q.isLoading && <CardSkeleton linhas={6} />}
       {p && (
-        <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_20rem] [&>*]:min-w-0">
           <div className="flex flex-col gap-6">
             <div>
               <div className="flex flex-wrap items-center gap-2">
@@ -87,7 +88,7 @@ export default function AcaoDetalhePage() {
             {p.oportunidade && (
               <Card>
                 <CardHeader>
-                  <p className="overline text-muted-foreground">Veio da oportunidade</p>
+                  <p className="sobretitulo text-muted-foreground">Veio da oportunidade</p>
                   <CardTitle className="text-base">{p.oportunidade.titulo}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
@@ -99,7 +100,7 @@ export default function AcaoDetalhePage() {
             {p.situacao === "aberta" && (
               <Card className="p-4">
                 <div className="flex flex-col gap-2">
-                  <Button onClick={() => setSituacao("concluida")}><Check aria-hidden /> Concluir</Button>
+                  <Confirmacao><Button className="w-full" onClick={() => setSituacao("concluida")}><Check aria-hidden /> Concluir</Button></Confirmacao>
                   <Button variant="ghost" onClick={() => setSituacao("descartada")}><X aria-hidden /> Descartar com justificativa</Button>
                 </div>
               </Card>

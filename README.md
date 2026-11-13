@@ -43,6 +43,7 @@
 | Tudo junto | **Oportunidades** | Até 3 cartões priorizados (regras A/B/C), cada um com evidência, amostra e limitação |
 | Produto em baixa | **Agente de vendas** | Lista de clientes com motivo legível e mensagem pronta; você aprova e envia pelo WhatsApp |
 | Decisão | **Plano de ação** | Responsável, prazo, indicador e medição antes/depois calculada |
+| Algo importante aconteceu | **Sino de avisos** | Padrão Observer: procuras sem estoque, oportunidade nova, campanha proposta, cliente comprou após contato, ação atrasada, importação divergente, estoque velho |
 
 ## O agente
 
@@ -61,6 +62,19 @@ flowchart LR
 - **Funciona sem internet.** O provedor offline entende frases como *"procurou calça jeans 42, uns 40 anos, não tinha"* ou *"quero vender a camisa parada"*.
 - **Claude é opcional** (`MIDIA_IA_PROVEDOR=claude`). Recebe só texto mascarado e agregados. Frases com nome de pessoa nunca saem do servidor.
 - **Prospecção responsável:** só clientes que autorizaram contato, descanso de 14 dias, "Responda SAIR" em toda mensagem e medição de quem comprou em 14 dias.
+
+## Notificações (padrão Observer)
+
+```mermaid
+flowchart LR
+    S["Services<br/>balcão · motor · agente · importação"] -->|"publicar(evento)<br/>após o commit"| B["Barramento<br/>apps/notificacoes/eventos.py"]
+    C["cron: manage.py verificar_prazos"] --> B
+    B --> T["Observer: aviso na tela<br/>(agrupa repetições em 24 h)"]
+    B --> E["Observer: e-mail<br/>(opcional, NOTIFICACOES_EMAIL)"]
+    T --> UI["Sino + toast<br/>(consulta a cada 30 s)"]
+```
+
+Quem publica não conhece quem observa. Um observer com erro não derruba a operação, e operação desfeita (rollback) não notifica. Os avisos são só para a equipe, filtrados por loja e papel, sem dado pessoal no texto. A leitura é marcada por pessoa.
 
 ## Rodar local (sem Docker)
 

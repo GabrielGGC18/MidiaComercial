@@ -11,7 +11,7 @@ export function PeriodosNicho({ p }: { p: Periodos }) {
       <ol className="grid gap-2 sm:grid-cols-3" aria-label="Períodos mais fortes da loja">
         {p.top.map((t, i) => (
           <li key={t.periodo} className={cn("rounded-md border border-border p-3", i === 0 && "border-violeta-300 bg-violeta-50 dark:bg-violeta-900/30")}>
-            <p className="overline text-muted-foreground">{i + 1}º período</p>
+            <p className="sobretitulo text-muted-foreground">{i + 1}º período</p>
             <p className="mt-1 flex items-center gap-1.5 font-display font-semibold">
               <Clock className="size-4 text-violeta-500" aria-hidden /> {t.periodo}
             </p>
@@ -23,7 +23,7 @@ export function PeriodosNicho({ p }: { p: Periodos }) {
       </ol>
 
       <div>
-        <p className="overline mb-2 text-muted-foreground">Melhor horário por nicho</p>
+        <p className="sobretitulo mb-2 text-muted-foreground">Melhor horário por nicho</p>
         <ul className="divide-y divide-border rounded-md border border-border">
           {p.por_categoria.map((c) => (
             <li key={c.categoria} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-3 py-2 text-sm">
@@ -41,15 +41,15 @@ export function PeriodosNicho({ p }: { p: Periodos }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <p className="overline mb-2 flex items-center gap-1.5 text-muted-foreground">
+          <p className="sobretitulo mb-2 flex items-center gap-1.5 text-muted-foreground">
             <CalendarDays className="size-3.5" aria-hidden /> Fase do mês (efeito salário)
           </p>
           <ul className="flex flex-col gap-2">
             {p.fases_mes.map((f) => (
               <li key={f.fase} className="grid grid-cols-[4.5rem_1fr_auto] items-center gap-2 text-sm">
                 <span className="text-muted-foreground">Dias {f.fase}</span>
-                <span className="h-4 overflow-hidden rounded-sm bg-muted">
-                  <span className="block h-full rounded-sm bg-violeta-500" style={{ width: `${(Number(f.receita) / maxFase) * 100}%` }} />
+                <span className="h-4 overflow-hidden bg-muted">
+                  <span className="block h-full bg-violeta-500" style={{ width: `${(Number(f.receita) / maxFase) * 100}%` }} />
                 </span>
                 <span className="w-14 text-right text-xs font-semibold tabular">{pct(f.participacao)}</span>
               </li>
@@ -57,7 +57,7 @@ export function PeriodosNicho({ p }: { p: Periodos }) {
           </ul>
         </div>
         <div>
-          <p className="overline mb-2 text-muted-foreground">Turno</p>
+          <p className="sobretitulo mb-2 text-muted-foreground">Turno</p>
           <ul className="flex flex-col gap-2">
             {p.turnos.map((t) => (
               <li key={t.turno} className="grid grid-cols-[1fr_auto] text-sm">
@@ -80,8 +80,8 @@ export function FaixaEtariaBars({ f }: { f: FaixasPublico }) {
         <li key={x.faixa}>
           <div className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-3 text-sm">
             <span className="font-semibold tabular">{x.rotulo}</span>
-            <span className="h-5 overflow-hidden rounded-sm bg-muted">
-              <span className={cn("block h-full rounded-sm", f.principal === x.rotulo ? "bg-violeta-700" : "bg-violeta-300")} style={{ width: `${(Number(x.receita) / max) * 100}%` }} />
+            <span className="h-5 overflow-hidden bg-muted">
+              <span className={cn("block h-full", f.principal === x.rotulo ? "bg-violeta-700" : "bg-violeta-300")} style={{ width: `${(Number(x.receita) / max) * 100}%` }} />
             </span>
             <span className="w-14 text-right font-semibold tabular">{pct(x.participacao)}</span>
           </div>

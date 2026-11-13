@@ -17,6 +17,7 @@ from apps.core.api import router as core_router
 from apps.core.permissoes import SemLoja
 from apps.importacao.api import router as importacao_router
 from apps.inteligencia.api import router as inteligencia_router
+from apps.notificacoes.api import router as notificacoes_router
 from apps.publico.api import analises_router, catalogo_router, demandas_router
 
 api = NinjaAPI(
@@ -36,6 +37,7 @@ api.add_router("/oportunidades", inteligencia_router)
 api.add_router("/acoes", acoes_router)
 api.add_router("/clientes", clientes_router)
 api.add_router("/agente", agente_router)
+api.add_router("/notificacoes", notificacoes_router)
 
 
 @api.exception_handler(SemLoja)

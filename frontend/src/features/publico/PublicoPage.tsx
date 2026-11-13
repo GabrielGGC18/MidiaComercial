@@ -6,11 +6,11 @@ import { useChaveLoja } from "@/api/sessao";
 import type { Publico } from "@/api/types";
 import { CardSkeleton, EmptyState, ErrorState, PageHeader } from "@/components/midia/estado";
 import { CategoryBars, HeatmapWeek, SerieReceita, type Unidade } from "@/components/midia/graficos";
-import { KpiTile } from "@/components/midia/KpiTile";
+import { KpiBloco, KpiTile } from "@/components/midia/KpiTile";
 import { FaixaEtariaBars, PeriodosNicho } from "@/components/midia/publico";
 import { CoverageNote, LimitationNote, SignalBadge } from "@/components/midia/sinais";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { isoDaqui, isoHoje, moeda, numero, pct, periodo } from "@/lib/format";
+import { data as dataCurta, isoDaqui, isoHoje, moeda, numero, pct, periodo } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const PERIODOS = [
@@ -36,7 +36,7 @@ function Segmentado<T extends string | number>({
   rotulo: string;
 }) {
   return (
-    <div role="radiogroup" aria-label={rotulo} className="inline-flex rounded-md border border-border bg-card p-0.5 shadow-xs">
+    <div role="radiogroup" aria-label={rotulo} className="flex w-full rounded-md border border-border bg-card p-0.5 shadow-xs sm:inline-flex sm:w-auto">
       {opcoes.map((o) => (
         <button
           key={String(o.v)}
@@ -45,7 +45,7 @@ function Segmentado<T extends string | number>({
           aria-checked={o.v === valor}
           onClick={() => onChange(o.v)}
           className={cn(
-            "h-9 rounded-[8px] px-3 text-[13px] font-medium transition-colors",
+            "h-11 flex-1 whitespace-nowrap rounded-sm px-3 text-[13px] font-medium transition sm:h-9 sm:flex-none-colors",
             o.v === valor ? "bg-violeta-500 text-white" : "text-muted-foreground hover:text-foreground",
           )}
         >
@@ -76,12 +76,26 @@ export default function PublicoPage() {
   });
   const d = q.data;
   const per = d ? periodo(d.inicio, d.fim) : "";
+  // linha de destaque: "o que mudou?", calculada com o que já veio da API
+  const destaque = (() => {
+    if (!d || !d.kpis.pedidos) return undefined;
+    const lider = d.categorias[0];
+    const pico = d.periodos.top[0];
+    const melhorDia = d.serie_diaria.reduce((a, b) => (Number(b.receita) > Number(a.receita) ? b : a), d.serie_diaria[0]);
+    return [
+      lider && `${lider.categoria} lideram (${pct(lider.participacao_receita)})`,
+      pico && `pico ${pico.periodo.toLowerCase()}`,
+      melhorDia && `melhor dia ${dataCurta(melhorDia.data)}`,
+      d.faixas.principal && `quem mais compra: ${d.faixas.principal} anos`,
+    ].filter(Boolean).join(" · ");
+  })();
 
   return (
     <>
       <PageHeader
         titulo="Meu público"
         subtitulo="Quem compra, o quê e quando. Só pedidos concluídos; devoluções aparecem à parte."
+        destaque={destaque}
         acoes={
           <Segmentado
             rotulo="Período"
@@ -94,25 +108,25 @@ export default function PublicoPage() {
 
       {q.isError && <ErrorState mensagem={mensagemErro(q.error)} onTentar={() => q.refetch()} />}
 
-      <section aria-label="Indicadores" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <KpiBloco>
         {!d
-          ? [0, 1, 2, 3].map((i) => <CardSkeleton key={i} linhas={1} />)
+          ? [0, 1, 2, 3].map((i) => <CardSkeleton key={i} linhas={1} className="border-0 shadow-none" />)
           : (
             <>
-              <KpiTile rotulo="Receita" valor={Number(d.kpis.receita)} formato="moeda" periodo={per} amostra={`devoluções ${moeda(d.kpis.devolucoes)}`} destaque="violeta" icone={<Wallet />} />
-              <KpiTile rotulo="Ticket médio" valor={Number(d.kpis.ticket_medio)} formato="moeda" periodo={per} amostra={`${numero(d.kpis.pedidos)} pedidos`} icone={<Receipt />} />
-              <KpiTile rotulo="Pedidos" valor={d.kpis.pedidos} periodo={per} amostra={`${numero(d.kpis.itens)} itens`} icone={<ShoppingBag />} />
-              <KpiTile rotulo="Clientes identificados" valor={Number(d.cobertura.percentual)} formato="pct" periodo={per} amostra={`${d.cobertura.identificados} de ${d.cobertura.total} pedidos`} icone={<UserCheck />} />
+              <KpiTile embutido rotulo="Receita" valor={Number(d.kpis.receita)} formato="moeda" periodo={per} amostra={`devoluções ${moeda(d.kpis.devolucoes)}`} destaque="violeta" icone={<Wallet />} />
+              <KpiTile embutido rotulo="Ticket médio" valor={Number(d.kpis.ticket_medio)} formato="moeda" periodo={per} amostra={`${numero(d.kpis.pedidos)} pedidos`} icone={<Receipt />} />
+              <KpiTile embutido rotulo="Pedidos" valor={d.kpis.pedidos} periodo={per} amostra={`${numero(d.kpis.itens)} itens`} icone={<ShoppingBag />} />
+              <KpiTile embutido rotulo="Clientes identificados" valor={Number(d.cobertura.percentual)} formato="pct" periodo={per} amostra={`${d.cobertura.identificados} de ${d.cobertura.total} pedidos`} icone={<UserCheck />} />
             </>
           )}
-      </section>
+      </KpiBloco>
 
       {d && d.kpis.pedidos === 0 && (
         <EmptyState className="mt-6" titulo="Sem vendas no período" descricao="Importe o CSV de vendas ou escolha um período maior." />
       )}
 
       {d && d.kpis.pedidos > 0 && (
-        <div className="mt-6 grid gap-6 xl:grid-cols-2">
+        <div className="mt-6 grid gap-6 xl:grid-cols-2 [&>*]:min-w-0">
           <Card>
             <CardHeader className="flex-row flex-wrap items-start justify-between gap-3">
               <div>
@@ -198,11 +212,11 @@ export default function PublicoPage() {
                 <>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-md bg-muted/60 p-4">
-                      <p className="overline text-muted-foreground">Compra única</p>
+                      <p className="sobretitulo text-muted-foreground">Compra única</p>
                       <p className="font-display text-h1 font-bold tabular">{pct(d.recorrencia.compra_unica_pct)}</p>
                     </div>
                     <div className="rounded-md bg-violeta-50 p-4 dark:bg-violeta-900/30">
-                      <p className="overline text-violeta-700 dark:text-violeta-100">2+ compras</p>
+                      <p className="sobretitulo text-violeta-700 dark:text-violeta-100">2+ compras</p>
                       <p className="font-display text-h1 font-bold text-violeta-700 tabular dark:text-violeta-100">{pct(d.recorrencia.recorrentes_pct)}</p>
                     </div>
                   </div>

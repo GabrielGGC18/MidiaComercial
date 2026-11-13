@@ -1,34 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { Card } from "@/components/ui/card";
+import { CountUp } from "@/components/efeitos/CountUp";
+import { SpotlightCard } from "@/components/efeitos/SpotlightCard";
 import { moeda, numero, pct } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type Formato = "moeda" | "numero" | "pct";
-const FMT: Record<Formato, (v: number) => string> = { moeda, numero, pct };
+const FMT: Record<Formato, (v: number) => string> = { moeda, numero, pct: (v) => pct(v) };
 
-function useContagem(alvo: number, ms = 600) {
-  const [v, setV] = useState(alvo);
-  const anterior = useRef(0);
-  useEffect(() => {
-    const reduz = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (reduz) return setV(alvo);
-    const de = anterior.current;
-    const t0 = performance.now();
-    let raf = 0;
-    const passo = (t: number) => {
-      const p = Math.min(1, (t - t0) / ms);
-      const e = 1 - Math.pow(1 - p, 3);
-      setV(de + (alvo - de) * e);
-      if (p < 1) raf = requestAnimationFrame(passo);
-      else anterior.current = alvo;
-    };
-    raf = requestAnimationFrame(passo);
-    return () => cancelAnimationFrame(raf);
-  }, [alvo, ms]);
-  return v;
-}
-
-/** Número-herói + período + amostra (§5.2). */
+/** Número-herói + período + amostra (§5.2). `embutido` = dentro de um KpiBloco com divisórias. */
 export function KpiTile({
   rotulo,
   valor,
@@ -38,6 +16,7 @@ export function KpiTile({
   nota,
   destaque,
   icone,
+  embutido,
 }: {
   rotulo: string;
   valor: number;
@@ -47,36 +26,48 @@ export function KpiTile({
   nota?: string;
   destaque?: "coral" | "violeta";
   icone?: React.ReactNode;
+  embutido?: boolean;
 }) {
-  const animado = useContagem(valor);
+  const fmt = (v: number) => FMT[formato](formato === "numero" ? Math.round(v) : v);
   return (
-    <Card className="relative overflow-hidden p-5">
+    <SpotlightCard
+      cor={destaque === "coral" ? "var(--color-coral-500)" : "var(--color-violeta-500)"}
+      className={cn("p-5", !embutido && "rounded-lg border border-border bg-card shadow-sm")}
+    >
       {destaque && (
-        <span
-          aria-hidden
-          className={cn(
-            "absolute inset-x-0 top-0 h-1",
-            destaque === "coral" ? "bg-coral-500" : "bg-violeta-500",
-          )}
-        />
+        <span aria-hidden className={cn("absolute inset-x-0 top-0 h-0.5", destaque === "coral" ? "bg-coral-500" : "bg-violeta-500")} />
       )}
       <div className="flex items-center justify-between gap-2">
-        <p className="overline text-muted-foreground">{rotulo}</p>
+        <p className="sobretitulo text-muted-foreground">{rotulo}</p>
         {icone && <span className="text-muted-foreground [&_svg]:size-4">{icone}</span>}
       </div>
       <p
         className={cn(
-          "mt-2 font-display text-display font-extrabold tabular",
+          "mt-2 whitespace-nowrap font-display text-[clamp(1.5rem,2.3vw,2.25rem)] font-extrabold leading-tight tabular",
           destaque === "coral" && "text-coral-700 dark:text-coral-500",
         )}
-        aria-label={`${rotulo}: ${FMT[formato](valor)}`}
+        aria-label={`${rotulo}: ${fmt(valor)}`}
       >
-        {FMT[formato](formato === "numero" ? Math.round(animado) : animado)}
+        <CountUp para={valor} formatar={fmt} />
       </p>
-      <p className="mt-1 text-xs font-medium text-muted-foreground">
-        {[periodo, amostra].filter(Boolean).join(" · ")}
-      </p>
+      <p className="mt-1 text-xs font-medium text-muted-foreground">{[periodo, amostra].filter(Boolean).join(" · ")}</p>
       {nota && <p className="mt-2 text-xs text-muted-foreground">{nota}</p>}
-    </Card>
+    </SpotlightCard>
+  );
+}
+
+/** KPIs num bloco único com divisórias no desktop (cara de painel); cards soltos no celular. */
+export function KpiBloco({ children, colunas = 4 }: { children: React.ReactNode; colunas?: 3 | 4 }) {
+  return (
+    <section
+      aria-label="Indicadores"
+      className={cn(
+        "grid gap-4 sm:grid-cols-2 lg:gap-0 lg:divide-x lg:divide-border lg:rounded-lg lg:border lg:border-border lg:bg-card lg:shadow-sm",
+        "max-lg:[&>*]:rounded-lg max-lg:[&>*]:border max-lg:[&>*]:border-border max-lg:[&>*]:bg-card max-lg:[&>*]:shadow-sm",
+        colunas === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3",
+      )}
+    >
+      {children}
+    </section>
   );
 }

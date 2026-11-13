@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FAIXAS, MOTIVOS, numero } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { Confirmacao } from "./destaques";
 
 export function ChipPicker<T extends string>({
   rotulo,
@@ -34,7 +35,7 @@ export function ChipPicker<T extends string>({
               aria-checked={sel}
               onClick={() => onChange(sel ? null : o.valor)}
               className={cn(
-                "rounded-full border font-medium transition-colors duration-150",
+                "rounded-sm border font-medium transition-colors duration-150",
                 grande ? "min-h-12 min-w-14 px-4 text-base" : "min-h-11 min-w-11 px-3 text-sm",
                 sel
                   ? "border-violeta-500 bg-violeta-500 text-white shadow-sm"
@@ -157,7 +158,7 @@ export function DemandQuickForm({
       ) : (
         <div className="flex items-center justify-between gap-2 rounded-md bg-violeta-50 px-4 py-3 dark:bg-violeta-900/30">
           <div>
-            <p className="overline text-violeta-700 dark:text-violeta-100">Produto</p>
+            <p className="sobretitulo text-violeta-700 dark:text-violeta-100">Produto</p>
             <p className="font-semibold">{produto.nome}</p>
           </div>
           <Button variant="ghost" size="sm" onClick={limpar}>
@@ -195,9 +196,11 @@ export function DemandQuickForm({
         <ChipPicker rotulo="Idade aproximada (opcional)" opcoes={FAIXAS} valor={faixa} onChange={setFaixa} />
       )}
 
-      <Button variant="balcao" disabled={!pronto} carregando={enviando} onClick={enviar}>
-        Registrar
-      </Button>
+      <Confirmacao tom="coral">
+        <Button variant="balcao" disabled={!pronto} carregando={enviando} onClick={enviar}>
+          Registrar
+        </Button>
+      </Confirmacao>
 
       <div aria-live="polite" className="min-h-14">
         {ultimo && (
@@ -233,7 +236,7 @@ export function DemandRanking({ itens }: { itens: ItemRanking[] }) {
               {it.rotulo}
               {it.sku && <span className="ml-2 font-mono text-xs text-muted-foreground">{it.sku}</span>}
               {!it.no_catalogo && (
-                <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">fora do catálogo</span>
+                <span className="ml-2 rounded-sm border border-border bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">fora do catálogo</span>
               )}
             </p>
             <p className="text-sm tabular">
@@ -246,8 +249,8 @@ export function DemandRanking({ itens }: { itens: ItemRanking[] }) {
               )}
             </p>
           </div>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted" aria-hidden>
-            <div className="h-full rounded-full bg-coral-500" style={{ width: `${(it.total / max) * 100}%` }} />
+          <div className="mt-2 h-2 overflow-hidden bg-muted" aria-hidden>
+            <div className="h-full bg-coral-500" style={{ width: `${(it.total / max) * 100}%` }} />
           </div>
           <p className="mt-1.5 text-xs text-muted-foreground">
             {Object.entries(it.por_motivo)

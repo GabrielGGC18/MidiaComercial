@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { api, mensagemErro } from "@/api/client";
 import { useChaveLoja } from "@/api/sessao";
 import type { Lote, LoteResumo } from "@/api/types";
+import { Processando } from "@/components/midia/destaques";
 import { PageHeader } from "@/components/midia/estado";
 import { DropzoneCsv, ImportStepper, ReconciliationBar, RejectedRowsTable } from "@/components/midia/importacao";
 import { Badge } from "@/components/ui/badge";
@@ -146,6 +147,7 @@ export default function ImportarPage() {
                 <Button type="submit" disabled={!arquivo} carregando={previa.isPending}>
                   Ver prévia
                 </Button>
+                {previa.isPending && <Processando className="text-center text-xs">Conferindo linha por linha…</Processando>}
               </div>
             </form>
           )}
@@ -161,7 +163,7 @@ export default function ImportarPage() {
 
               {etapa === 2 && lote.previa.length > 0 && (
                 <div>
-                  <p className="overline mb-2 text-muted-foreground">Prévia ({Math.min(5, lote.previa.length)} primeiras linhas)</p>
+                  <p className="sobretitulo mb-2 text-muted-foreground">Prévia ({Math.min(5, lote.previa.length)} primeiras linhas)</p>
                   <div className="overflow-x-auto rounded-md border border-border">
                     <table className="w-full text-sm">
                       <thead className="bg-muted/60 text-left text-xs text-muted-foreground">
@@ -183,7 +185,7 @@ export default function ImportarPage() {
 
               {lote.reconciliacao && (
                 <div>
-                  <p className="overline mb-2 text-muted-foreground">Reconciliação</p>
+                  <p className="sobretitulo mb-2 text-muted-foreground">Reconciliação</p>
                   <ReconciliationBar r={lote.reconciliacao} />
                 </div>
               )}
@@ -195,7 +197,7 @@ export default function ImportarPage() {
 
               {lote.rejeitadas.length > 0 && (
                 <div>
-                  <p className="overline mb-2 text-muted-foreground">Linhas rejeitadas: corrija e envie de novo</p>
+                  <p className="sobretitulo mb-2 text-muted-foreground">Linhas rejeitadas: corrija e envie de novo</p>
                   <RejectedRowsTable linhas={lote.rejeitadas} />
                 </div>
               )}

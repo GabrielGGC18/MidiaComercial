@@ -49,17 +49,17 @@ export default function AcoesPage() {
             role="tab"
             aria-selected={aba === c.s}
             onClick={() => setParams({ situacao: c.s }, { replace: true })}
-            className={cn("h-10 flex-1 rounded-[8px] text-[13px] font-medium", aba === c.s ? "bg-violeta-500 text-white" : "text-muted-foreground")}
+            className={cn("h-10 flex-1 rounded-sm text-[13px] font-medium", aba === c.s ? "bg-violeta-500 text-white" : "text-muted-foreground")}
           >
             {c.rotulo} ({por(c.s).length})
           </button>
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3 [&>*]:min-w-0">
         {COLUNAS.map((c) => (
           <section key={c.s} aria-label={c.rotulo} className={cn("flex flex-col gap-3", aba !== c.s && "hidden lg:flex")}>
-            <h2 className="overline hidden items-center justify-between text-muted-foreground lg:flex">
+            <h2 className="sobretitulo hidden items-center justify-between text-muted-foreground lg:flex">
               {c.rotulo} <span className="tabular">{por(c.s).length}</span>
             </h2>
             {q.isLoading && <CardSkeleton linhas={3} />}

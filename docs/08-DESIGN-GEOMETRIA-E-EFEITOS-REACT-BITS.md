@@ -1,6 +1,6 @@
 # 08. Design: geometria reta, efeitos React Bits e telas mais intuitivas
 
-**Projeto:** MidiaComercial · **Data:** 13/11/2026 · **Status:** proposta (nada implementado ainda)
+**Projeto:** MidiaComercial · **Data:** 13/11/2026 · **Status:** implementado na v0.3 (13/11/2026). Ver §12 para o que mudou em relação a esta proposta.
 **Complementa:** [`FRONTEND.md`](../FRONTEND.md) §4 (Mídia UI) e [07](07-EVOLUCAO-AGENTE-PUBLICO.md) (telas do agente e de clientes)
 **Escopo:** só o frontend (`frontend/src`). Backend, API e regras de negócio não mudam.
 
@@ -306,3 +306,20 @@ cd frontend && npm run typecheck && npm test && npm run build
 | Estética | **Dribbble**, **Land-book** |
 
 Regra mantida do `FRONTEND.md` §3.2: padrão de uso vem de produto real; estética, de galeria; nada é copiado pixel a pixel.
+
+---
+
+## 12. Registro da implementação (v0.3)
+
+| Item | Como ficou |
+| --- | --- |
+| Geometria | Tokens 2/4/6/8 px e sombra "dura"; `rounded-full` só em avatar, ponto ao vivo e microfone; barras retas |
+| Efeitos | `components/efeitos/` com SpotlightCard, CountUp, ShinyText, ClickSpark, Squares, StarBorder, AnimatedList, BlurText, FadeContent |
+| Origem do código | **Reimplementações enxutas inspiradas** no React Bits, não cópias. Motivo: as versões atuais do registro trazem paletas com hex fixo (§2.5), o FadeContent usa **gsap** (§4.3), AnimatedList e Stepper dependem de **@hugeicons** e o conjunto soma cerca de 4.500 linhas (§2.6). Cada arquivo registra a origem |
+| Ponte para as telas | `components/midia/destaques.tsx` (Processando, AcaoPrincipal, CartaoExploravel, FundoGrade, TituloAnimado, Confirmacao, Entrada) e `lista-ao-vivo.tsx` (ListaAoVivo). Features não importam efeito direto |
+| `motion` | Instalado e usado só no AnimatedList, em módulo separado: fica fora do bundle inicial |
+| Orçamento | Bundle inicial (index + modulepreload): 191.516 → 191.541 bytes gzip (**+25 bytes**) |
+| Telas | PageHeader com linha de destaque; KPIs em bloco com divisórias; heatmap por transparência (sem célula branca no escuro); barras em 2 linhas no celular; menu em grupos Analisar/Agir/Dados com barra de 3 px; menu inferior com 5 itens; agente com abas no celular e funil com CountUp; Clientes em tabela densa no desktop; login e escolha de loja com grade e BlurText |
+| Correção encontrada | A classe `overline` colidia com a utilidade nativa do Tailwind (`text-decoration: overline`) e desenhava um traço sobre os rótulos. Renomeada para `sobretitulo` |
+| Não feito | Stepper de 3 etapas novo na importação: o `ImportStepper` atual (Arquivo → Prévia → Confirmar) foi mantido com geometria reta |
+| Verificação | Screenshots logado em 1280 e 375 px, claro e escuro; 12 testes de frontend (incluindo *reduced motion*) |

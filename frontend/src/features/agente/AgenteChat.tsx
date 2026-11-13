@@ -6,6 +6,8 @@ import { api, json, mensagemErro } from "@/api/client";
 import { useAuth } from "@/api/sessao";
 import type { PropostaAgente, RespostaAgente } from "@/api/types";
 import { PropostaCard, VozButton } from "@/components/midia/agente";
+import { Processando } from "@/components/midia/destaques";
+import { ListaAoVivo } from "@/components/midia/lista-ao-vivo";
 import { temPapel } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 import { useVoz } from "@/lib/voz";
@@ -68,7 +70,7 @@ export default function AgenteChat({ className }: { className?: string }) {
           <div className="flex flex-col gap-2 py-2">
             <p className="text-sm text-muted-foreground">Fale ou escreva o que aconteceu. Eu preparo o registro e você confirma.</p>
             {exemplos.map((e) => (
-              <button key={e} type="button" onClick={() => mandar(e)} className="rounded-md border border-dashed border-violeta-300 px-3 py-2 text-left text-[13px] hover:bg-violeta-50 dark:hover:bg-violeta-900/30">
+              <button key={e} type="button" onClick={() => mandar(e)} className="rounded-sm border border-dashed border-violeta-300 px-3 py-2 text-left text-[13px] hover:bg-violeta-50 dark:hover:bg-violeta-900/30">
                 “{e}”
               </button>
             ))}
@@ -77,28 +79,32 @@ export default function AgenteChat({ className }: { className?: string }) {
         <ul className="flex flex-col gap-3">
           {itens.map((i, n) => (
             <li key={n} className={cn("flex flex-col gap-2", i.de === "voce" && "items-end")}>
-              <p className={cn("max-w-[90%] rounded-lg px-3 py-2 text-sm", i.de === "voce" ? "bg-violeta-500 text-white" : "bg-muted")}>
+              <p className={cn("max-w-[90%] rounded-sm border-l-2 px-3 py-2 text-sm", i.de === "voce" ? "border-violeta-900 bg-violeta-500 text-white" : "border-violeta-500 bg-muted")}>
                 {i.de === "agente" && <Sparkles className="mr-1.5 inline size-3.5 text-violeta-500" aria-hidden />}
                 {i.texto}
               </p>
-              {i.propostas
-                ?.filter((p) => p.tipo !== "contato")
-                .map((p) => (
-                  <div key={p.id} className="w-full">
+              {!!i.propostas?.some((p) => p.tipo !== "contato") && (
+                <ListaAoVivo
+                  className="flex w-full flex-col gap-2"
+                  rotulo="Propostas do agente"
+                  itens={i.propostas.filter((p) => p.tipo !== "contato")}
+                  chave={(p) => p.id}
+                  render={(p) => (
                     <PropostaCard
                       proposta={p}
                       ocupado={decidir.isPending && decidir.variables?.id === p.id}
                       onConfirmar={() => decidir.mutate({ id: p.id, acao: "confirmar" })}
                       onRejeitar={() => decidir.mutate({ id: p.id, acao: "rejeitar" })}
                     />
-                  </div>
-                ))}
+                  )}
+                />
+              )}
               {i.propostas?.some((p) => p.tipo === "contato") && (
                 <a href="/agente" className="text-sm font-medium text-primary hover:underline">Revisar contatos no Agente de vendas →</a>
               )}
             </li>
           ))}
-          {enviar.isPending && <li className="text-sm text-muted-foreground">Pensando…</li>}
+          {enviar.isPending && <li className="text-sm"><Processando>Agente pensando…</Processando></li>}
         </ul>
         <div ref={fim} />
       </div>

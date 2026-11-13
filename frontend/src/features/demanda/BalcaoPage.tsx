@@ -7,6 +7,7 @@ import { useChaveLoja } from "@/api/sessao";
 import type { DemandaIn, DemandaRegistrada, ProdutoCatalogo, PropostaAgente, RespostaAgente } from "@/api/types";
 import { PropostaCard, VozButton } from "@/components/midia/agente";
 import { DemandQuickForm } from "@/components/midia/demanda";
+import { ListaAoVivo } from "@/components/midia/lista-ao-vivo";
 import { hora, rotuloFaixa } from "@/lib/format";
 import { useVoz } from "@/lib/voz";
 
@@ -138,7 +139,7 @@ export default function BalcaoPage() {
         </div>
       </section>
 
-      <p className="overline mb-3 text-muted-foreground">Ou pelos botões</p>
+      <p className="sobretitulo mb-3 text-muted-foreground">Ou pelos botões</p>
       <DemandQuickForm
         resultados={busca.length >= 2 ? (catalogo.data ?? []) : []}
         buscando={catalogo.isFetching}
@@ -151,10 +152,14 @@ export default function BalcaoPage() {
 
       {!!recentes.data?.length && (
         <section className="mt-8">
-          <p className="overline mb-2 text-muted-foreground">Seus últimos registros</p>
-          <ul className="divide-y divide-border rounded-md border border-border bg-card">
-            {recentes.data.map((d) => (
-              <li key={d.id} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
+          <p className="sobretitulo mb-2 text-muted-foreground">Seus últimos registros</p>
+          <ListaAoVivo
+            className="divide-y divide-border rounded-md border border-border bg-card"
+            rotulo="Seus últimos registros"
+            itens={recentes.data}
+            chave={(d) => d.id}
+            render={(d) => (
+              <div className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
                 <span className="min-w-0 truncate">
                   <span className="font-medium">{d.rotulo}</span>{" "}
                   <span className="text-muted-foreground">
@@ -163,9 +168,9 @@ export default function BalcaoPage() {
                   </span>
                 </span>
                 <span className="shrink-0 text-xs text-muted-foreground tabular">{hora(d.registrado_em)}</span>
-              </li>
-            ))}
-          </ul>
+              </div>
+            )}
+          />
         </section>
       )}
     </>

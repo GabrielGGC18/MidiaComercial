@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/input";
 import { MOTIVOS, rotuloFaixa } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { Confirmacao } from "./destaques";
 
 export function VozButton({
   ouvindo,
@@ -83,21 +84,21 @@ export function PropostaCard({
   const incertos = new Set(p.campos_incertos.map((c) => (c === "produto_texto" ? "produto" : c)));
   const decidida = p.status !== "pendente";
   return (
-    <article className="animate-entrar rounded-lg border border-violeta-300/60 bg-card p-4 shadow-sm" aria-label={`Proposta: ${p.resumo}`}>
+    <article className="rounded-lg border border-l-[3px] border-violeta-300/60 border-l-violeta-500 bg-card p-4 shadow-sm" aria-label={`Proposta: ${p.resumo}`}>
       <header className="flex items-center justify-between gap-2">
-        <p className="overline flex items-center gap-1.5 text-violeta-700 dark:text-violeta-100">
+        <p className="sobretitulo flex items-center gap-1.5 text-violeta-700 dark:text-violeta-100">
           <Sparkles className="size-3.5" aria-hidden /> {TITULO[p.tipo]}
         </p>
         {decidida && <Badge tom={p.status === "rejeitada" ? "bloqueado" : "ok"}>{p.status === "rejeitada" ? "Rejeitada" : "Gravado"}</Badge>}
       </header>
       <dl className="mt-3 grid gap-1.5 text-sm">
         {linhas(p).map(([campo, valor]) => (
-          <div key={campo} className={cn("flex items-baseline justify-between gap-3 rounded-sm px-1", incertos.has(campo) && "bg-sinal-atencao-bg dark:bg-sinal-atencao/10")}>
+          <div key={campo} className={cn("flex items-baseline justify-between gap-3 rounded-sm px-1", incertos.has(campo) && "border border-dashed border-coral-500 bg-coral-100/50 dark:bg-coral-700/15")}>
             <dt className="text-muted-foreground">{ROTULO_CAMPO[campo] ?? campo}</dt>
             <dd className="text-right font-medium">
               {valor}
               {incertos.has(campo) && (
-                <span className="ml-1.5 inline-flex items-center gap-0.5 text-xs font-semibold text-sinal-atencao-tx dark:text-sinal-atencao">
+                <span className="ml-1.5 inline-flex items-center gap-0.5 text-xs font-semibold text-coral-700 dark:text-coral-500">
                   <TriangleAlert className="size-3" aria-hidden /> confira
                 </span>
               )}
@@ -108,9 +109,13 @@ export function PropostaCard({
       {p.limitacao && <p className="mt-3 text-xs text-muted-foreground">{p.limitacao}</p>}
       {!decidida && (
         <div className="mt-4 flex gap-2">
-          <Button size="sm" className="flex-1" onClick={onConfirmar} carregando={ocupado}>
-            <Check aria-hidden /> Confirmar
-          </Button>
+          <span className="flex-1">
+            <Confirmacao>
+              <Button size="sm" className="w-full" onClick={onConfirmar} carregando={ocupado}>
+                <Check aria-hidden /> Confirmar
+              </Button>
+            </Confirmacao>
+          </span>
           <Button size="sm" variant="ghost" onClick={onRejeitar} disabled={ocupado}>
             <X aria-hidden /> Rejeitar
           </Button>
@@ -154,7 +159,7 @@ export function ContatoCard({
       </header>
       <ul className="flex flex-wrap gap-1.5" aria-label="Por que este cliente">
         {p.motivos.map((m) => (
-          <li key={m} className="rounded-full bg-violeta-50 px-2.5 py-0.5 text-xs font-medium text-violeta-700 dark:bg-violeta-900/50 dark:text-violeta-100">
+          <li key={m} className="rounded-sm border border-violeta-300/40 bg-violeta-50 px-2 py-0.5 text-xs font-medium text-violeta-700 dark:bg-violeta-900/50 dark:text-violeta-100">
             {m}
           </li>
         ))}

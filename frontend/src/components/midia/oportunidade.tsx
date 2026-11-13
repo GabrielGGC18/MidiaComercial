@@ -4,6 +4,7 @@ import type { Bloqueio, Evidencia, Oportunidade } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { numero, periodo } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { CartaoExploravel } from "./destaques";
 import { corBordaStatus, LimitationNote, SignalBadge, SourceChip } from "./sinais";
 
 export function EvidenceList({ evidencias }: { evidencias: Evidencia[] }) {
@@ -46,16 +47,19 @@ export function OpportunityCard({
   onDescartar,
   onDetalhes,
   indice = 0,
+  total,
 }: {
   oportunidade: Oportunidade;
   onCriarAcao: () => void;
   onDescartar: () => void;
   onDetalhes: () => void;
   indice?: number;
+  total?: number;
 }) {
   const sku = typeof o.alvo.sku === "string" ? o.alvo.sku : null;
   return (
-    <article
+    <CartaoExploravel
+      role="article"
       aria-labelledby={`op-${o.id}`}
       style={{ animationDelay: `${indice * 60}ms` }}
       className={cn(
@@ -63,9 +67,15 @@ export function OpportunityCard({
         corBordaStatus[o.status],
       )}
     >
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <p className="overline flex items-center gap-2 text-muted-foreground">
-          <span className="grid size-5 place-items-center rounded-full bg-violeta-50 text-[11px] font-bold text-violeta-700 dark:bg-violeta-900/60 dark:text-violeta-100">
+      {total && (
+        <span aria-hidden className="absolute right-4 top-3 font-display text-h1 font-extrabold leading-none text-tinta-200 tabular dark:text-tinta-800">
+          {o.prioridade}
+          <span className="text-sm font-bold">/{total}</span>
+        </span>
+      )}
+      <header className="flex flex-wrap items-center justify-between gap-2 pr-14">
+        <p className="sobretitulo flex items-center gap-2 text-muted-foreground">
+          <span className="grid size-5 place-items-center rounded-sm bg-violeta-50 text-[11px] font-bold text-violeta-700 dark:bg-violeta-900/60 dark:text-violeta-100">
             {o.prioridade}
           </span>
           <Barras nivel={4 - Math.min(3, o.prioridade)} />
@@ -79,7 +89,7 @@ export function OpportunityCard({
       </h3>
       {sku && <p className="font-mono text-xs font-medium text-muted-foreground">{sku}</p>}
 
-      <p className="overline mt-4 mb-2 text-muted-foreground">Evidência</p>
+      <p className="sobretitulo mt-4 mb-2 text-muted-foreground">Evidência</p>
       <EvidenceList evidencias={o.evidencias} />
 
       <LimitationNote texto={o.limitacao} className="mt-4" />
@@ -107,7 +117,7 @@ export function OpportunityCard({
           </Button>
         )}
       </footer>
-    </article>
+    </CartaoExploravel>
   );
 }
 

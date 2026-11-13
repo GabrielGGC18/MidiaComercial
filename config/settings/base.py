@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "apps.acoes",
     "apps.clientes",
     "apps.agente",
+    "apps.notificacoes",
 ]
 
 MIDDLEWARE = [
@@ -108,3 +109,8 @@ MIDIA_IA_PROVEDOR = env("MIDIA_IA_PROVEDOR", default="offline")  # offline | cla
 MIDIA_IA_API_KEY = env("MIDIA_IA_API_KEY", default="")
 MIDIA_IA_MODELO = env("MIDIA_IA_MODELO", default="")
 MIDIA_AGENTE_MAX_PASSOS = 6
+
+# Notificações (padrão Observer): na tela sempre; e-mail opcional
+NOTIFICACOES_EMAIL = env.bool("NOTIFICACOES_EMAIL", default=False)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="MidiaComercial <nao-responda@localhost>")
+EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")

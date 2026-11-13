@@ -145,27 +145,27 @@ export function DetalheDialog({
         {o && (
           <>
             <DialogHeader className="mb-0">
-              <p className="overline text-muted-foreground">{o.regra_nome}</p>
+              <p className="sobretitulo text-muted-foreground">{o.regra_nome}</p>
               <DialogTitle className="text-h2">{o.titulo}</DialogTitle>
               <div><SignalBadge status={o.status} /></div>
             </DialogHeader>
 
             <section className="rounded-md bg-violeta-50 p-4 dark:bg-violeta-900/30">
-              <p className="overline mb-2 flex items-center gap-1.5 text-violeta-700 dark:text-violeta-100">
+              <p className="sobretitulo mb-2 flex items-center gap-1.5 text-violeta-700 dark:text-violeta-100">
                 <Lightbulb className="size-3.5" aria-hidden /> Por que estamos sugerindo isso
               </p>
               <p className="text-sm leading-relaxed">{o.explicacao}</p>
             </section>
 
             <section>
-              <p className="overline mb-2 text-muted-foreground">Evidência</p>
+              <p className="sobretitulo mb-2 text-muted-foreground">Evidência</p>
               <EvidenceList evidencias={o.evidencias} />
             </section>
 
             <LimitationNote texto={o.limitacao} />
 
             <section className="text-sm">
-              <p className="overline mb-1 text-muted-foreground">Como medir</p>
+              <p className="sobretitulo mb-1 text-muted-foreground">Como medir</p>
               <p>{o.medicao_sugerida || "—"}</p>
             </section>
 

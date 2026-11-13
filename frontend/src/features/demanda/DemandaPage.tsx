@@ -36,7 +36,7 @@ export default function DemandaPage() {
         }
       />
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_20rem] [&>*]:min-w-0">
         <Card>
           <CardHeader>
             <CardTitle>Ranking por produto e variação</CardTitle>

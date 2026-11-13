@@ -15,15 +15,15 @@ export function CategoryBars({ dados, unidade }: { dados: CategoriaPublico[]; un
   return (
     <ul className="flex flex-col gap-2.5">
       {ordenado.map((c) => (
-        <li key={c.categoria} className="grid grid-cols-[7rem_1fr_auto] items-center gap-3 text-sm">
+        <li key={c.categoria} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 text-sm sm:grid-cols-[7rem_1fr_auto]">
           <span className="truncate font-medium">{c.categoria}</span>
-          <span className="h-6 overflow-hidden rounded-sm bg-muted">
+          <span className="col-span-2 row-start-2 h-5 overflow-hidden bg-muted sm:col-span-1 sm:row-start-auto sm:h-6">
             <span
-              className="block h-full rounded-sm bg-violeta-500 transition-all duration-500"
+              className="block h-full bg-violeta-500 transition-all duration-500"
               style={{ width: `${(valor(c) / max) * 100}%` }}
             />
           </span>
-          <span className="w-28 text-right tabular">
+          <span className="whitespace-nowrap text-right tabular sm:w-32">
             <strong>{unidade === "receita" ? moeda(valor(c)) : numero(valor(c))}</strong>{" "}
             <span className="text-xs text-muted-foreground">{pct((valor(c) / total) * 100)}</span>
           </span>
@@ -33,7 +33,8 @@ export function CategoryBars({ dados, unidade }: { dados: CategoriaPublico[]; un
   );
 }
 
-const ESCALA = ["#F1EEFF", "#A898FF", "#6D4AFF", "#2A1677"];
+// docs/08 §6(c): transparência do violeta: célula fraca nunca fica branca no tema escuro
+const ESCALA = [18, 40, 70, 100].map((n) => `color-mix(in oklab, var(--color-violeta-500) ${n}%, transparent)`);
 
 export function HeatmapWeek({
   celulas,
@@ -71,7 +72,7 @@ export function HeatmapWeek({
           <tbody>
             {dias.map((d) => (
               <tr key={d}>
-                <th scope="row" className="pr-1 text-left font-medium text-muted-foreground">
+                <th scope="row" className="sticky left-0 z-10 bg-card pr-1 text-left font-medium text-muted-foreground">
                   {DIAS_SEMANA[d]}
                 </th>
                 {horas.map((h) => {
@@ -79,7 +80,7 @@ export function HeatmapWeek({
                   return (
                     <td key={h} className="p-0">
                       <span
-                        className="block h-7 min-w-7 rounded-sm"
+                        className="block h-7 min-w-7"
                         style={{ background: cor(n) }}
                         title={`${DIAS_SEMANA[d]} ${h}h: ${n} pedidos`}
                       >
@@ -99,7 +100,7 @@ export function HeatmapWeek({
         <span className="flex items-center gap-1.5">
           Menos
           {ESCALA.map((c) => (
-            <span key={c} className="size-3.5 rounded-sm" style={{ background: c }} aria-hidden />
+            <span key={c} className="size-3.5" style={{ background: c }} aria-hidden />
           ))}
           Mais pedidos
         </span>

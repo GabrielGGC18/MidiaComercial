@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { mensagemErro } from "@/api/client";
 import { EmptyState } from "@/components/midia/estado";
+import { FundoGrade } from "@/components/midia/destaques";
 import { Logo } from "@/components/midia/marca";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,8 @@ export default function LojasPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-lg flex-col px-6 py-10">
+    <main className="relative isolate mx-auto flex min-h-dvh max-w-lg flex-col px-6 py-10">
+      <FundoGrade className="-z-10" />
       <div className="flex items-center justify-between">
         <Logo />
         <Button variant="ghost" size="sm" onClick={() => sair().then(() => nav("/login"))}>
@@ -45,7 +47,7 @@ export default function LojasPage() {
               type="button"
               onClick={() => abrir(l.id)}
               disabled={abrindo !== null}
-              className="flex w-full items-center gap-4 rounded-lg border border-border bg-card p-4 text-left shadow-sm transition-shadow hover:shadow-md disabled:opacity-60"
+              className="flex w-full items-center gap-4 rounded-lg border border-border bg-card p-4 text-left shadow-sm transition-shadow hover:shadow-bloco disabled:opacity-60"
             >
               <span className="grid size-11 place-items-center rounded-md bg-violeta-50 text-violeta-700 dark:bg-violeta-900/60 dark:text-violeta-100">
                 <Store className="size-5" aria-hidden />

@@ -75,6 +75,7 @@ def gerar(loja, fim: date | None = None) -> ExecucaoMotor:
     )
     selecionadas, bloqueios, status_regras = avaliar(ctx, excluir)
 
+    anteriores = {chave_alvo(o.regra, o.alvo) for o in Oportunidade.objects.da_loja(loja)}
     # nova execução substitui cartões abertos sem plano da execução anterior
     Oportunidade.objects.da_loja(loja).filter(
         plano__isnull=True, descartada_em__isnull=True
@@ -116,4 +117,21 @@ def gerar(loja, fim: date | None = None) -> ExecucaoMotor:
                 periodo_fim=e.periodo_fim,
                 amostra=e.amostra,
             )
+    _publicar_eventos(loja, ctx, selecionadas, status_regras, anteriores)
     return execucao
+
+
+def _publicar_eventos(loja, ctx, selecionadas, status_regras, anteriores) -> None:
+    from apps.notificacoes.eventos import ESTOQUE_DESATUALIZADO, OPORTUNIDADE_NOVA, publicar
+
+    nomes = {r.codigo: r.nome for r in REGRAS}
+    for op, status in selecionadas:
+        chave = chave_alvo(op.regra, op.alvo)
+        if status == "suficiente" and chave not in anteriores:
+            publicar(
+                OPORTUNIDADE_NOVA, loja, chave=f"op:{chave[0]}:{chave[1]}",
+                titulo=op.titulo, regra_nome=nomes[op.regra],
+            )  # fmt: skip
+    b = status_regras.get("B_POUCA_SAIDA", {})
+    if b.get("status") == "bloqueada" and ctx.estoque and not ctx.estoque_atualizado:
+        publicar(ESTOQUE_DESATUALIZADO, loja, chave="estoque", horas=int(ctx.idade_estoque_horas))

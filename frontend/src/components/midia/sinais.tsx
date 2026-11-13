@@ -30,7 +30,7 @@ export function SignalBadge({ status, motivo }: { status: StatusDados; motivo?: 
 
 const FONTES: Record<Fonte, { rotulo: string; Icone: typeof Store; cls: string }> = {
   demanda: { rotulo: "Balcão", Icone: Store, cls: "bg-coral-100 text-coral-700 dark:bg-coral-700/25 dark:text-coral-100" },
-  estoque: { rotulo: "Estoque", Icone: Boxes, cls: "bg-turquesa/12 text-[#0f766e] dark:text-turquesa" },
+  estoque: { rotulo: "Estoque", Icone: Boxes, cls: "bg-turquesa/12 text-turquesa-tx dark:text-turquesa" },
   vendas: { rotulo: "Vendas", Icone: Receipt, cls: "bg-violeta-50 text-violeta-700 dark:bg-violeta-900/50 dark:text-violeta-100" },
   acao: { rotulo: "Ação", Icone: Users, cls: "bg-info-bg text-info-tx dark:bg-info/15 dark:text-info" },
 };
@@ -38,7 +38,7 @@ const FONTES: Record<Fonte, { rotulo: string; Icone: typeof Store; cls: string }
 export function SourceChip({ fonte }: { fonte: Fonte }) {
   const f = FONTES[fonte];
   return (
-    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold", f.cls)}>
+    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-sm border border-current/15 px-2 py-0.5 text-xs font-semibold", f.cls)}>
       <f.Icone className="size-3.5" aria-hidden />
       {f.rotulo}
     </span>

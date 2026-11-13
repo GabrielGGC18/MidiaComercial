@@ -137,7 +137,46 @@ export default function ClientesPage() {
           <EmptyState titulo="Nenhum cliente encontrado" descricao="Ajuste os filtros ou importe sua planilha (CSV ou Excel)." />
         )}
         {!!lista.data?.length && (
-          <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <div className="hidden max-h-[70dvh] overflow-auto rounded-lg border border-border bg-card shadow-sm lg:block">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 z-10 bg-muted text-left text-xs text-muted-foreground">
+                <tr>
+                  {["Cliente", "Idade", "Tamanhos", "Compras", "Gasto", "Última", "Interesses", "Contato"].map((h) => (
+                    <th key={h} scope="col" className="sobretitulo whitespace-nowrap px-3 py-2">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {lista.data.map((c) => (
+                  <tr key={c.id} className="hover:bg-muted/50">
+                    <td className="px-3 py-2">
+                      <span className="block font-semibold">{c.nome || "Sem nome"}</span>
+                      <span className="font-mono text-[11px] text-muted-foreground">{c.ref}{c.whatsapp && ` · ${zap(c.whatsapp)}`}</span>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 tabular">{c.faixa_rotulo || "—"}</td>
+                    <td className="px-3 py-2">{c.tamanhos.join(", ") || "—"}</td>
+                    <td className="px-3 py-2 tabular">{numero(c.pedidos)}</td>
+                    <td className="whitespace-nowrap px-3 py-2 tabular">{moeda(c.gasto)}</td>
+                    <td className="whitespace-nowrap px-3 py-2 tabular">{c.ultima_compra ? data(c.ultima_compra) : "—"}</td>
+                    <td className="px-3 py-2 text-xs text-muted-foreground">{[...new Set([...c.categorias_compradas, ...c.categorias_interesse])].join(", ") || "—"}</td>
+                    <td className="whitespace-nowrap px-3 py-2">
+                      {c.consentimento_contato ? (
+                        <span className="flex items-center gap-2">
+                          <Badge tom={c.em_descanso ? "atencao" : "ok"}>{c.em_descanso ? "Em descanso" : "Autorizou"}</Badge>
+                          <button type="button" className="text-xs text-muted-foreground hover:text-erro-tx" onClick={() => sair.mutate(c.id)}>sair</button>
+                        </span>
+                      ) : (
+                        <Badge tom="bloqueado">Sem contato</Badge>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {!!lista.data?.length && (
+          <ul className="grid gap-3 md:grid-cols-2 lg:hidden">
             {lista.data.map((c) => (
               <li key={c.id} className="flex flex-col gap-2 rounded-lg border border-border bg-card p-4 shadow-sm">
                 <div className="flex items-start justify-between gap-2">
@@ -171,7 +210,7 @@ export default function ClientesPage() {
                 {(c.categorias_compradas.length > 0 || c.categorias_interesse.length > 0) && (
                   <div className="flex flex-wrap gap-1">
                     {[...new Set([...c.categorias_compradas, ...c.categorias_interesse])].map((k) => (
-                      <span key={k} className="rounded-full bg-muted px-2 py-0.5 text-[11px]">{k}</span>
+                      <span key={k} className="rounded-sm border border-border bg-muted px-2 py-0.5 text-[11px]">{k}</span>
                     ))}
                   </div>
                 )}

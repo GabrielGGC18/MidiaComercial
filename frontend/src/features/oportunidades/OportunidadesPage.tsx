@@ -7,7 +7,8 @@ import { api, mensagemErro } from "@/api/client";
 import { useChaveLoja } from "@/api/sessao";
 import type { Oportunidade, Painel } from "@/api/types";
 import { CardSkeleton, EmptyState, ErrorState, PageHeader } from "@/components/midia/estado";
-import { KpiTile } from "@/components/midia/KpiTile";
+import { KpiBloco, KpiTile } from "@/components/midia/KpiTile";
+import { AcaoPrincipal } from "@/components/midia/destaques";
 import { BlockedRuleRow, OpportunityCard } from "@/components/midia/oportunidade";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -39,6 +40,11 @@ export default function OportunidadesPage() {
     <>
       <PageHeader
         titulo="Oportunidades da semana"
+        destaque={
+          p && p.cartoes[0]
+            ? `${p.cartoes.length} de 3 prontas para decidir · comece por “${p.cartoes[0].titulo}”`
+            : undefined
+        }
         subtitulo={
           p ? (
             <>
@@ -58,12 +64,13 @@ export default function OportunidadesPage() {
       {q.isError && <ErrorState mensagem={mensagemErro(q.error)} onTentar={() => q.refetch()} />}
 
       {/* Faixa de KPIs */}
-      <section aria-label="Resumo da janela" className="grid gap-4 sm:grid-cols-3">
+      <KpiBloco colunas={3}>
         {q.isLoading || !qual ? (
-          [0, 1, 2].map((i) => <CardSkeleton key={i} linhas={1} />)
+          [0, 1, 2].map((i) => <CardSkeleton key={i} linhas={1} className="border-0 shadow-none" />)
         ) : (
           <>
             <KpiTile
+              embutido
               rotulo="Procuraram e não tinha"
               valor={qual.demandas_na_janela}
               periodo={janela}
@@ -72,6 +79,7 @@ export default function OportunidadesPage() {
               icone={<Search />}
             />
             <KpiTile
+              embutido
               rotulo="Receita da janela"
               valor={qual.receita_janela}
               formato="moeda"
@@ -81,6 +89,7 @@ export default function OportunidadesPage() {
               icone={<Wallet />}
             />
             <KpiTile
+              embutido
               rotulo="Ticket médio"
               valor={qual.ticket_medio}
               formato="moeda"
@@ -90,7 +99,7 @@ export default function OportunidadesPage() {
             />
           </>
         )}
-      </section>
+      </KpiBloco>
 
       {/* Qualidade dos dados */}
       {qual && (
@@ -112,6 +121,7 @@ export default function OportunidadesPage() {
           <OpportunityCard
             key={o.id}
             indice={i}
+            total={p.cartoes.length}
             oportunidade={o}
             onCriarAcao={() => setCriar(o)}
             onDescartar={() => setDescartar(o)}
@@ -124,7 +134,9 @@ export default function OportunidadesPage() {
             descricao="Isso pode ser bom sinal. Para a análise ficar mais rica, importe vendas recentes e peça ao balcão para registrar o que os clientes procuram e não encontram."
             acao={
               <div className="flex flex-wrap justify-center gap-2">
-                <Link to="/importar" className={buttonVariants({ variant: "secondary", size: "sm" })}>Importar dados</Link>
+                <AcaoPrincipal>
+                  <Link to="/importar" className={buttonVariants({ variant: "secondary", size: "sm" })}>Importar CSV</Link>
+                </AcaoPrincipal>
                 <Link to="/balcao" className={buttonVariants({ size: "sm" })}>Abrir balcão</Link>
               </div>
             }
@@ -134,7 +146,7 @@ export default function OportunidadesPage() {
 
       {p && p.bloqueios.length > 0 && (
         <section aria-label="Regras bloqueadas" className="mt-6 flex flex-col gap-2">
-          <p className="overline text-muted-foreground">O que não dá para calcular agora</p>
+          <p className="sobretitulo text-muted-foreground">O que não dá para calcular agora</p>
           {p.bloqueios.map((b) => (
             <BlockedRuleRow key={b.regra} bloqueio={b} />
           ))}
