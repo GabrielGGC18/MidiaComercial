@@ -112,10 +112,11 @@ export function Hero() {
         </h1>
 
         <p className="mt-6 max-w-xl text-[17px] leading-8 text-muted-foreground">
-          Para o <strong className="text-foreground">lojista do shopping</strong>: junte <strong className="text-foreground">o que vendeu</strong>,{" "}
-          <strong className="text-foreground">o que o cliente procurou e não levou</strong>, o <strong className="text-foreground">estoque parado</strong> e o{" "}
-          <strong className="text-foreground">seu público</strong> em até <strong className="text-foreground">3 decisões por semana</strong>. Com um agente que
-          encontra clientes e <strong className="text-foreground">aprovação humana</strong> em cada envio.
+          O MidiaComercial cruza <strong className="text-foreground">o que você vendeu</strong>,{" "}
+          <strong className="text-foreground">o que o cliente procurou e não encontrou</strong>, o <strong className="text-foreground">estoque parado</strong> e o{" "}
+          <strong className="text-foreground">seu público</strong>, e entrega até <strong className="text-foreground">3 decisões por semana</strong>, cada uma
+          com a evidência. O agente de vendas indica <strong className="text-foreground">quais clientes chamar e por quê</strong> e deixa a mensagem pronta:
+          você revisa e envia pelo WhatsApp.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3">

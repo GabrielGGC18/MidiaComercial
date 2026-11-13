@@ -44,11 +44,23 @@ export async function api<T>(url: string, init: RequestInit = {}): Promise<T> {
   }
   if (res.status === 204) return undefined as T;
   const tipo = res.headers.get("content-type") ?? "";
-  const corpo = tipo.includes("application/json") ? await res.json() : null;
+  const corpo = tipo.includes("application/json") ? await res.json().catch(() => null) : null;
   if (!res.ok) {
-    throw new ApiError(res.status, corpo ?? { detail: `Erro inesperado (${res.status}). Tente de novo.` });
+    // 5xx (servidor fora, proxy, timeout) ou resposta sem JSON: o visitante nunca vê o texto técnico
+    if (res.status >= 500 || !corpo?.detail) throw new ApiError(res.status, erroAmigavel(res.status, corpo?.codigo));
+    throw new ApiError(res.status, corpo);
   }
   return corpo as T;
+}
+
+function erroAmigavel(status: number, codigo?: string): ErroApiCorpo {
+  if (status === 503 || status === 502 || codigo === "indisponivel")
+    return { detail: "O sistema está em manutenção. Tente de novo em alguns minutos.", codigo: "indisponivel" };
+  if (status === 504) return { detail: "O servidor demorou para responder. Tente de novo.", codigo: "tempo_esgotado" };
+  if (status === 413) return { detail: "Arquivo grande demais. Envie um arquivo de até 20 MB.", codigo: "grande_demais" };
+  if (status === 429) return { detail: "Muitas tentativas. Espere um minuto e tente de novo.", codigo: "limite" };
+  if (status >= 500) return { detail: "Algo deu errado no servidor. Tente de novo em instantes.", codigo: "erro_servidor" };
+  return { detail: `Não foi possível concluir (erro ${status}). Tente de novo.` };
 }
 
 export const json = (dados: unknown) => JSON.stringify(dados);
