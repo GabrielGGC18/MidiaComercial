@@ -106,3 +106,33 @@ def test_agente_tem_limite_proprio(client, gerente):
     assert falar().status_code != 429
     assert falar().status_code != 429
     assert falar().status_code == 429
+
+
+@override_settings(MIDIA_LIMITE_LOGIN_IP="2/m")
+def test_x_real_ip_so_vale_vindo_de_proxy_confiavel(client):
+    token = _csrf(client)
+    # conexão de fora (não é proxy): trocar o X-Real-IP não escapa do limite
+    fora = {"ip": "203.0.113.5"}
+    assert _login(client, token, HTTP_X_REAL_IP="1.1.1.1", **fora).status_code != 429
+    assert _login(client, token, HTTP_X_REAL_IP="2.2.2.2", **fora).status_code != 429
+    assert _login(client, token, HTTP_X_REAL_IP="3.3.3.3", **fora).status_code == 429
+    # conexão do proxy (loopback): o X-Real-IP que ele sobrescreve identifica o cliente
+    assert _login(client, token, ip="127.0.0.1", HTTP_X_REAL_IP="4.4.4.4").status_code != 429
+
+
+@override_settings(MIDIA_LOGIN_MAX_FALHAS=100, MIDIA_LOGIN_MAX_FALHAS_CONTA=3)
+def test_conta_real_tem_limite_global_entre_ips(client, gerente):
+    token = _csrf(client)
+    for i in range(3):  # força bruta distribuída: cada falha de um IP diferente
+        assert _login(client, token, "limite", "errada", ip=f"10.1.0.{i}").status_code == 401
+    assert _login(client, token, "limite", "errada", ip="10.1.0.99").status_code == 429
+
+
+@override_settings(MIDIA_LOGIN_MAX_FALHAS=100, MIDIA_LOGIN_MAX_FALHAS_CONTA=3)
+def test_conta_demo_nao_tem_limite_global(client):
+    from apps.core.demo import USUARIOS_DEMO
+
+    token = _csrf(client)
+    demo = USUARIOS_DEMO[0]
+    for i in range(5):  # senha pública: bloquear globalmente só tiraria a banca da demo
+        assert _login(client, token, demo, "errada", ip=f"10.2.0.{i}").status_code == 401

@@ -128,6 +128,14 @@ MIDIA_LIMITE_LOGIN_IP = env("MIDIA_LIMITE_LOGIN_IP", default="30/m")
 # Falhas de senha por usuário + IP (só erro conta; acerto zera): evita trancar a demo pública
 MIDIA_LOGIN_MAX_FALHAS = env.int("MIDIA_LOGIN_MAX_FALHAS", default=10)
 MIDIA_LOGIN_JANELA_FALHAS = env.int("MIDIA_LOGIN_JANELA_FALHAS", default=300)  # segundos
+# Por conta, somando todos os IPs (força bruta distribuída). Não vale para contas da demo.
+MIDIA_LOGIN_MAX_FALHAS_CONTA = env.int("MIDIA_LOGIN_MAX_FALHAS_CONTA", default=30)
+MIDIA_LOGIN_JANELA_CONTA = env.int("MIDIA_LOGIN_JANELA_CONTA", default=900)  # segundos
+# Conexões de onde o X-Real-IP é confiável (proxy que SOBRESCREVE o cabeçalho): loopback
+# e redes Docker. De qualquer outra origem, vale o IP da conexão.
+MIDIA_PROXIES_CONFIAVEIS = env(
+    "MIDIA_PROXIES_CONFIAVEIS", default="127.0.0.1/32,::1/128,172.16.0.0/12"
+)
 # Segredo compartilhado com o middleware da Vercel (API_SEGREDO lá). Só com ele o IP do
 # cliente repassado pela Vercel é aceito; vazio = nunca confiar em IP repassado.
 MIDIA_PROXY_SEGREDO = env("MIDIA_PROXY_SEGREDO", default="")

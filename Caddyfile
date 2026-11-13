@@ -1,8 +1,9 @@
 # MidiaComercial: SPA + API no mesmo domínio (sem CORS). FRONTEND.md §8.4
 {$DOMINIO:localhost} {
     encode gzip zstd
-    handle /api/*    { reverse_proxy web:8000 }
-    handle /admin/*  { reverse_proxy web:8000 }
+    # X-Real-IP sobrescrito com o IP da conexão (o Django só confia nele vindo de proxy)
+    handle /api/*    { reverse_proxy web:8000 { header_up X-Real-IP {remote_host} } }
+    handle /admin/*  { reverse_proxy web:8000 { header_up X-Real-IP {remote_host} } }
     handle /static/* { reverse_proxy web:8000 }
     handle {
         root * /srv/frontend

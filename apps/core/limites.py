@@ -11,25 +11,45 @@ IP do cliente (`ip_cliente`): NUNCA vem do X-Forwarded-For, que o cliente pode f
 - Requisição que veio pelo middleware da Vercel traz `X-Midia-Proxy` com o segredo
   compartilhado (MIDIA_PROXY_SEGREDO) e `X-Midia-Cliente-Ip` com o IP que a Vercel viu.
   Só nesse caso o IP repassado é aceito.
-- Sem o segredo (chamada direta à API), vale o `X-Real-IP` que o nginx do host SOBRESCREVE
-  com o IP da conexão; sem nginx (dev), o REMOTE_ADDR.
+- Sem o segredo, o `X-Real-IP` só vale se a CONEXÃO vier de um proxy confiável
+  (MIDIA_PROXIES_CONFIAVEIS: nginx do host ou Caddy da rede Docker, que sobrescrevem o
+  cabeçalho). Conexão de qualquer outra origem: REMOTE_ADDR, sem olhar cabeçalho.
 
-Login: além do limite por IP (todas as tentativas), há um limite de FALHAS por
-usuário + IP. Só senha errada conta e o login certo zera. Assim ninguém tranca uma conta
-(ex.: a demo pública) errando a senha de propósito de outro IP.
+Login (só senha errada conta; o acerto zera):
+- por usuário + IP: ninguém tranca a conta de outra pessoa errando de outro IP;
+- por conta, somando todos os IPs (limite mais alto), contra força bruta distribuída.
+  Não vale para as contas da demo: a senha delas é pública (força bruta não faz
+  sentido) e bloqueá-las só serviria para tirar a banca da demo.
 """
 
 from __future__ import annotations
 
 import hashlib
 import hmac
+import ipaddress
+from functools import lru_cache
 
 from django.conf import settings
 from django.core.cache import cache
 from ninja.throttling import AnonRateThrottle, UserRateThrottle
 
 
+@lru_cache(maxsize=8)
+def _redes(texto: str) -> tuple:
+    faixas = (r.strip() for r in texto.split(","))
+    return tuple(ipaddress.ip_network(r, strict=False) for r in faixas if r)
+
+
+def _de_proxy_confiavel(remoto: str) -> bool:
+    try:
+        ip = ipaddress.ip_address(remoto)
+    except ValueError:
+        return False
+    return any(ip in rede for rede in _redes(settings.MIDIA_PROXIES_CONFIAVEIS))
+
+
 def ip_cliente(request) -> str:
+    remoto = request.META.get("REMOTE_ADDR") or ""
     segredo = getattr(settings, "MIDIA_PROXY_SEGREDO", "")
     if segredo:
         enviado = request.headers.get("X-Midia-Proxy", "")
@@ -37,7 +57,10 @@ def ip_cliente(request) -> str:
             ip = request.headers.get("X-Midia-Cliente-Ip", "").strip()
             if ip:
                 return ip[:64]
-    return (request.headers.get("X-Real-IP") or request.META.get("REMOTE_ADDR") or "")[:64]
+    real = request.headers.get("X-Real-IP", "").strip()
+    if real and _de_proxy_confiavel(remoto):
+        return real[:64]
+    return remoto[:64]
 
 
 class _TaxaDasSettings:
@@ -82,24 +105,46 @@ class LimiteImportacao(_TaxaDasSettings, UserRateThrottle):
 # ── falhas de login por usuário + IP ─────────────────────────────────────────
 
 
+def _hash(texto: str) -> str:
+    return hashlib.sha256(texto.encode()).hexdigest()[:32]
+
+
 def _chave_falhas(usuario: str, request) -> str:
-    base = f"{usuario.strip().lower()}|{ip_cliente(request)}"
-    return "login_falhas_" + hashlib.sha256(base.encode()).hexdigest()[:32]
+    return "login_falhas_" + _hash(f"{usuario.strip().lower()}|{ip_cliente(request)}")
+
+
+def _chave_falhas_conta(usuario: str) -> str:
+    return "login_falhas_conta_" + _hash(usuario.strip().lower())
+
+
+def _conta_demo(usuario: str) -> bool:
+    from apps.core.demo import USUARIOS_DEMO
+
+    return usuario.strip().lower() in {u.lower() for u in USUARIOS_DEMO}
 
 
 def login_bloqueado(usuario: str, request) -> bool:
-    return cache.get(_chave_falhas(usuario, request), 0) >= settings.MIDIA_LOGIN_MAX_FALHAS
+    if cache.get(_chave_falhas(usuario, request), 0) >= settings.MIDIA_LOGIN_MAX_FALHAS:
+        return True
+    if _conta_demo(usuario):
+        return False
+    return cache.get(_chave_falhas_conta(usuario), 0) >= settings.MIDIA_LOGIN_MAX_FALHAS_CONTA
 
 
-def registrar_falha_login(usuario: str, request) -> None:
-    chave = _chave_falhas(usuario, request)
+def _incrementar(chave: str, janela: int) -> None:
     # janela fixa: conta a partir da 1ª falha e expira sozinha
-    if not cache.add(chave, 1, timeout=settings.MIDIA_LOGIN_JANELA_FALHAS):
+    if not cache.add(chave, 1, timeout=janela):
         try:
             cache.incr(chave)
         except ValueError:  # expirou entre o add e o incr
-            cache.set(chave, 1, timeout=settings.MIDIA_LOGIN_JANELA_FALHAS)
+            cache.set(chave, 1, timeout=janela)
+
+
+def registrar_falha_login(usuario: str, request) -> None:
+    _incrementar(_chave_falhas(usuario, request), settings.MIDIA_LOGIN_JANELA_FALHAS)
+    if not _conta_demo(usuario):
+        _incrementar(_chave_falhas_conta(usuario), settings.MIDIA_LOGIN_JANELA_CONTA)
 
 
 def limpar_falhas_login(usuario: str, request) -> None:
-    cache.delete(_chave_falhas(usuario, request))
+    cache.delete_many([_chave_falhas(usuario, request), _chave_falhas_conta(usuario)])
