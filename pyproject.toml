@@ -21,7 +21,7 @@ dev = [
     "pytest>=8",
     "pytest-django>=4.9",
     "factory-boy>=3.3",
-    "ruff>=0.7",
+    "ruff==0.17.5",  # fixo: versão nova do ruff muda o formato e quebra o CI sem mudança de código
     "pre-commit>=4",
 ]
 
@@ -41,6 +41,10 @@ addopts = "-q"
 line-length = 100
 target-version = "py312"
 extend-exclude = ["**/migrations/*"]
+
+[tool.ruff.format]
+# docs/tasks trazem trechos ilustrativos em markdown: o formatador cuida só do código Python
+exclude = ["*.md"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "DJ"]
