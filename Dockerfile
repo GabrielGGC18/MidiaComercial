@@ -1,15 +1,22 @@
-# ── web: Django + Gunicorn (só /api e /admin) ───────────────────────────────
+# ── web: Django + Gunicorn (só /api, /admin e /static) ──────────────────────
 FROM python:3.12-slim AS web
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
 COPY pyproject.toml ./
-RUN pip install --no-cache-dir ".[dev]"
-COPY manage.py conftest.py ./
+# Só dependências de produção (pytest/ruff ficam fora da imagem; o CI instala .[dev] por conta própria)
+RUN pip install --no-cache-dir .
+COPY manage.py ./
 COPY config ./config
 COPY apps ./apps
-RUN DJANGO_SETTINGS_MODULE=config.settings.prod SECRET_KEY=build python manage.py collectstatic --noinput
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh  && DJANGO_SETTINGS_MODULE=config.settings.prod SECRET_KEY=build-only python manage.py collectstatic --noinput
+# Sem root. Na VPS o compose troca o uid/gid pelo do usuário `midiacomercial` do host
+# (precisa ler o socket da ponte do Hermes).
+RUN useradd --create-home --uid 10001 app && chown -R app /app
+USER app
 EXPOSE 8000
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "90", "--access-logfile", "-"]
 
 # ── frontend: build do React (Vite) ─────────────────────────────────────────
 FROM node:22-alpine AS frontend
