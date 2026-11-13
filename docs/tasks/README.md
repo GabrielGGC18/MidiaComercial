@@ -43,14 +43,14 @@ Base: [docs/10](../10-POS-VENDA-E-ADEQUACAO-A-PESQUISA.md). Foco: a pequena loja
 | Pessoa | Tasks |
 | --- | --- |
 | **Pessoa 1** | [PV-02](PV-02-mapeamento-de-colunas.md) · [PV-03](PV-03-catalogo-cor-tamanho.md) · [PV-04](PV-04-correcao-e-cancelamento-de-vendas.md) · [PV-09](PV-09-avisar-quando-chegar.md) (back) · [UX-02](UX-02-linguagem-de-loja.md) · [UX-04](UX-04-importacao-guiada.md) |
-| **Pessoa 2** | [PV-01](PV-01-mensagem-honesta.md) · [PV-05](PV-05-vinculo-de-cliente.md) · [PV-06](PV-06-relacoes-de-catalogo.md) (back) · [PV-07](PV-07-recomendacao-por-compra-recente.md) · [PV-10](PV-10-desfecho-e-medicao.md) (back) · [PV-11](PV-11-aceitacao-e-cenario-de-demo.md) · [UX-05](UX-05-primeiro-uso-e-estados-vazios.md) |
-| **Pessoa 3** | [PV-06](PV-06-relacoes-de-catalogo.md) (tela) · [PV-08](PV-08-cartoes-de-sugestao-e-historico.md) · [PV-10](PV-10-desfecho-e-medicao.md) (tela) · [UX-01](UX-01-inicio-hoje-e-menu-pela-rotina.md) · [UX-03](UX-03-balcao-em-tres-toques.md) |
+| **Pessoa 2** | [PV-01](PV-01-mensagem-honesta.md) · [PV-05](PV-05-vinculo-de-cliente.md) · [PV-06](PV-06-relacoes-de-catalogo.md) (back) · [PV-07](PV-07-recomendacao-por-compra-recente.md) · [PV-10](PV-10-desfecho-e-medicao.md) (back) · [PV-11](PV-11-aceitacao-e-cenario-de-demo.md) · [UX-05](UX-05-primeiro-uso-e-estados-vazios.md) · [UX-07](UX-07-detalhe-da-oportunidade.md) (back) |
+| **Pessoa 3** | [PV-06](PV-06-relacoes-de-catalogo.md) (tela) · [PV-08](PV-08-cartoes-de-sugestao-e-historico.md) · [PV-10](PV-10-desfecho-e-medicao.md) (tela) · [UX-01](UX-01-inicio-hoje-e-menu-pela-rotina.md) · [UX-03](UX-03-balcao-em-tres-toques.md) · [UX-07](UX-07-detalhe-da-oportunidade.md) (tela) |
 | **Gabriel + todos** | [PV-12](PV-12-conector-loja-piloto.md) (levantamento do sistema da loja) · [UX-06](UX-06-teste-com-lojista.md) (teste com lojista) |
 
 **Corte do hackathon:**
 
 1. **Bloqueios:** P1-01, P1-08, P1-02, P3-01 e **PV-01**.
-2. **Cenário completo do boné preto:** PV-02, PV-03, PV-06, PV-07, PV-08, UX-01, UX-02 e PV-11.
+2. **Cenário completo do boné preto:** PV-02, PV-03, PV-06, PV-07, PV-08, UX-01, UX-02, UX-07 e PV-11.
 3. **Se sobrar tempo:** PV-04, PV-05, UX-03, UX-04 e PV-09.
 4. **Depois do hackathon:** PV-10, UX-05, UX-06 e PV-12.
 
@@ -74,6 +74,7 @@ Dia 3  P1: UX-04 ─ PV-09(back)    P2: PV-05 ─ PV-10(back)            └─�
 | UX-01 | P3-01 e P3-02 |
 | UX-04 | PV-02 |
 | UX-05 | UX-01 |
+| UX-07 | UX-02 (termos); o passo 1, bug da data, não depende de nada |
 
 **Princípios que valem para todas** (resumo do docs/10 §4):
 
@@ -157,5 +158,6 @@ Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `
 | UX-04 | Pessoa 1 | ⬜ |
 | UX-05 | Pessoa 2 | ⬜ |
 | UX-06 | Todos | ⬜ |
+| UX-07 | Pessoa 3 + 2 | ⬜ |
 
 Legenda: ⬜ a fazer · 🟨 fazendo · 🟦 em revisão (PR aberto) · ✅ feito

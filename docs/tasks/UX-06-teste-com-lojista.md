@@ -32,7 +32,7 @@ Não ajude durante a tarefa. Peça para a pessoa **falar em voz alta** o que est
 ## Entrega
 
 - `docs/pesquisa/teste-usabilidade-<data>.md`: tabela de resultados + as 5 principais correções.
-- Uma task nova (UX-07 em diante) por correção que leve mais de 1 hora.
+- Uma task nova (UX-08 em diante) por correção que leve mais de 1 hora.
 
 ## Pronto quando
 

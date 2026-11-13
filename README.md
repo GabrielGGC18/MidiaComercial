@@ -42,7 +42,7 @@
 
 ---
 
-## 🎯 O desafio: Hackrun, tema 06 · Inteligência comercial para lojistas
+## 🎯 O desafio: Inteligência comercial para lojistas
 
 > **Contexto:** o shopping reúne estabelecimentos de diferentes segmentos, que atendem públicos com interesses e comportamentos variados.
 >
@@ -141,7 +141,7 @@ só os próprios dados, com isolamento por loja. Não é um painel da administra
 flowchart LR
     V["Voz ou texto<br/>(transcrição no navegador)"] --> M["Mascara telefone,<br/>CPF e e-mail"]
     M --> O["Orquestrador<br/>loja da sessão · ferramentas por papel · limite de passos"]
-    O --> P["Provedor<br/>offline (padrão) ou Claude"]
+    O --> P["Provedor<br/>offline (padrão) · Hermes/GPT (produção) · Claude"]
     P --> F["Ferramentas<br/>buscar_variante · propor_demanda · propor_cliente<br/>buscar_clientes · prospectar_produtos_em_baixa · resumo_publico"]
     F --> PR["Propostas pendentes<br/>(campos incertos destacados)"]
     PR -->|"pessoa confirma"| S["Mesmos services<br/>dos formulários"]
@@ -150,7 +150,7 @@ flowchart LR
 
 - **Propõe, não grava.** Toda escrita passa por `confirmar()`, com as mesmas validações da tela.
 - **Funciona sem internet.** O provedor offline entende frases como *"procurou calça jeans 42, uns 40 anos, não tinha"* ou *"quero vender a camisa parada"*.
-- **Claude é opcional** (`MIDIA_IA_PROVEDOR=claude`). Recebe só texto mascarado e agregados. Frases com nome de pessoa nunca saem do servidor.
+- **LLM opcional:** em produção, GPT pelo Hermes (`MIDIA_IA_PROVEDOR=hermes`, sem chave na aplicação); Claude também é suportado. O LLM recebe só texto mascarado e agregados. Frases com nome de pessoa nunca saem do servidor. Qualquer falha cai no offline. Detalhes em [docs/13](docs/13-AGENTE.md).
 - **Prospecção responsável:** só clientes que autorizaram contato, descanso de 14 dias, "Responda SAIR" em toda mensagem e medição de quem comprou em 14 dias.
 
 ## Notificações (padrão Observer)
@@ -289,8 +289,9 @@ Os testes cobrem:
 
 ## Deploy
 
-Plano oficial em **[`Deploy.md`](Deploy.md)**: frontend na Vercel e backend na VPS Hostinger (gunicorn + nginx + Postgres). Os
-próximos passos de design estão em **[`planejamento.md`](planejamento.md)**.
+Como está no ar em **[docs/14 · Deploy e operação](docs/14-DEPLOY-E-OPERACAO.md)**: front na Vercel, API em Docker na VPS
+Hostinger (nginx + Postgres), CI no GitHub Actions e CD que publica a `main` quando o CI passa. Os próximos passos de design
+estão em **[`planejamento.md`](planejamento.md)**.
 
 Alternativa com Docker (tudo na VPS):
 
