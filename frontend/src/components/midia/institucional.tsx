@@ -71,7 +71,7 @@ function CabecalhoSecao({ sobre, titulo, texto, id }: { sobre: string; titulo: s
   return (
     <div className="mx-auto max-w-2xl text-center">
       <p className="sobretitulo text-coral-700 dark:text-coral-500">{sobre}</p>
-      <h2 id={id} className="titulo-fino mt-2 font-display text-[clamp(1.8rem,3.6vw,2.75rem)] font-bold leading-tight">
+      <h2 id={id} className="titulo-secao mt-2">
         {titulo}
       </h2>
       {texto && <p className="mt-3 text-base leading-7 text-muted-foreground">{texto}</p>}

@@ -21,10 +21,10 @@ export function DialogContent({
   }[lado ?? "centro"];
   return (
     <D.Portal>
-      <D.Overlay className="fixed inset-0 z-50 bg-tinta-950/50 backdrop-blur-[2px] data-[state=open]:animate-[entrar_150ms_ease-out]" />
+      <D.Overlay className="fixed inset-0 z-sobre bg-tinta-950/50 backdrop-blur-[2px] data-[state=open]:animate-[entrar_150ms_ease-out]" />
       <D.Content
         className={cn(
-          "fixed z-50 overflow-y-auto border border-border bg-card p-6 text-card-foreground shadow-md data-[state=open]:animate-entrar",
+          "fixed z-dialogo overflow-y-auto border border-border bg-card p-6 text-card-foreground shadow-md data-[state=open]:animate-entrar",
           posicao,
           className,
         )}

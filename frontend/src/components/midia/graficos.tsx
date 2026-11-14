@@ -72,7 +72,7 @@ export function HeatmapWeek({
           <tbody>
             {dias.map((d) => (
               <tr key={d}>
-                <th scope="row" className="sticky left-0 z-10 bg-card pr-1 text-left font-medium text-muted-foreground">
+                <th scope="row" className="sticky left-0 z-conteudo bg-card pr-1 text-left font-medium text-muted-foreground">
                   {DIAS_SEMANA[d]}
                 </th>
                 {horas.map((h) => {

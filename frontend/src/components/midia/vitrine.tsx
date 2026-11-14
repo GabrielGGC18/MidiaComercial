@@ -41,21 +41,23 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
   return (
     <section className="-mt-[68px] px-3 pt-3" data-capitulo="noite">
       <div className="painel-noite relative isolate mx-auto w-full max-w-[1280px] overflow-hidden rounded-[28px] border border-white/10 text-white">
-        <FundoEstilhacos sempreEscuro className="absolute inset-x-0 top-0 -z-10 h-[560px] opacity-70" />
+        <div data-gsap="fundo" className="absolute inset-x-0 top-0 -z-10 h-[560px]">
+          <FundoEstilhacos sempreEscuro className="absolute inset-0 opacity-70" />
+        </div>
         <div className="px-3 pb-5 pt-28 sm:px-8 lg:px-12 lg:pt-32">
           <div className="mx-auto max-w-5xl text-center">
-            <p className="text-sm font-medium text-tinta-300">Inteligência comercial para lojas de moda e acessórios</p>
-            <h1 className="titulo-fino mt-4 font-display text-[clamp(2.2rem,5.4vw,4.25rem)] font-bold leading-[1.02] text-white">
+            <p data-gsap="sobe" className="text-sm font-medium text-tinta-300">Inteligência comercial para lojas de moda e acessórios</p>
+            <h1 className="titulo-hero mt-4 text-white">
               <TituloSubindo texto="Sua equipe fala." />
               <br />
               <span className="text-violeta-300">
                 <TituloSubindo texto="A loja ganha o próximo passo." atraso={180} />
               </span>
             </h1>
-            <p className="mx-auto mt-5 max-w-xl text-[17px] leading-7 text-tinta-300">
+            <p data-gsap="sobe" className="mx-auto mt-5 max-w-xl text-[17px] leading-7 text-tinta-300">
               Veja uma conversa no balcão virar registro, número da loja e uma ação que o vendedor revisa.
             </p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
+            <div data-gsap="sobe" className="mt-7 flex flex-wrap justify-center gap-3">
               <button
                 type="button"
                 onClick={onComecar}
@@ -72,7 +74,7 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
             </div>
           </div>
 
-          <div className="relative mt-12">
+          <div data-gsap="palco" className="relative mt-12">
             <span className="brilho-sinal pointer-events-none absolute left-1/2 top-1/4 -z-10 h-72 w-[min(90%,760px)] -translate-x-1/2" aria-hidden />
             {children}
           </div>
@@ -89,7 +91,7 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
   );
 }
 
-const TITULO_SECAO = "titulo-fino font-display text-[clamp(1.8rem,3.6vw,2.75rem)] font-bold leading-tight";
+const TITULO_SECAO = "titulo-secao";
 
 /** Bento de diferenciais: cartões altos, cada um com sua atmosfera (noite, estrias, raios). */
 export function Diferenciais() {
@@ -191,6 +193,11 @@ export function Caminhos({ onComecar }: { onComecar: () => void }) {
           <li>
             <Link to="/login" className={linha}>
               Sou lojista: entrar na minha loja {seta}
+            </Link>
+          </li>
+          <li>
+            <Link to="/apresentar" className={linha}>
+              Abrir o modo apresentação (pitch) {seta}
             </Link>
           </li>
           <li>

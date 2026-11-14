@@ -105,7 +105,7 @@ export default function Sino({ className, alinhar = "esquerda" }: { className?: 
           role="dialog"
           aria-label="Notificações"
           className={cn(
-            "absolute top-full z-50 mt-2 w-[min(22rem,calc(100vw-2rem))] animate-entrar rounded-lg border border-border bg-card shadow-md",
+            "absolute top-full z-sobre mt-2 w-[min(22rem,calc(100vw-2rem))] animate-entrar rounded-lg border border-border bg-card shadow-md",
             alinhar === "direita" ? "right-0" : "left-0",
           )}
         >

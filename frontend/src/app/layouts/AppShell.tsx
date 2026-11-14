@@ -108,14 +108,14 @@ export default function AppShell() {
   return (
     <div className="min-h-dvh">
       {me?.loja?.demo && <DemoRibbon />}
-      <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-card focus:p-2">
+      <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-aviso focus:rounded-md focus:bg-card focus:p-2">
         Pular para o conteúdo
       </a>
 
       {/* Sidebar desktop: 264 px, recolhe para 72 px */}
       <aside
         className={cn(
-          "fixed bottom-0 left-0 z-30 hidden flex-col border-r border-border bg-card transition-[width] duration-200 lg:flex",
+          "fixed bottom-0 left-0 z-fixo hidden flex-col border-r border-border bg-card transition-[width] duration-200 lg:flex",
           me?.loja?.demo ? "top-7" : "top-0",
           recolhida ? "w-[72px]" : "w-[264px]",
         )}
@@ -168,7 +168,7 @@ export default function AppShell() {
       </aside>
 
       {/* Header mobile */}
-      <header className={cn("sticky z-20 flex h-14 items-center justify-between border-b border-border bg-card/90 px-4 backdrop-blur lg:hidden", me?.loja?.demo ? "top-7" : "top-0")}>
+      <header className={cn("sticky z-barra flex h-14 items-center justify-between border-b border-border bg-card/90 px-4 backdrop-blur lg:hidden", me?.loja?.demo ? "top-7" : "top-0")}>
         <Logo />
         <div className="flex items-center gap-1">
           <span className="max-w-[40vw] truncate text-xs font-medium text-muted-foreground">{me?.loja?.nome}</span>
@@ -187,7 +187,7 @@ export default function AppShell() {
       </main>
 
       {/* Menu inferior mobile: Início, Demanda, Ações, Mais */}
-      <nav aria-label="Principal" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] lg:hidden">
+      <nav aria-label="Principal" className="fixed inset-x-0 bottom-0 z-fixo grid grid-cols-5 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] lg:hidden">
         {NAV_MOBILE.map(({ to, rotulo, Icone, fim }) => (
           <NavLink
             key={to}
@@ -212,7 +212,7 @@ export default function AppShell() {
         <button
           type="button"
           onClick={() => setIa(true)}
-          className="fixed bottom-20 right-4 z-30 inline-flex h-12 items-center gap-2 rounded-md bg-violeta-500 shadow-bloco px-4 max-sm:w-12 max-sm:justify-center max-sm:px-0 text-sm font-semibold text-white shadow-md hover:bg-violeta-600 lg:bottom-6 lg:right-6"
+          className="fixed bottom-20 right-4 z-fixo inline-flex h-12 items-center gap-2 rounded-md bg-violeta-500 shadow-bloco px-4 max-sm:w-12 max-sm:justify-center max-sm:px-0 text-sm font-semibold text-white shadow-md hover:bg-violeta-600 lg:bottom-6 lg:right-6"
         >
           <Sparkles className="size-4" aria-hidden /> <span className="max-sm:sr-only">Preencher com IA</span>
         </button>

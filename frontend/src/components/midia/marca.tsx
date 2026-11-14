@@ -37,7 +37,19 @@ export function Logo({ compacto, className }: { compacto?: boolean; className?: 
  * a linha de tendência é desenhada por cima e o ponto final "pulsa" (sinal chegando).
  * Com movimento reduzido, mostra a logo estática.
  */
-export function LogoAnimado({ className, compacto }: { className?: string; compacto?: boolean }) {
+export function LogoAnimado({
+  className,
+  compacto,
+  sobreEscuro = false,
+  classeNome,
+}: {
+  className?: string;
+  compacto?: boolean;
+  /** força cores claras (nav escura sobre qualquer tema) */
+  sobreEscuro?: boolean;
+  /** classes extras do nome (ex.: esconder em tela muito estreita) */
+  classeNome?: string;
+}) {
   const menos = useMenosMovimento();
   const a = (c: string) => (menos ? undefined : c);
   return (
@@ -53,7 +65,7 @@ export function LogoAnimado({ className, compacto }: { className?: string; compa
               pathLength={1}
               points="1,15 4.5,10 9,12.5 12,5.5 15.5,7.5 21.5,0.5"
               fill="none"
-              stroke="var(--color-foreground)"
+              stroke={sobreEscuro ? "#ffffff" : "var(--color-foreground)"}
               strokeOpacity={0.55}
               strokeWidth={0.9}
               strokeLinecap="square"
@@ -63,9 +75,16 @@ export function LogoAnimado({ className, compacto }: { className?: string; compa
           </>
         )}
       </svg>
-      <span className={cn("font-display font-extrabold tracking-tight", compacto ? "text-xl" : "text-2xl sm:text-3xl", a("logo-nome-revela"))} aria-hidden>
-        <span className={menos ? "text-violeta-500 dark:text-violeta-300" : "logo-brilho logo-brilho-midia"}>Mídia</span>
-        <span className={menos ? "text-foreground" : "logo-brilho logo-brilho-comercial"}>Comercial</span>
+      <span
+        className={cn("whitespace-nowrap font-display font-extrabold tracking-tight", compacto ? "text-lg sm:text-xl" : "text-2xl sm:text-3xl", a("logo-nome-revela"), classeNome)}
+        aria-hidden
+      >
+        <span className={cn(menos ? (sobreEscuro ? "text-violeta-300" : "text-violeta-500 dark:text-violeta-300") : "logo-brilho logo-brilho-midia", sobreEscuro && !menos && "logo-brilho-midia-escuro")}>
+          Mídia
+        </span>
+        <span className={cn(menos ? (sobreEscuro ? "text-white" : "text-foreground") : "logo-brilho logo-brilho-comercial", sobreEscuro && !menos && "logo-brilho-comercial-escuro")}>
+          Comercial
+        </span>
       </span>
       <span className="sr-only">MidiaComercial</span>
     </span>
@@ -76,7 +95,7 @@ export function DemoRibbon() {
   return (
     <div
       role="note"
-      className="sticky top-0 z-40 flex h-7 items-center justify-center gap-2 bg-violeta-900 text-[11px] font-semibold uppercase tracking-[0.08em] text-violeta-100"
+      className="sticky top-0 z-nav flex h-7 items-center justify-center gap-2 bg-violeta-900 text-[11px] font-semibold uppercase tracking-[0.08em] text-violeta-100"
     >
       <span className="size-1.5 animate-pulse rounded-full bg-coral-500" aria-hidden />
       Dados de demonstração
@@ -140,7 +159,7 @@ export function StoreSwitcher({
         <ul
           role="listbox"
           aria-label="Trocar de loja"
-          className="absolute bottom-full left-0 z-50 mb-2 w-64 rounded-md border border-border bg-card p-1 shadow-md animate-entrar"
+          className="absolute bottom-full left-0 z-sobre mb-2 w-64 rounded-md border border-border bg-card p-1 shadow-md animate-entrar"
         >
           {lojas.map((l) => (
             <li key={l.id}>

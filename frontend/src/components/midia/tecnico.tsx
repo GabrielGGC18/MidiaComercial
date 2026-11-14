@@ -8,7 +8,7 @@ import { indice, Revelar } from "./destaques";
 
 const SOBRE = "text-sm font-semibold text-coral-700 dark:text-coral-500 inline-flex items-center gap-2";
 const PONTO = <span className="size-2 rounded-full bg-coral-500" aria-hidden />;
-const TITULO = "titulo-fino font-display text-[clamp(1.9rem,3.8vw,3rem)] font-bold leading-[1.05]";
+const TITULO = "titulo-secao";
 
 /* ───────────── 1. camadas explodidas ───────────── */
 
@@ -76,7 +76,7 @@ export function FaixaFatos() {
         {FATOS.map((f, i) => (
           <div key={f.r} style={indice(i)} className="border-white/10 px-2 lg:border-l lg:first:border-0 lg:px-6">
             <p className="titulo-fino font-display text-5xl font-bold">
-              {f.v}
+              <span data-conta={f.v}>{f.v}</span>
               <span className="text-coral-500">.</span>
             </p>
             <p className="mt-1 text-sm leading-5 text-tinta-300">{f.r}</p>

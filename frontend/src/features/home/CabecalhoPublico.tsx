@@ -1,5 +1,6 @@
-// Navegação pública em pílula flutuante (ref. visual: nav central com ação branca em destaque).
-import { ArrowLeft, ChevronRight, LayoutDashboard, Menu, Moon, Sun, X } from "lucide-react";
+// Navegação pública: uma barra de vidro só (logo · seções · ações). O tom segue o capítulo que passa
+// por baixo e o tema: vidro escuro sobre seção escura, vidro claro sobre seção clara (tema claro).
+import { ArrowLeft, ChevronRight, LayoutDashboard, Menu, Moon, Presentation, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useAuth } from "@/api/sessao";
@@ -15,33 +16,34 @@ const LINKS = [
   { href: "#sobre", rotulo: "Quem somos" },
 ];
 
-const COR_CAPITULO: Record<string, string> = {
-  noite: "border-white/10 bg-tinta-950/80",
-  coral: "border-coral-500/50 bg-[#2a0f08]/85",
-  violeta: "border-violeta-300/40 bg-violeta-900/85",
-  claro: "border-white/15 bg-tinta-900/85",
+type Capitulo = "noite" | "coral" | "violeta" | "claro";
+
+/** Tom da barra por capítulo (escuro) e o vidro claro para seções claras no tema claro. */
+const TOM_ESCURO: Record<Capitulo, string> = {
+  noite: "border-white/10 bg-tinta-950/70",
+  coral: "border-coral-500/30 bg-[#1c0d0a]/80",
+  violeta: "border-violeta-300/25 bg-[#15123f]/80",
+  claro: "border-white/10 bg-tinta-950/80",
 };
+const TOM_CLARO = "border-tinta-200/80 bg-white/80";
 
-const BRANCO = "inline-flex h-10 items-center gap-1.5 rounded-xl bg-white px-4 text-sm font-semibold text-tinta-950 shadow-sm transition-colors hover:bg-tinta-50";
-
-/** Cabeçalho das páginas públicas: início (/) e login (/login). */
 export function CabecalhoPublico({ pagina }: { pagina: "inicio" | "login" }) {
   const { me } = useAuth();
   const { tema, alternar } = useTema();
   const [menu, setMenu] = useState(false);
-  const [capitulo, setCapitulo] = useState("noite");
+  const [capitulo, setCapitulo] = useState<Capitulo>("noite");
+  const IconeTema = tema === "escuro" ? Sun : Moon;
 
-  // A nav assume a cor do capítulo que está passando por baixo dela
+  // A barra assume o tom do capítulo que está passando por baixo dela
   useEffect(() => {
     if (pagina !== "inicio" || typeof IntersectionObserver === "undefined") return;
     const io = new IntersectionObserver(
-      (ents) => ents.forEach((e) => e.isIntersecting && setCapitulo((e.target as HTMLElement).dataset.capitulo ?? "noite")),
+      (ents) => ents.forEach((e) => e.isIntersecting && setCapitulo(((e.target as HTMLElement).dataset.capitulo as Capitulo) ?? "noite")),
       { rootMargin: "-40px 0px -92% 0px" },
     );
     document.querySelectorAll("[data-capitulo]").forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [pagina]);
-  const IconeTema = tema === "escuro" ? Sun : Moon;
 
   useEffect(() => {
     if (!menu) return;
@@ -50,42 +52,66 @@ export function CabecalhoPublico({ pagina }: { pagina: "inicio" | "login" }) {
     return () => window.removeEventListener("keydown", fechar);
   }, [menu]);
 
+  // vidro claro só sobre seção clara no tema claro (no login, segue o tema)
+  const claro = tema === "claro" && (pagina === "login" || capitulo === "claro");
+  const tom = claro ? TOM_CLARO : TOM_ESCURO[capitulo];
+  const texto = claro ? "text-tinta-900" : "text-white";
+  const link = claro ? "text-tinta-700 hover:bg-tinta-100 hover:text-tinta-950" : "text-tinta-200 hover:bg-white/10 hover:text-white";
+  const icone = claro
+    ? "border-tinta-200 bg-white text-tinta-700 hover:text-tinta-950"
+    : "border-white/10 bg-white/5 text-tinta-200 hover:bg-white/10 hover:text-white";
+  const principal = claro ? "bg-tinta-950 text-white hover:bg-tinta-800" : "bg-white text-tinta-950 hover:bg-tinta-50";
+  const botao = "inline-flex h-10 items-center gap-1.5 rounded-xl px-3.5 text-sm font-semibold transition-colors";
+
   const acao =
     pagina === "login" ? (
-      <Link to="/" className={BRANCO}>
+      <Link to="/" className={cn(botao, principal)}>
         <ArrowLeft className="size-4" aria-hidden /> Início
       </Link>
     ) : me ? (
-      <Link to={me.loja ? rotaInicial(me.papel) : "/lojas"} className={BRANCO}>
-        <LayoutDashboard className="size-4" aria-hidden /> Abrir painel
+      <Link to={me.loja ? rotaInicial(me.papel) : "/lojas"} className={cn(botao, principal)}>
+        <LayoutDashboard className="size-4" aria-hidden /> <span className="max-[380px]:sr-only">Abrir painel</span>
       </Link>
     ) : (
-      <Link to="/login" className={BRANCO}>
+      <Link to="/login" className={cn(botao, "gap-1 px-4", principal)}>
         Entrar <ChevronRight className="size-4" aria-hidden />
       </Link>
     );
 
   return (
-    <header className="sticky top-0 z-40 px-3 pt-3">
-      <div className="mx-auto flex h-14 w-full max-w-[1280px] items-center justify-between gap-3 rounded-2xl border border-white/10 bg-tinta-950/70 px-3 text-tinta-50 shadow-[0_10px_40px_-20px_rgb(0_0_0/0.8)] backdrop-blur-xl md:justify-center md:gap-2 md:border-0 md:bg-transparent md:shadow-none md:backdrop-blur-0">
-        <Link to="/" aria-label="MidiaComercial, página inicial" className="rounded-xl md:mr-1 md:grid md:size-10 md:place-items-center md:bg-tinta-950/80 md:backdrop-blur-xl">
-          <LogoAnimado compacto />
+    <header className="sticky top-0 z-nav px-3 pt-3">
+      <div
+        className={cn(
+          "mx-auto flex h-14 w-full max-w-[1280px] items-center gap-2 rounded-2xl border pl-3 pr-2 shadow-[0_10px_40px_-22px_rgb(0_0_0/0.7)] backdrop-blur-xl transition-colors duration-500 sm:pl-4",
+          tom,
+          texto,
+        )}
+      >
+        <Link to="/" aria-label="MidiaComercial, página inicial" className="flex min-w-0 shrink-0 items-center rounded-lg pr-1">
+          <LogoAnimado compacto sobreEscuro={!claro} classeNome="max-[359px]:hidden" />
         </Link>
+
         {pagina === "inicio" && (
-          <nav aria-label="Seções" className={cn("hidden h-10 items-center rounded-xl border p-1 text-sm font-medium backdrop-blur-xl transition-colors duration-500 md:flex", COR_CAPITULO[capitulo] ?? COR_CAPITULO.noite)}>
+          <nav aria-label="Seções" className="mx-auto hidden items-center gap-0.5 text-sm font-medium lg:flex">
             {LINKS.map((l) => (
-              <a key={l.href} href={l.href} className="rounded-lg px-3.5 py-1.5 text-tinta-300 transition-colors hover:bg-white/10 hover:text-white">
+              <a key={l.href} href={l.href} className={cn("rounded-lg px-3.5 py-2 transition-colors", link)}>
                 {l.rotulo}
               </a>
             ))}
           </nav>
         )}
-        <div className="flex items-center gap-2">
+
+        <div className={cn("ml-auto flex shrink-0 items-center gap-1.5", pagina === "inicio" && "lg:ml-0")}>
+          {pagina === "inicio" && (
+            <Link to="/apresentar" className={cn("hidden h-10 items-center gap-1.5 rounded-xl px-3 text-sm font-medium transition-colors xl:inline-flex", link)}>
+              <Presentation className="size-4" aria-hidden /> Apresentar
+            </Link>
+          )}
           {acao}
           <button
             type="button"
             onClick={alternar}
-            className="grid size-10 place-items-center rounded-xl border border-white/10 bg-tinta-950/80 text-tinta-300 backdrop-blur-xl hover:text-white"
+            className={cn("size-10 place-items-center rounded-xl border transition-colors", pagina === "inicio" ? "hidden sm:grid" : "grid", icone)}
             aria-label={tema === "escuro" ? "Usar tema claro" : "Usar tema escuro"}
           >
             <IconeTema className="size-4" />
@@ -96,7 +122,7 @@ export function CabecalhoPublico({ pagina }: { pagina: "inicio" | "login" }) {
               onClick={() => setMenu((v) => !v)}
               aria-expanded={menu}
               aria-controls="menu-publico"
-              className="grid size-10 place-items-center rounded-xl border border-white/10 bg-tinta-950/80 text-tinta-100 md:hidden"
+              className={cn("grid size-10 place-items-center rounded-xl border transition-colors lg:hidden", icone)}
               aria-label={menu ? "Fechar menu" : "Abrir menu"}
             >
               {menu ? <X className="size-4" /> : <Menu className="size-4" />}
@@ -104,18 +130,44 @@ export function CabecalhoPublico({ pagina }: { pagina: "inicio" | "login" }) {
           )}
         </div>
       </div>
+
       {menu && (
-        <nav id="menu-publico" aria-label="Seções" className="mx-auto mt-2 w-full max-w-[1280px] rounded-2xl border border-white/10 bg-tinta-950/95 p-2 text-tinta-50 backdrop-blur-xl md:hidden">
+        <nav
+          id="menu-publico"
+          aria-label="Seções"
+          className={cn(
+            "mx-auto mt-2 w-full max-w-[1280px] rounded-2xl border p-2 shadow-lg backdrop-blur-xl lg:hidden",
+            claro ? "border-tinta-200 bg-white/95 text-tinta-900" : "border-white/10 bg-tinta-950/95 text-white",
+          )}
+        >
           {LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setMenu(false)}
-              className={cn("flex h-12 items-center justify-between border-b border-white/10 px-3 text-base last:border-0")}
+              className={cn(
+                "flex h-12 items-center justify-between rounded-lg border-b px-3 text-base last:border-0",
+                claro ? "border-tinta-100 hover:bg-tinta-50" : "border-white/10 hover:bg-white/5",
+              )}
             >
-              {l.rotulo} <ChevronRight className="size-4 text-tinta-300" aria-hidden />
+              {l.rotulo} <ChevronRight className={cn("size-4", claro ? "text-tinta-500" : "text-tinta-300")} aria-hidden />
             </a>
           ))}
+          <Link
+            to="/apresentar"
+            onClick={() => setMenu(false)}
+            className={cn("flex h-12 items-center justify-between rounded-lg border-b px-3 text-base", claro ? "border-tinta-100 hover:bg-tinta-50" : "border-white/10 hover:bg-white/5")}
+          >
+            Modo apresentação <Presentation className="size-4" aria-hidden />
+          </Link>
+          {/* no celular, o tema fica aqui para a barra caber em 320 px */}
+          <button
+            type="button"
+            onClick={alternar}
+            className={cn("flex h-12 w-full items-center justify-between rounded-lg px-3 text-base sm:hidden", claro ? "hover:bg-tinta-50" : "hover:bg-white/5")}
+          >
+            {tema === "escuro" ? "Usar tema claro" : "Usar tema escuro"} <IconeTema className="size-4" aria-hidden />
+          </button>
         </nav>
       )}
     </header>

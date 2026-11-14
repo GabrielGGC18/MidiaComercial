@@ -1,4 +1,4 @@
-/* Mídia UI: Design System do MidiaComercial (FRONTEND.md §4) */
+/* Mídia UI 2: Design System do MidiaComercial (docs/18-DESIGN-SYSTEM-V2.md; base em FRONTEND.md §4) */
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -10,25 +10,33 @@
 
   --color-violeta-50: #f1eeff;
   --color-violeta-100: #e2dcff;
+  --color-violeta-200: #c9bfff;
   --color-violeta-300: #a898ff;
+  --color-violeta-400: #8a70ff;
   --color-violeta-500: #6d4aff;
   --color-violeta-600: #5b35f0;
   --color-violeta-700: #4a27c9;
+  --color-violeta-800: #391e9e;
   --color-violeta-900: #2a1677;
 
   --color-coral-100: #ffe6dc;
+  --color-coral-300: #ffa98c;
   --color-coral-500: #ff6a3d;
+  --color-coral-600: #e8552b;
   --color-coral-700: #c9461e;
 
   --color-tinta-50: #f7f8fc;
   --color-tinta-100: #eef1f7;
   --color-tinta-200: #dde2ee;
   --color-tinta-300: #b9c0d4;
+  --color-tinta-400: #8e98b4;
   --color-tinta-500: #64708f;
+  --color-tinta-600: #485477;
   --color-tinta-700: #2f3a5f;
   --color-tinta-800: #1e2747;
   --color-tinta-900: #121933;
   --color-tinta-950: #0b1020;
+  --color-noite: #04060d; /* topo dos painéis escuros */
 
   /* semânticas: cor / fundo / texto */
   --color-sinal-ok: #12b76a;
@@ -64,18 +72,24 @@
   --color-ring: var(--ring);
   --color-destructive: var(--destructive);
 
-  /* geometria reta (docs/08 §3.1): antes 6 / 10 / 14 / 20 */
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
-  --radius-xl: 8px;
+  /* Mídia UI 2: uma escala de raio só, da etiqueta ao painel (antes: geometria reta 2/4/6/8) */
+  --radius-sm: 6px;   /* etiqueta, chip, foco */
+  --radius-md: 10px;  /* botão, campo */
+  --radius-lg: 14px;  /* cartão */
+  --radius-xl: 16px;  /* cartão grande, diálogo */
+  --radius-2xl: 20px;
+  --radius-3xl: 28px; /* painel de seção */
 
-  /* sombra "dura", deslocada: combina com cantos retos */
-  --shadow-xs: 0 1px 0 rgb(18 25 51 / 0.06);
-  --shadow-sm: 0 1px 0 rgb(18 25 51 / 0.08), 0 0 0 1px rgb(18 25 51 / 0.02);
-  --shadow-md: 4px 4px 0 -1px rgb(18 25 51 / 0.10);
-  --shadow-bloco: 3px 3px 0 0 var(--color-violeta-500);
+  /* elevação suave (antes: sombra dura deslocada) */
+  --shadow-xs: 0 1px 2px rgb(11 16 32 / 0.05);
+  --shadow-sm: 0 1px 2px rgb(11 16 32 / 0.06), 0 2px 6px -2px rgb(11 16 32 / 0.06);
+  --shadow-md: 0 4px 14px -4px rgb(11 16 32 / 0.12), 0 2px 4px -2px rgb(11 16 32 / 0.06);
+  --shadow-lg: 0 18px 40px -16px rgb(11 16 32 / 0.28);
+  --shadow-bloco: 0 0 0 1px var(--color-violeta-500), 0 10px 30px -12px rgb(109 74 255 / 0.45);
   --shadow-foco: 0 0 0 3px rgb(109 74 255 / 0.35);
+
+  /* pontos de quebra: 320 é o mínimo suportado; conferir em 320 · 375 · 768 · 1024 · 1440 */
+  --breakpoint-xs: 400px;
 
   --text-display: 36px;
   --text-display--line-height: 44px;
@@ -121,6 +135,7 @@
   --chart-4: #f5b700;
   --chart-5: #2e90fa;
   --chart-6: #d444f1;
+  --altura-nav: 68px; /* barra pública: 56 px + 12 px de respiro */
   color-scheme: light;
 }
 
@@ -138,7 +153,11 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { -webkit-text-size-adjust: 100%; }
+  /* âncoras nunca param embaixo da barra fixa; nada estoura a largura da tela */
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--altura-nav) + 16px); }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+  h1, h2, h3, h4, p, li, dd, dt { overflow-wrap: break-word; }
+  img, svg, video, canvas { max-width: 100%; }
   body {
     background: var(--color-background);
     color: var(--color-foreground);
@@ -149,7 +168,7 @@
   }
   h1, h2, h3 { font-family: var(--font-display); }
   :focus-visible { outline: none; box-shadow: var(--shadow-foco); border-radius: var(--radius-sm); }
-  .dark { --shadow-md: 4px 4px 0 -1px rgb(0 0 0 / 0.45); }
+  .dark { --shadow-md: 0 6px 18px -6px rgb(0 0 0 / 0.6); --shadow-lg: 0 20px 44px -16px rgb(0 0 0 / 0.7); }
   ::selection { background: var(--color-violeta-100); color: var(--color-violeta-900); }
 }
 
@@ -212,6 +231,8 @@
 }
 .logo-brilho-midia { background-image: linear-gradient(110deg, var(--color-violeta-500) 40%, var(--color-coral-500) 50%, var(--color-violeta-500) 60%); }
 .logo-brilho-comercial { background-image: linear-gradient(110deg, var(--color-foreground) 40%, var(--color-violeta-300) 50%, var(--color-foreground) 60%); }
+.logo-brilho-midia-escuro, .dark .logo-brilho-midia-escuro { background-image: linear-gradient(110deg, var(--color-violeta-300) 40%, var(--color-coral-500) 50%, var(--color-violeta-300) 60%) !important; }
+.logo-brilho-comercial-escuro { background-image: linear-gradient(110deg, #ffffff 40%, var(--color-violeta-300) 50%, #ffffff 60%) !important; }
 .dark .logo-brilho-midia { background-image: linear-gradient(110deg, var(--color-violeta-300) 40%, var(--color-coral-500) 50%, var(--color-violeta-300) 60%); }
 @keyframes logo-brilho { 0% { background-position: 100% 0; } 18%, 100% { background-position: -100% 0; } }
 
@@ -334,3 +355,32 @@
   .pilha[data-revelar="grupo"][data-visivel] > * { opacity: 1; transform: none; }
   .pilha-camada:hover { transform: perspective(900px) rotateX(56deg) rotateZ(-36deg) translateZ(14px); transition: transform 0.3s; }
 }
+
+/* GSAP (MovimentoLanding): estado inicial escondido só enquanto o módulo carrega; .sem-gsap é a saída de emergência */
+@media (prefers-reduced-motion: no-preference) {
+  .com-gsap [data-gsap="sobe"], .com-gsap [data-gsap="palco"] { visibility: hidden; }
+}
+
+/* ── Mídia UI 2: camadas, layout e tipografia fluida (docs/18) ─────────────────────────────────
+   Camadas: use SEMPRE estes nomes, nunca z-[número] solto. Ordem de baixo para cima. */
+@utility z-conteudo { z-index: 10; }  /* decoração/elemento acima do fluxo dentro de um cartão */
+@utility z-fixo { z-index: 30; }      /* sidebar, barra inferior, cabeçalho de tabela preso */
+@utility z-nav { z-index: 40; }       /* barra de navegação pública */
+@utility z-sobre { z-index: 50; }     /* fundo de sobreposição (overlay) */
+@utility z-dialogo { z-index: 60; }   /* diálogo, gaveta, palco em tela cheia */
+@utility z-aviso { z-index: 70; }     /* toast */
+
+/* largura de conteúdo e painel de seção */
+@utility conteudo { margin-inline: auto; width: 100%; max-width: 1280px; }
+@utility painel { border-radius: var(--radius-3xl); border-width: 1px; overflow: hidden; }
+@utility secao-pad { padding: 3.5rem 1.25rem; @media (width >= 40rem) { padding: 4rem 2.5rem; } @media (width >= 64rem) { padding: 4rem 3.5rem; } }
+
+/* títulos fluidos: um só lugar para o tamanho (nada de clamp repetido nas telas) */
+@utility titulo-hero { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.1rem, 5.4vw, 4.25rem); line-height: 1.03; letter-spacing: -0.035em; text-wrap: balance; }
+@utility titulo-secao { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.75rem, 3.8vw, 3rem); line-height: 1.06; letter-spacing: -0.035em; text-wrap: balance; }
+@utility titulo-cartao { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.4rem, 2.6vw, 2.2rem); line-height: 1.1; letter-spacing: -0.03em; }
+
+/* áreas seguras do celular (entalhe, barra de gestos) para barras fixas */
+@utility seguro-topo { padding-top: max(0.75rem, env(safe-area-inset-top)); }
+@utility seguro-base { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+@utility z-barra { z-index: 20; }     /* cabeçalho preso dentro do conteúdo (abaixo da sidebar) */

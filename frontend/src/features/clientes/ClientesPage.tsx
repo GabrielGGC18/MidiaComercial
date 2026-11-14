@@ -146,7 +146,7 @@ export default function ClientesPage() {
         {!!lista.data?.length && (
           <div className="hidden max-h-[70dvh] overflow-auto rounded-lg border border-border bg-card shadow-sm lg:block">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 z-10 bg-muted text-left text-xs text-muted-foreground">
+              <thead className="sticky top-0 z-conteudo bg-muted text-left text-xs text-muted-foreground">
                 <tr>
                   {["Cliente", "Idade", "Tamanhos", "Compras", "Gasto", "Última", "Interesses", "Contato"].map((h) => (
                     <th key={h} scope="col" className="sobretitulo whitespace-nowrap px-3 py-2">{h}</th>

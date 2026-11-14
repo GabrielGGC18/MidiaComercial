@@ -18,6 +18,7 @@ const AcoesPage = lazy(() => import("@/features/acoes/AcoesPage"));
 const AcaoDetalhePage = lazy(() => import("@/features/acoes/AcaoDetalhePage"));
 const ClientesPage = lazy(() => import("@/features/clientes/ClientesPage"));
 const AgentePage = lazy(() => import("@/features/agente/AgentePage"));
+const PitchPage = lazy(() => import("@/features/pitch/PitchPage"));
 
 const s = (el: React.ReactNode) => (
   <Suspense fallback={<div className="grid gap-4"><CardSkeleton /><CardSkeleton /></div>}>{el}</Suspense>
@@ -27,6 +28,8 @@ export const router = createBrowserRouter([
   // Públicas: página inicial em "/" e login em "/login"
   { path: "/", element: <HomePage /> },
   { path: "/login", element: <LoginPage /> },
+  // Modo apresentação (pitch): os capítulos da página inicial em slides de tela cheia
+  { path: "/apresentar", element: s(<PitchPage />) },
   {
     element: <RequireLogin />,
     children: [{ path: "/lojas", element: <LojasPage /> }],

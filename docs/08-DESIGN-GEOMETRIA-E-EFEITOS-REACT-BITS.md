@@ -338,3 +338,5 @@ A página inicial (`/`) ganhou um palco que mostra uma venda fictícia em 6 cap�
 | **Movimento reduzido e celular** | Avanço manual por padrão; no celular, abas "Resultado" e "Conversa" |
 
 **Atualização (v0.5):** o percurso principal virou "balcão por voz" (áudio com onda real e confirmação explícita) e entrou o fundo Aero Shards em Canvas 2D (sem WebGPU). Detalhes e decisões em [docs/17](17-DESIGN-DA-APRESENTACAO.md).
+
+**Atualização (v0.6, 13/11):** por decisão do Gabriel, o GSAP passou a ser permitido (pacotes `gsap` e `@gsap/react`; skills oficiais em `.claude/skills/gsap-*`) e a "geometria reta" foi substituída pela escala de raios do Mídia UI 2. O que vale agora está no [docs/18](18-DESIGN-SYSTEM-V2.md). As linhas deste documento que proíbem o GSAP ou pedem cantos de 2 a 8 px ficam como histórico.

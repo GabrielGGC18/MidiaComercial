@@ -90,9 +90,9 @@ function Resultado({ e, r }: { e: EstadoBalcao; r: Relogio }) {
   const dados = DIAS.map((d, i) => ({ dia: d, n: e.procuras[i] ?? 0 }));
 
   return (
-    <div className="flex flex-col gap-4">
+    <motion.div layout className="flex flex-col gap-4">
       {/* 1. Registro: aparece enquanto o assistente confere */}
-      <section aria-label="Registro da procura" className={cn("rounded-xl border bg-card p-4 transition-colors", e.foco === "proposta" || e.foco === "confirmar" ? "border-violeta-500/60" : "border-border")}>
+      <motion.section layout transition={{ layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }} aria-label="Registro da procura" className={cn("rounded-xl border bg-card p-4 transition-colors", e.foco === "proposta" || e.foco === "confirmar" ? "border-violeta-500/60" : "border-border")}>
         <div className="mb-1 flex items-center justify-between gap-2">
           <p className="text-sm font-semibold">Procura no balcão</p>
           {e.registrado ? (
@@ -117,12 +117,12 @@ function Resultado({ e, r }: { e: EstadoBalcao; r: Relogio }) {
             </Button>
           </motion.div>
         )}
-      </section>
+      </motion.section>
 
       {/* 2. Número e gráfico: só depois de registrado */}
       <AnimatePresence>
         {e.registrado && (
-          <motion.section {...surge} aria-label="Procuras desse item" className={cn("rounded-xl border bg-card p-4", e.foco === "registro" || e.foco === "grafico" ? "border-violeta-500/60" : "border-border")}>
+          <motion.section layout {...surge} aria-label="Procuras desse item" className={cn("rounded-xl border bg-card p-4", e.foco === "registro" || e.foco === "grafico" ? "border-violeta-500/60" : "border-border")}>
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="text-sm text-muted-foreground">Procuras sem estoque · últimos 7 dias</p>
@@ -158,7 +158,7 @@ function Resultado({ e, r }: { e: EstadoBalcao; r: Relogio }) {
       {/* 3. Decisão */}
       <AnimatePresence>
         {e.foco === "decisao" && (
-          <motion.section {...surge} aria-label="O que fazer" className="rounded-xl border border-l-[3px] border-border border-l-coral-500 bg-card p-4">
+          <motion.section layout {...surge} aria-label="O que fazer" className="rounded-xl border border-l-[3px] border-border border-l-coral-500 bg-card p-4">
             <p className="sobretitulo text-muted-foreground">Falta no estoque</p>
             <p className="mt-1 font-display text-lg font-bold">Repor calça jeans azul 42?</p>
             <p className="mt-2 text-sm"><span className="font-semibold">O que fazer:</span> conferir o estoque físico e consultar o fornecedor antes de comprar.</p>
@@ -186,7 +186,7 @@ function Resultado({ e, r }: { e: EstadoBalcao; r: Relogio }) {
           </motion.section>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
 

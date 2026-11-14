@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ComoFunciona, RodapeLogin, SobreNos } from "@/components/midia/institucional";
 import { BlocosProduto, CamadasProduto, FaixaFatos, FeitoParaAuditar, FluxoTresColunas } from "@/components/midia/tecnico";
 import { EscadaProblema, SemanaNaLoja } from "@/components/midia/capitulos";
@@ -6,6 +6,8 @@ import { Caminhos, Diferenciais, Hero, PainelSecao } from "@/components/midia/vi
 import { CabecalhoPublico } from "./CabecalhoPublico";
 
 // Palco animado (motion + recharts) carrega depois do texto; a área fica reservada (ANIMACAO-Tela §19)
+// Coreografia GSAP (ScrollTrigger): módulo separado, carrega depois do texto
+const MovimentoLanding = lazy(() => import("@/components/efeitos/MovimentoLanding"));
 const ApresentacaoProduto = lazy(() => import("@/features/apresentacao/ApresentacaoProduto"));
 
 function PalcoReservado() {
@@ -24,12 +26,22 @@ function PalcoReservado() {
  */
 export default function HomePage() {
   const [pedidoInicio, setPedidoInicio] = useState(0);
+  const raiz = useRef<HTMLDivElement>(null);
+  // "com-gsap" esconde a abertura até a coreografia assumir; se o módulo não chegar em 3 s, mostra tudo
+  const [esperaGsap, setEsperaGsap] = useState(true);
+  useEffect(() => {
+    const t = window.setTimeout(() => setEsperaGsap(false), 3000);
+    return () => window.clearTimeout(t);
+  }, []);
   const comecar = () => {
     setPedidoInicio((n) => n + 1);
     document.getElementById("percurso")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
   return (
-    <div className="relative isolate min-h-dvh overflow-x-clip bg-background pb-3">
+    <div ref={raiz} className={`relative isolate min-h-dvh overflow-x-clip bg-background pb-3 ${esperaGsap ? "com-gsap" : ""}`}>
+      <Suspense fallback={null}>
+        <MovimentoLanding alvo={raiz} />
+      </Suspense>
       <CabecalhoPublico pagina="inicio" />
       <main id="topo">
         <Hero onComecar={comecar}>

@@ -72,15 +72,15 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
 
   return (
     <>
-      {ampliado && <div className="fixed inset-0 z-40 bg-tinta-950/85 backdrop-blur-sm" aria-hidden onClick={fecharAmpliado} />}
+      {ampliado && <div className="fixed inset-0 z-sobre bg-tinta-950/85 backdrop-blur-sm" aria-hidden onClick={fecharAmpliado} />}
       <section
         ref={palco}
         id="percurso"
         aria-label="Demonstração do MídiaComercial"
         onKeyDown={teclas}
         className={cn(
-          "scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-background/90 shadow-[0_30px_80px_-30px_rgb(11_16_32/0.6)] backdrop-blur",
-          ampliado && "fixed inset-3 z-50 overflow-y-auto bg-background sm:inset-6",
+          "scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-background/90 text-foreground shadow-[0_30px_80px_-30px_rgb(11_16_32/0.6)] backdrop-blur",
+          ampliado && "fixed inset-3 z-dialogo overflow-y-auto bg-background sm:inset-6",
         )}
       >
         <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border px-4 py-3">
