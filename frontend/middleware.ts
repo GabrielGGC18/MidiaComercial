@@ -62,12 +62,21 @@ export function limparSegredo(bruto: string | undefined): string {
     .trim();
 }
 
+/** API_ORIGEM apontando para o próprio front (ou outro deploy da Vercel) não é a API: o
+ * proxy cairia num 404 da Vercel sem explicação. */
+export function apontaParaVercel(base: URL, requisicao: URL): boolean {
+  return base.host === requisicao.host || base.hostname.endsWith(".vercel.app");
+}
+
 export default function middleware(request: Request): Response {
   const base = normalizarOrigem(process.env.API_ORIGEM);
   if (!base) {
     return indisponivel(process.env.API_ORIGEM ? "API_ORIGEM em formato inválido (use https://dominio-da-api)" : "API_ORIGEM não definida");
   }
   const url = new URL(request.url);
+  if (apontaParaVercel(base, url)) {
+    return indisponivel(`API_ORIGEM aponta para a Vercel (${base.host}), não para a API na VPS`);
+  }
   const destino = new URL(url.pathname + url.search, base);
   try {
     const cabecalhos = new Headers(request.headers);
