@@ -58,6 +58,7 @@ export const ITEM = { produto: "Calça jeans", cor: "Azul", tamanho: "42", motiv
 // Procuras do item nos últimos 7 dias (fixture). O 6º registro entra hoje, uma vez só.
 export const DIAS = ["08/11", "09/11", "10/11", "11/11", "12/11", "13/11", "14/11"];
 export const PROCURAS_ANTES = [1, 0, 1, 0, 2, 1, 0];
-export const SALDO_INFORMADO = { valor: 0, importadoEm: "ontem, 18h" };
+// Dado fictício do estoque: vem da planilha que a loja envia (não há conexão direta com o caixa)
+export const SALDO_INFORMADO = { valor: 0, importadoEm: "ontem, 18h", produto: "Calça jeans azul 42", origem: "Planilha de estoque" };
 
 export const LIMITACAO = "São 6 atendimentos, não 6 compradores diferentes nem 6 vendas garantidas.";

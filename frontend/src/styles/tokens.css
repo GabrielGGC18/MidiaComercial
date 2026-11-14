@@ -393,12 +393,10 @@
   background-size: 200% 100%; animation: rodape-linha 6s linear infinite;
 }
 @keyframes rodape-linha { to { background-position: -200% 0; } }
-.rodape-letreiro {
-  font-size: clamp(5rem, 24vw, 19rem); letter-spacing: -0.05em; margin-bottom: -0.12em;
-  color: transparent; -webkit-text-stroke: 1px rgb(255 255 255 / 0.14);
-  background: linear-gradient(110deg, transparent 42%, rgb(182 255 59 / 0.55) 50%, transparent 58%) 100% 0 / 250% 100% no-repeat;
-  -webkit-background-clip: text; background-clip: text;
-  animation: rodape-brilho 7s ease-in-out infinite;
+.rodape-faixa {
+  background: linear-gradient(105deg, transparent 42%, rgb(255 255 255 / 0.95) 50%, transparent 58%) 100% 0 / 250% 100% no-repeat;
+  mix-blend-mode: overlay;
+  animation: rodape-brilho 6s ease-in-out infinite;
 }
 @keyframes rodape-brilho { 0% { background-position: 100% 0; } 60%, 100% { background-position: -100% 0; } }
 
