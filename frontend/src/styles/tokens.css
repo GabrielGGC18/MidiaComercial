@@ -378,3 +378,29 @@
 @utility seguro-topo { padding-top: max(0.75rem, env(safe-area-inset-top)); }
 @utility seguro-base { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
 @utility z-barra { z-index: 20; }     /* cabeçalho preso dentro do conteúdo (abaixo da sidebar) */
+
+/* ── Prévia do filme (components/midia/filme.tsx) e rodapé: entrada com foco, luz que varre e letreiro ── */
+.filme-entra { animation: filme-entra 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes filme-entra { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.filme-varre { background: linear-gradient(100deg, transparent, rgb(182 255 59 / 0.16), transparent); animation: filme-varre 0.9s ease-out both; }
+@keyframes filme-varre { from { transform: translateX(0); } to { transform: translateX(420%); } }
+.filme-pisca { animation: filme-pisca 1s steps(2) infinite; }
+@keyframes filme-pisca { 50% { opacity: 0.2; } }
+.filme-aura { background: radial-gradient(closest-side, rgb(139 92 246 / 0.3), transparent); animation: filme-aura 9s ease-in-out infinite alternate; }
+@keyframes filme-aura { to { transform: translate(-60px, 50px) scale(1.15); } }
+.rodape-linha {
+  background: linear-gradient(90deg, transparent, var(--color-violeta-500), var(--color-neon-500), var(--color-violeta-500), transparent);
+  background-size: 200% 100%; animation: rodape-linha 6s linear infinite;
+}
+@keyframes rodape-linha { to { background-position: -200% 0; } }
+.rodape-letreiro {
+  font-size: clamp(5rem, 24vw, 19rem); letter-spacing: -0.05em; margin-bottom: -0.12em;
+  color: transparent; -webkit-text-stroke: 1px rgb(255 255 255 / 0.14);
+  background: linear-gradient(110deg, transparent 42%, rgb(182 255 59 / 0.55) 50%, transparent 58%) 100% 0 / 250% 100% no-repeat;
+  -webkit-background-clip: text; background-clip: text;
+  animation: rodape-brilho 7s ease-in-out infinite;
+}
+@keyframes rodape-brilho { 0% { background-position: 100% 0; } 60%, 100% { background-position: -100% 0; } }
+
+/* Demonstração em tela cheia: ancestrais com transformação deixariam o `fixed` preso dentro deles */
+[data-solto] { transform: none !important; filter: none !important; perspective: none !important; backdrop-filter: none !important; will-change: auto !important; isolation: auto !important; z-index: auto !important; contain: none !important; opacity: 1 !important; visibility: visible !important; mask-image: none !important; clip-path: none !important; }

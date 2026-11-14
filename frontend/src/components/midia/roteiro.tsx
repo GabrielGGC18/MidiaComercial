@@ -10,9 +10,6 @@ import { DURACAO_FILME, FilmeAnimado } from "./filme";
 const PAINEL = "mx-auto w-full max-w-[1280px] overflow-hidden rounded-[28px] border px-5 py-14 sm:px-10 lg:px-14 lg:py-20";
 const ETIQUETA = "text-xs font-semibold uppercase tracking-[0.14em]";
 const TITULO = "titulo-secao";
-const CARTAO = "flex min-w-0 flex-col gap-3 rounded-[20px] border border-border bg-card p-5 sm:p-6";
-const ACAO =
-  "mt-auto inline-flex h-11 items-center gap-2 self-start rounded-xl border border-border bg-background px-4 text-sm font-semibold transition-colors hover:border-violeta-400 hover:text-violeta-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violeta-300 dark:hover:text-violeta-300";
 const SELO = "inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground";
 
 const RANKING = [
@@ -110,58 +107,75 @@ export function FilmeProduto({ onExplorar }: { onExplorar: () => void }) {
   );
 }
 
-/* ───────────── Foto 1 · cinco cards: uma ideia, um exemplo, uma ação ───────────── */
+/* ───────────── Foto 1 · cinco passos ligados por uma linha (diagrama simples) ───────────── */
 
-function CartaoConferencia({ onVerDemo }: { onVerDemo: () => void }) {
+function Passo({ n, titulo, texto, ultimo = false, children }: { n: number; titulo: string; texto: string; ultimo?: boolean; children: React.ReactNode }) {
+  return (
+    <li style={indice(n - 1)} className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-3 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-x-5">
+      {/* trilho: número e a linha que leva ao próximo passo */}
+      <div className="flex flex-col items-center" aria-hidden>
+        <span className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-violeta-500 bg-background font-display text-base font-bold text-violeta-600 sm:size-12 sm:text-lg dark:text-violeta-300">
+          {n}
+        </span>
+        {!ultimo && <span className="my-1 w-0.5 flex-1 rounded-full bg-gradient-to-b from-violeta-500 to-violeta-500/15" />}
+      </div>
+      <article className={cn("grid min-w-0 items-center gap-4 rounded-[20px] border border-border bg-card p-5 sm:p-6 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:gap-8", !ultimo && "mb-4")}>
+        <div className="min-w-0">
+          <h3 className="text-xl font-semibold leading-tight">
+            <span className="sr-only">Passo {n}: </span>
+            {titulo}
+          </h3>
+          <p className="mt-1.5 text-[15px] leading-6 text-muted-foreground">{texto}</p>
+        </div>
+        <div className="min-w-0">{children}</div>
+      </article>
+    </li>
+  );
+}
+
+function ExemploConferencia() {
   const [tamanho, setTamanho] = useState("42");
   const [editando, setEditando] = useState(false);
   const [confirmado, setConfirmado] = useState(false);
   const mini = "inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-medium hover:border-violeta-400";
   return (
-    <article className={cn(CARTAO, "md:col-span-1 lg:col-span-6")}>
-      <h3 className="text-xl font-semibold">Confira antes de registrar</h3>
-      <p className="text-[15px] leading-6 text-muted-foreground">Você pode ajustar o que foi entendido e confirmar quando estiver certo.</p>
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background p-3">
-        <label htmlFor="conf-tamanho" className="text-sm text-muted-foreground">
-          Tamanho:
-        </label>
-        {editando ? (
-          <select
-            id="conf-tamanho"
-            value={tamanho}
-            autoFocus
-            onChange={(e) => {
-              setTamanho(e.target.value);
-              setEditando(false);
-              setConfirmado(false);
-            }}
-            className="h-9 rounded-lg border border-border bg-card px-2 text-sm font-semibold"
-          >
-            {["40", "42", "44"].map((t) => (
-              <option key={t}>{t}</option>
-            ))}
-          </select>
-        ) : (
-          <span id="conf-tamanho" className="tabular text-base font-semibold">
-            {tamanho}
-          </span>
-        )}
-        <span className="ml-auto flex flex-wrap gap-2">
-          <button type="button" className={mini} onClick={() => setEditando(true)}>
-            <Pencil className="size-3.5" aria-hidden /> Corrigir
-          </button>
-          <button type="button" className={cn(mini, confirmado && "border-sinal-ok text-sinal-ok-tx dark:text-sinal-ok")} onClick={() => setConfirmado(true)}>
-            <Check className="size-3.5" aria-hidden /> Confirmar
-          </button>
-        </span>
-        <p className="w-full text-xs text-muted-foreground" aria-live="polite">
-          {confirmado ? "Confirmado na demonstração. Nada foi gravado." : "Aguardando conferência · exemplo local"}
-        </p>
-      </div>
-      <button type="button" className={ACAO} onClick={onVerDemo}>
-        Experimentar a conferência <Seta />
-      </button>
-    </article>
+    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background p-3">
+      <span className="rounded-lg bg-muted/60 px-2.5 py-1 text-sm font-semibold">Calça jeans</span>
+      <span className="rounded-lg bg-muted/60 px-2.5 py-1 text-sm font-semibold">Azul</span>
+      <label htmlFor="conf-tamanho" className="sr-only">
+        Tamanho
+      </label>
+      {editando ? (
+        <select
+          id="conf-tamanho"
+          value={tamanho}
+          autoFocus
+          onChange={(e) => {
+            setTamanho(e.target.value);
+            setEditando(false);
+            setConfirmado(false);
+          }}
+          className="h-8 rounded-lg border border-border bg-card px-2 text-sm font-semibold"
+        >
+          {["40", "42", "44"].map((t) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
+      ) : (
+        <span className="tabular rounded-lg bg-violeta-500/15 px-2.5 py-1 text-sm font-semibold">Tam. {tamanho}</span>
+      )}
+      <span className="ml-auto flex flex-wrap gap-2">
+        <button type="button" className={mini} onClick={() => setEditando(true)}>
+          <Pencil className="size-3.5" aria-hidden /> Corrigir
+        </button>
+        <button type="button" className={cn(mini, confirmado && "border-sinal-ok text-sinal-ok-tx dark:text-sinal-ok")} onClick={() => setConfirmado(true)}>
+          <Check className="size-3.5" aria-hidden /> Confirmar
+        </button>
+      </span>
+      <p className="w-full text-xs text-muted-foreground" aria-live="polite">
+        {confirmado ? "Confirmado na demonstração. Nada foi gravado." : "Experimente: corrija o tamanho e confirme · exemplo local"}
+      </p>
+    </div>
   );
 }
 
@@ -169,39 +183,25 @@ export function GradeBeneficios({ onVerDemo }: { onVerDemo: () => void }) {
   return (
     <div className="px-3 pt-3" data-capitulo="claro">
       <section id="diferenciais" aria-labelledby="dif-titulo" className={cn(PAINEL, "painel-secao scroll-mt-24 border-border")}>
-        <div className="max-w-2xl">
+        <div className="max-w-3xl">
           <p className={cn(ETIQUETA, "text-violeta-600 dark:text-violeta-300")}>Como ajuda</p>
           <h2 id="dif-titulo" className={cn(TITULO, "mt-2")}>
-            Da conversa ao próximo passo.
+            O “não tinha” de hoje vira a <span className="text-violeta-600 dark:text-neon-500">decisão de amanhã.</span>
           </h2>
-          <p className="mt-3 text-lg leading-7 text-muted-foreground">Veja o que sua equipe pode registrar, conferir e acompanhar na rotina da loja.</p>
+          <p className="mt-3 text-lg leading-7 text-muted-foreground">Cinco passos simples, do balcão ao resultado.</p>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-12">
-          {/* A · conversa (principal) */}
-          <article className={cn(CARTAO, "md:col-span-2 lg:col-span-7 lg:row-span-2")}>
-            <h3 className="text-[22px] font-semibold leading-tight">Fale do seu jeito</h3>
-            <p className="text-[15px] leading-6 text-muted-foreground">Uma frase do balcão pode virar um registro que a equipe consegue conferir.</p>
-            <div className="my-2 flex flex-1 flex-col justify-center gap-3 rounded-2xl bg-[radial-gradient(120%_90%_at_80%_0%,rgb(109_74_255/0.16),transparent_60%)] p-2 text-base leading-7 sm:p-4 lg:text-lg">
-              <p className="max-w-[88%] self-end rounded-2xl rounded-tr-sm bg-violeta-600 px-4 py-2.5 text-white">
-                <Mic className="mr-1.5 inline size-4 align-[-2px]" aria-hidden />
-                “Procuraram calça jeans azul, tamanho 42, e não tinha.”
-              </p>
-              <p className="max-w-[88%] self-start rounded-2xl rounded-tl-sm border border-border bg-background px-4 py-2.5">“Calça jeans azul, 42. Item indisponível. Confere?”</p>
-              <p className="flex flex-wrap items-center gap-2 pt-1 text-sm">
-                <span className="rounded-lg border border-border bg-background px-2.5 py-1 font-semibold">Calça jeans · Azul · 42</span>
-                <span className="text-muted-foreground">Aguardando conferência</span>
-              </p>
-            </div>
-            <button type="button" className={ACAO} onClick={onVerDemo}>
-              Ver essa conversa <Seta />
-            </button>
-          </article>
-
-          {/* B · o que ficou faltando */}
-          <article className={cn(CARTAO, "lg:col-span-5")}>
-            <h3 className="text-xl font-semibold">Veja o que ficou faltando</h3>
-            <p className="text-[15px] leading-6 text-muted-foreground">As procuras registradas aparecem juntas, com produto e variação.</p>
+        <Revelar modo="grupo" as="ol" className="mt-10">
+          <Passo n={1} titulo="Fale do seu jeito" texto="O vendedor conta o que o cliente procurou, com as próprias palavras.">
+            <p className="max-w-[34ch] rounded-2xl rounded-tl-sm bg-violeta-600 px-4 py-2.5 text-base leading-6 text-white">
+              <Mic className="mr-1.5 inline size-4 align-[-2px]" aria-hidden />
+              “Procuraram calça jeans azul, tamanho 42, e não tinha.”
+            </p>
+          </Passo>
+          <Passo n={2} titulo="A IA preenche, você confere" texto="O agente monta o registro sozinho. Você só corrige, se precisar, e confirma.">
+            <ExemploConferencia />
+          </Passo>
+          <Passo n={3} titulo="Veja o que ficou faltando" texto="As procuras aparecem juntas, por produto e tamanho.">
             <ol className="flex flex-col gap-1.5 text-sm">
               {RANKING.map((r, i) => (
                 <li key={r.nome} className={cn("flex items-center justify-between gap-3 rounded-lg px-3 py-2", i === 0 ? "bg-violeta-500/10 font-semibold" : "bg-muted/60")}>
@@ -213,51 +213,34 @@ export function GradeBeneficios({ onVerDemo }: { onVerDemo: () => void }) {
                 </li>
               ))}
             </ol>
-            <p className="text-xs text-muted-foreground">Exemplo fictício · últimos 7 dias</p>
-            <button type="button" className={ACAO} onClick={onVerDemo}>
-              Ver as procuras <Seta />
-            </button>
-          </article>
-
-          {/* C · o próximo passo */}
-          <article className={cn(CARTAO, "lg:col-span-5")}>
-            <h3 className="text-xl font-semibold">Escolha o próximo passo</h3>
-            <p className="text-[15px] leading-6 text-muted-foreground">Entenda por que uma sugestão apareceu e escolha o que fazer.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Exemplo fictício · últimos 7 dias</p>
+          </Passo>
+          <Passo n={4} titulo="Escolha o próximo passo" texto="A sugestão vem com o motivo. Quem decide é você.">
             <ul className="flex flex-col divide-y divide-border rounded-xl border border-border text-sm">
-              <li className="px-3 py-2">6 procuras registradas</li>
-              <li className="px-3 py-2">Saldo informado: 0</li>
+              <li className="px-3 py-2">6 procuras registradas · saldo informado: 0</li>
               <li className="flex items-start gap-2 px-3 py-2 font-semibold">
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-coral-500" aria-hidden /> Sugestão: conferir o estoque e consultar o fornecedor
+                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-coral-500" aria-hidden /> Conferir o estoque e consultar o fornecedor
               </li>
             </ul>
-            <button type="button" className={ACAO} onClick={onVerDemo}>
-              Entender a sugestão <Seta />
-            </button>
-          </article>
-
-          {/* D · conferência editável (estado local) */}
-          <CartaoConferencia onVerDemo={onVerDemo} />
-
-          {/* E · contexto */}
-          <article className={cn(CARTAO, "md:col-span-1 lg:col-span-6")}>
-            <h3 className="text-xl font-semibold">Acompanhe com contexto</h3>
-            <p className="text-[15px] leading-6 text-muted-foreground">Veja o período e a origem dos dados antes de escolher uma ação.</p>
-            <ul className="flex flex-col gap-2 text-sm">
-              <li className="flex items-center gap-2.5">
+          </Passo>
+          <Passo n={5} ultimo titulo="Acompanhe o resultado" texto="Cada ação tem responsável e prazo. Depois, a loja compara o antes e o depois.">
+            <ul className="flex flex-wrap gap-2 text-sm">
+              <li className="inline-flex items-center gap-2 rounded-lg bg-muted/60 px-3 py-2">
                 <CalendarDays className="size-4 shrink-0 text-violeta-500" aria-hidden /> Últimos 7 dias
               </li>
-              <li className="flex items-center gap-2.5">
+              <li className="inline-flex items-center gap-2 rounded-lg bg-muted/60 px-3 py-2">
                 <FileText className="size-4 shrink-0 text-violeta-500" aria-hidden /> Estoque informado às 09h
               </li>
-              <li className="flex items-center gap-2.5">
-                <ListChecks className="size-4 shrink-0 text-violeta-500" aria-hidden /> Ação: conferir disponibilidade
+              <li className="inline-flex items-center gap-2 rounded-lg bg-muted/60 px-3 py-2">
+                <ListChecks className="size-4 shrink-0 text-violeta-500" aria-hidden /> Ação aberta
               </li>
             </ul>
-            <button type="button" className={ACAO} onClick={onVerDemo}>
-              Ver um plano de ação <Seta />
-            </button>
-          </article>
-        </div>
+          </Passo>
+        </Revelar>
+
+        <button type="button" onClick={onVerDemo} className="mt-8 inline-flex h-12 items-center gap-2 rounded-xl bg-violeta-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-violeta-700 sm:ml-[4.25rem]">
+          Ver os cinco passos funcionando <Seta />
+        </button>
       </section>
     </div>
   );
@@ -270,6 +253,29 @@ const MOMENTOS = [
   { rotulo: "Depois do expediente", sobre: "Resumo da semana", texto: "6 procuras registradas nesta semana.", apoio: "Calça jeans azul 42 · últimos 7 dias · saldo informado 0." },
   { rotulo: "Na próxima decisão", sobre: "Ação aberta", texto: "Conferir o estoque e consultar o fornecedor.", apoio: "Responsável: gerente · prazo: 7 dias (ilustrativos)." },
 ];
+
+const RELATORIOS = [
+  {
+    periodo: "7 dias",
+    titulo: "Relatório da semana",
+    linhas: [
+      ["Receita", "R$ 12.800"],
+      ["Ticket médio", "R$ 160"],
+      ["O que mais vendeu", "Calças"],
+      ["Mais procurado sem estoque", "Calça jeans azul 42"],
+    ],
+  },
+  {
+    periodo: "30 dias",
+    titulo: "Relatório do mês",
+    linhas: [
+      ["Dia e horário mais forte", "Sábado, 10–12h"],
+      ["Quem mais compra", "25 a 34 anos"],
+      ["Clientes que voltaram", "2 ou mais compras"],
+      ["Fase do mês que mais vende", "Início do mês"],
+    ],
+  },
+] as const;
 
 export function RotinaLoja({ onVerDemo }: { onVerDemo: () => void }) {
   const [sel, setSel] = useState(1);
@@ -321,6 +327,33 @@ export function RotinaLoja({ onVerDemo }: { onVerDemo: () => void }) {
               </p>
             </div>
           </div>
+        </div>
+        {/* relatórios: o que a loja recebe pronto, sem digitar */}
+        <div className="mt-10 grid gap-4 border-t border-white/10 pt-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="min-w-0">
+            <h3 className="font-display text-2xl font-bold leading-tight tracking-tight">
+              Relatório da semana e do mês, <span className="text-neon-500">pronto.</span>
+            </h3>
+            <p className="mt-3 text-base leading-7 text-tinta-300">
+              Os números se preenchem sozinhos, com a planilha da loja e os registros do balcão. Ninguém precisa digitar.
+            </p>
+            <p className="mt-4 inline-flex rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-tinta-300">Na tela Meu público · 7, 30 ou 90 dias</p>
+          </div>
+          {RELATORIOS.map((r) => (
+            <article key={r.titulo} className="min-w-0 rounded-[20px] border border-white/10 bg-[#141c34] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-violeta-300">{r.periodo}</p>
+              <h4 className="mt-1 text-lg font-semibold">{r.titulo}</h4>
+              <ul className="mt-3 flex flex-col gap-2 text-sm">
+                {r.linhas.map(([rotulo, valor]) => (
+                  <li key={rotulo} className="flex items-baseline justify-between gap-3 border-b border-white/10 pb-2 last:border-0 last:pb-0">
+                    <span className="text-tinta-300">{rotulo}</span>
+                    <span className="text-right font-semibold">{valor}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+          <p className="text-xs text-tinta-300 lg:col-span-3">Números ilustrativos de uma loja fictícia.</p>
         </div>
       </section>
     </div>
