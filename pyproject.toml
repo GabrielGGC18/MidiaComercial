@@ -58,5 +58,6 @@ ignore = ["B008"]
 "apps/core/demo.py" = ["E501"]
 "apps/agente/**" = ["E501"]
 "apps/notificacoes/**" = ["E501"]
+"apps/core/management/commands/gerar_referencia.py" = ["E501"]  # textos dos docs gerados
 # utilitário de geração de áudio da demo (frases e comando do ffmpeg legíveis numa linha)
 "frontend/scripts/*" = ["E501"]

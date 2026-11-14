@@ -26,6 +26,8 @@ Comece pelo **[11 · Problema e solução](11-PROBLEMA-E-SOLUCAO.md)**. Os docum
 | 14 | Deploy e operação: Vercel, VPS, CI e CD | [14-DEPLOY-E-OPERACAO.md](14-DEPLOY-E-OPERACAO.md) |
 | 15 | Histórico da entrega e pendências | [15-HISTORICO-DA-ENTREGA.md](15-HISTORICO-DA-ENTREGA.md) |
 
+**Documentação técnica** (como o código funciona por dentro: camadas, fluxos, frontend, segurança, testes e referência gerada da API e dos modelos): [`docs/tecnico/`](tecnico/README.md).
+
 Skills para agentes de código (Claude Code) em [`.claude/skills/`](../.claude/skills/); agentes especialistas em [`.claude/agents/`](../.claude/agents/).
 
 ## Resumo em uma tela
