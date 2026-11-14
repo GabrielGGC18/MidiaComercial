@@ -59,6 +59,24 @@ export default function MovimentoLanding({ alvo }: { alvo: React.RefObject<HTMLE
           gsap.fromTo(el, { backgroundPositionY: "0px" }, { backgroundPositionY: "-40px", ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
         });
       });
+      // 6. Scroll-expand (ref. ReactBits "scroll-expand"): da tablet para cima, o palco da demonstração começa
+      //    recuado e cresce até a largura toda enquanto o título recua e o painel do hero sobe mais devagar.
+      //    No celular o palco já ocupa a largura; com "menos movimento", nada se mexe.
+      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 768px)", () => {
+        gsap.fromTo(
+          '[data-gsap="expande"]',
+          { scale: 0.86, y: 24 },
+          {
+            scale: 1,
+            y: 0,
+            ease: "none",
+            scrollTrigger: { trigger: '[data-gsap="palco"]', start: "top 95%", end: "top 22%", scrub: 0.6 },
+          },
+        );
+        const saida = { trigger: '[data-capitulo="noite"]', start: "top top", end: "+=560", scrub: 0.5 };
+        gsap.to('[data-gsap="recua"]', { yPercent: -10, autoAlpha: 0.45, ease: "none", scrollTrigger: saida });
+        gsap.to('[data-gsap="painel"]', { y: -70, rotate: -1.5, ease: "none", scrollTrigger: { ...saida } });
+      });
       return () => mm.revert();
     },
     { scope: alvo },

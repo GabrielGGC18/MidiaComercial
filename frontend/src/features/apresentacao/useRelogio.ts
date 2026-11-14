@@ -47,6 +47,9 @@ export function useRelogio() {
     }
     const src = AUDIOS[seg.id].src;
     const alvo = (posRef.current - seg.inicioMs) / 1000;
+    // Áudio do segmento já terminou: `play()` numa mídia encerrada recomeça do zero e prendia o percurso
+    // num laço. O relógio segue sozinho pelo respiro até o próximo segmento.
+    if (a.src.endsWith(src) && a.ended) return false;
     if (!a.src.endsWith(src)) {
       a.src = src;
       a.currentTime = alvo;
@@ -74,6 +77,8 @@ export function useRelogio() {
       const tocandoAudio = sincronizarAudio();
       const a = audio.current;
       let p = tocandoAudio && a && !a.paused && seg ? seg.inicioMs + a.currentTime * 1000 : posRef.current + dt;
+      // nunca volta no tempo por causa do áudio (troca de fonte, buffer)
+      if (p < posRef.current) p = posRef.current + dt;
 
       // Confirmação explícita no modo explorável: nunca um clique automático (melhoria-design §4)
       const espera = SEGMENTOS.find((s) => s.aguardar);

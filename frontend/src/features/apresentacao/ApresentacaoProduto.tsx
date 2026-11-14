@@ -45,7 +45,9 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
     setAmpliado(true);
     // tela cheia já começa mostrando o fluxo inteiro do balcão (o clique autoriza o som)
     setPercurso("balcao");
-    if (r.status === "pronto") tocar(true);
+    // modo apresentação roda do início ao fim: confirmação feita pelo roteiro, com aviso visível
+    r.setGuiado(true);
+    if (r.status === "pronto" || r.status === "aguardando" || r.status === "fim") tocar(true);
   };
   const fecharAmpliado = () => {
     setAmpliado(false);

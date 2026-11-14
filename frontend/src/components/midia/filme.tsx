@@ -211,7 +211,7 @@ export function FilmeAnimado({ inicial = 0 }: { inicial?: number }) {
           {/* nossa camada: entra ao lado, sem trocar o sistema da loja */}
           <div className={cn("min-w-0 overflow-hidden transition-opacity duration-700", comCamada ? "opacity-100" : "opacity-0 max-lg:hidden")} aria-hidden={!comCamada}>
             <div className="relative flex h-full min-h-[300px] flex-col overflow-hidden rounded-[20px] border border-[#8b5cf6]/50 bg-[#141c34] p-4 sm:p-5">
-              <span key={vista} className="filme-varre pointer-events-none absolute inset-y-0 -left-1/3 w-1/3" aria-hidden />
+              <span key={`varre-${vista}`} className="filme-varre pointer-events-none absolute inset-y-0 -left-1/3 w-1/3" aria-hidden />
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#bda7ff]">MidiaComercial · ao lado do caixa</p>
 
               {vista === "conversa" && (

@@ -1,9 +1,10 @@
 // Página inicial em painéis empilhados (ref. visual: Dribbble "Maritime Fusion Reactor", Flexy LLC),
 // adaptada à marca: noite tinta → violeta → luz, e o verde neon da marca como brilho; o coral fica só para a procura sem estoque.
 import { ArrowRight, BadgeCheck, ChevronDown, ChevronRight, LayoutDashboard, Play, ShieldCheck } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { cn } from "@/lib/utils";
-import { Entrada, FundoEstilhacos, TituloSubindo } from "./destaques";
+import { Entrada, FundoEstilhacos, PilhaAlternada, TituloSubindo } from "./destaques";
 
 /** Seção como painel arredondado empilhado. `escuro`: sempre escuro, nos dois temas. */
 export function PainelSecao({
@@ -34,29 +35,40 @@ export function PainelSecao({
 }
 
 /**
- * Primeira dobra: painel "noite → violeta → luz", título curto central e o palco "amanhecendo" no fim
- * do painel, com o brilho neon da marca atrás. Sobe por baixo da nav flutuante (-mt).
+ * Primeira dobra (ref.: ReactBits CardSwap e "scroll-expand", heros em duas colunas do Dribbble): título
+ * alinhado à esquerda e painel animado à direita, os dois até perto das bordas. Abaixo, o palco da
+ * demonstração começa recuado e se expande até a largura toda conforme a pessoa rola (GSAP, MovimentoLanding).
+ * Dados fictícios rotulados. Sobe por baixo da nav flutuante (-mt).
  */
 export function Hero({ onComecar, children }: { onComecar: () => void; children?: React.ReactNode }) {
   return (
     <section className="-mt-[68px] px-3 pt-3" data-capitulo="noite">
-      <div className="painel-noite relative isolate mx-auto w-full max-w-[1280px] overflow-hidden rounded-[28px] border border-white/10 text-white">
-        <div data-gsap="fundo" className="absolute inset-x-0 top-0 -z-10 h-[560px]">
+      <div className="painel-noite relative isolate mx-auto w-full max-w-[1680px] overflow-hidden rounded-[28px] border border-white/10 text-white">
+        <div data-gsap="fundo" className="absolute inset-x-0 top-0 -z-10 h-[760px]">
           <FundoEstilhacos sempreEscuro className="absolute inset-0 opacity-70" />
         </div>
-        <div className="px-3 pb-5 pt-28 sm:px-8 lg:px-12 lg:pt-32">
-          <div className="mx-auto max-w-5xl text-center">
-            <h1 className="titulo-hero text-[clamp(2.3rem,6.6vw,5.5rem)] leading-[0.98] text-white">
+        <span className="brilho-marca pointer-events-none absolute -right-24 top-24 -z-10 h-[28rem] w-[28rem] opacity-60 max-lg:hidden" aria-hidden />
+        <div className="px-4 pb-5 pt-24 sm:px-8 sm:pt-28 lg:px-14 lg:pt-32 2xl:px-20">
+          <div className="grid items-center gap-10 lg:min-h-[min(640px,calc(100svh-10rem))] lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-8 xl:gap-16">
+          <div data-gsap="recua" className="min-w-0 text-center lg:text-left">
+            <p data-gsap="sobe" className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-tinta-100 backdrop-blur">
+              <span className="relative flex size-2 shrink-0" aria-hidden>
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-neon-500 opacity-60" />
+                <span className="relative inline-flex size-2 rounded-full bg-neon-500" />
+              </span>
+              <span className="truncate">Assistente do balcão · dados fictícios</span>
+            </p>
+            <h1 className="titulo-hero mt-5 text-[clamp(2.3rem,7.4vw,6.4rem)] leading-[0.96] text-white lg:text-[clamp(3rem,5.4vw,6.2rem)]">
               <TituloSubindo texto="Sua loja sabe o que vende?" />
               <br />
               <span className="text-neon-500">
                 <TituloSubindo texto="E o porquê?" atraso={220} />
               </span>
             </h1>
-            <p data-gsap="sobe" className="mx-auto mt-6 max-w-xl text-lg leading-7 text-tinta-200">
+            <p data-gsap="sobe" className="mx-auto mt-6 max-w-xl text-lg leading-7 text-tinta-200 lg:mx-0">
               A conversa do balcão vira registro e próxima ação.
             </p>
-            <div data-gsap="sobe" className="mt-7 flex flex-wrap justify-center gap-3">
+            <div data-gsap="sobe" className="mt-7 flex flex-wrap justify-center gap-3 lg:justify-start">
               <button
                 type="button"
                 onClick={onComecar}
@@ -71,11 +83,29 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
                 Entrar <ArrowRight className="size-4" aria-hidden />
               </Link>
             </div>
+            <ul data-gsap="sobe" className="mt-9 grid max-w-xl grid-cols-3 gap-2 text-left max-lg:mx-auto sm:gap-3">
+              {PASSOS_HERO.map((p) => (
+                <li key={p.titulo} className="min-w-0 rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-2.5 backdrop-blur-sm sm:px-3">
+                  <p className="text-sm font-semibold text-white">{p.titulo}</p>
+                  <p className="mt-0.5 text-xs leading-4 text-tinta-300">{p.texto}</p>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div data-gsap="palco" className="relative mt-12">
+          <div data-gsap="sobe" className="min-w-0">
+            <div data-gsap="painel">
+              <PainelHero />
+            </div>
+          </div>
+          </div>
+
+          <div data-gsap="palco" className="relative mt-14 lg:mt-10">
             <span className="brilho-marca pointer-events-none absolute left-1/2 top-1/4 -z-10 h-72 w-[min(90%,760px)] -translate-x-1/2" aria-hidden />
-            {children}
+            {/* scroll-expand: o palco começa recuado e cresce até a largura toda (com movimento, md+) */}
+            <div data-gsap="expande" className="origin-top">
+              {children}
+            </div>
           </div>
 
           <div className="mt-5 flex items-center justify-between px-1 text-xs text-tinta-100/80">
@@ -87,6 +117,111 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
         </div>
       </div>
     </section>
+  );
+}
+
+const PASSOS_HERO = [
+  { titulo: "Ouvir", texto: "Fala ou toque no balcão" },
+  { titulo: "Conferir", texto: "Nada grava sem o seu ok" },
+  { titulo: "Decidir", texto: "Sinal e próxima ação" },
+];
+
+const ONDA = [5, 9, 14, 8, 16, 11, 6, 13, 17, 9, 12, 7, 15, 10, 6, 12, 8, 14, 9, 5];
+const BARRAS = [1, 0, 1, 0, 2, 1, 1];
+const ETAPAS_PAINEL = ["Ouvir", "Registrar", "Decidir"];
+
+/** Cartão de vidro escuro do painel do hero. */
+function CartaoHero({ etapa, titulo, children }: { etapa: string; titulo: string; children: React.ReactNode }) {
+  return (
+    <article className="flex h-full flex-col rounded-2xl border border-white/15 bg-[#0d1124] p-4 shadow-[0_30px_70px_-30px_rgb(0_0_0/0.9)] sm:p-5">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violeta-300">{etapa}</span>
+        <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-tinta-300">fictício</span>
+      </div>
+      <p className="mt-1.5 font-display text-lg font-bold leading-tight text-white">{titulo}</p>
+      <div className="mt-3 flex min-h-0 flex-1 flex-col">{children}</div>
+    </article>
+  );
+}
+
+/** Painel animado da primeira dobra: pilha de cards (ReactBits CardSwap) com as três etapas. */
+export function PainelHero() {
+  const [frente, setFrente] = useState(0);
+  return (
+    <div
+      className="relative mx-auto h-[350px] w-full max-w-[580px] sm:h-[400px] lg:mr-0 lg:h-[440px]"
+      role="img"
+      aria-label="Exemplo fictício: a fala do balcão vira registro conferido e um sinal com a próxima ação"
+    >
+      <PilhaAlternada
+        intervalo={3800}
+        deslocX={24}
+        deslocY={24}
+        onTroca={setFrente}
+        className="absolute bottom-9 left-0 h-[262px] w-[calc(100%-52px)] sm:h-[300px] sm:w-[calc(100%-64px)] lg:h-[320px]"
+      >
+        <CartaoHero etapa="1 · Ouvir" titulo="O vendedor fala, o assistente escuta">
+          <div className="ml-auto w-[min(100%,20rem)] rounded-2xl rounded-tr-sm bg-violeta-500 px-3.5 py-3">
+            <div className="hero-onda flex h-5 items-center gap-[3px] overflow-hidden" aria-hidden>
+              {ONDA.map((h, i) => (
+                <span key={i} className="w-[3px] shrink-0 rounded-full bg-white/85" style={{ height: h, animationDelay: `${(i % 7) * 0.11}s` }} />
+              ))}
+            </div>
+            <p className="mt-2 text-sm leading-5 text-white">“Procuraram calça jeans azul 42 e não tinha.”</p>
+          </div>
+          <p className="mt-auto flex items-center gap-2 text-xs text-tinta-300">
+            <span className="size-1.5 animate-pulse rounded-full bg-neon-500" aria-hidden /> transcrevendo a fala…
+          </p>
+        </CartaoHero>
+        <CartaoHero etapa="2 · Registrar" titulo="Os dados aparecem para conferir">
+          <dl className="grid grid-cols-2 gap-1.5 text-sm">
+            {[
+              ["Produto", "Calça jeans"],
+              ["Cor", "Azul"],
+              ["Tamanho", "42"],
+              ["Motivo", "Sem estoque"],
+            ].map(([r, v]) => (
+              <div key={r} className="min-w-0 rounded-lg bg-white/[0.06] px-2.5 py-1.5">
+                <dt className="text-[11px] text-tinta-300">{r}</dt>
+                <dd className="truncate font-semibold text-white">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <span className="mt-auto inline-flex items-center gap-1.5 self-start rounded-lg bg-neon-500 px-3 py-1.5 text-xs font-bold text-tinta-950">
+            <BadgeCheck className="size-3.5" aria-hidden /> Confirmar registro
+          </span>
+        </CartaoHero>
+        <CartaoHero etapa="3 · Decidir" titulo="O sinal vira próxima ação">
+          <div className="flex items-end justify-between gap-3">
+            <p className="font-display text-4xl font-extrabold leading-none text-white">
+              6<span className="ml-1.5 text-xs font-medium text-tinta-300">procuras · 7 dias</span>
+            </p>
+            <ul className="flex h-12 shrink-0 items-end gap-1" aria-hidden>
+              {BARRAS.map((v, i) => (
+                <li key={i} className={cn("w-2.5 rounded-t", i === BARRAS.length - 1 ? "bg-neon-500" : "bg-violeta-300")} style={{ height: `${20 + v * 38}%` }} />
+              ))}
+            </ul>
+          </div>
+          <p className="mt-3 rounded-lg bg-white/[0.06] px-2.5 py-2 text-xs text-tinta-200">Saldo informado 0 · planilha da loja</p>
+          <p className="mt-auto text-sm text-white">
+            Conferir o estoque e consultar o fornecedor. <span className="text-neon-500">Você decide.</span>
+          </p>
+        </CartaoHero>
+      </PilhaAlternada>
+
+      <span className="efeito-flutua absolute right-0 top-1 inline-flex items-center gap-1.5 rounded-full border border-neon-500/40 bg-tinta-950/85 px-3 py-1.5 text-xs font-semibold text-neon-500 backdrop-blur max-sm:hidden">
+        <ShieldCheck className="size-3.5" aria-hidden /> Nada grava sem o seu ok
+      </span>
+
+      <ol className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-3 lg:justify-start" aria-hidden>
+        {ETAPAS_PAINEL.map((e, i) => (
+          <li key={e} className={cn("flex items-center gap-1.5 text-[11px] font-medium transition-colors", i === frente ? "text-white" : "text-tinta-300")}>
+            <span className={cn("h-1 rounded-full transition-all duration-500", i === frente ? "w-8 bg-neon-500" : "w-3 bg-white/25")} />
+            {e}
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }
 
