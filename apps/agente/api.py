@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Literal
 
+from django.utils import timezone
 from ninja import Field, Router, Schema
 from ninja.errors import HttpError
 
@@ -55,6 +56,28 @@ class MensagemOut(Schema):
     provedor: str
     resposta: str
     propostas: list[PropostaOut]
+    passos: list[str] = []  # o que o agente fez, em palavras de loja
+
+
+class ConversaResumo(Schema):
+    id: int
+    titulo: str
+    turnos: int
+    atualizado_em: datetime
+    provedor: str
+
+
+class FalaOut(Schema):
+    papel: Literal["voce", "agente"]
+    texto: str
+    em: datetime | None = None
+    passos: list[str] = []
+    propostas: list[PropostaOut] = []
+
+
+class ConversaOut(Schema):
+    id: int
+    falas: list[FalaOut]
 
 
 class ConfirmarIn(Schema):
@@ -313,3 +336,82 @@ def encerrar(request, campanha_id: int):
     c.save(update_fields=["status"])
     c.propostas.filter(status="pendente").update(status="rejeitada")
     return _camp_out(c)
+
+
+# ── conversas (P2-01): histórico do chat, só da própria pessoa nesta loja ─────
+
+
+def _titulo(s: SessaoAgente) -> str:
+    for m in s.historico:
+        if m.get("role") == "user" and isinstance(m.get("content"), str):
+            t = m["content"].strip()
+            return t[:60] + ("…" if len(t) > 60 else "")
+    return "Conversa"
+
+
+def _minha_sessao(request, sessao_id: int) -> SessaoAgente:
+    loja = loja_com_papel(request, "atendente")
+    s = SessaoAgente.objects.da_loja(loja).filter(pk=sessao_id, usuario=request.user).first()
+    if s is None:  # de outra pessoa ou de outra loja: não existe para quem pediu
+        raise HttpError(404, "Conversa não encontrada.")
+    return s
+
+
+@router.get("/conversas", response=list[ConversaResumo])
+def conversas(request):
+    loja = loja_com_papel(request, "atendente")
+    qs = (
+        SessaoAgente.objects.da_loja(loja)
+        .filter(usuario=request.user, turnos__gt=0)
+        .exclude(historico=[])
+        .order_by("-atualizado_em")[:30]
+    )
+    return [
+        {
+            "id": s.id,
+            "titulo": _titulo(s),
+            "turnos": s.turnos,
+            "atualizado_em": s.atualizado_em,
+            "provedor": s.provedor,
+        }
+        for s in qs
+    ]
+
+
+@router.get("/conversas/{int:sessao_id}", response=ConversaOut)
+def conversa(request, sessao_id: int):
+    from .orquestrador import ROTULO_PASSO
+
+    s = _minha_sessao(request, sessao_id)
+    ids = {i for m in s.historico for i in m.get("propostas", [])}
+    ver = tem_papel(request, "gerente")
+    props = {
+        p.id: _p_out(p, ver)
+        for p in PropostaAgente.objects.da_loja(s.loja).filter(id__in=ids).select_related("cliente")
+    }
+    falas = [
+        {
+            "papel": "voce" if m.get("role") == "user" else "agente",
+            "texto": m.get("content") or "",
+            "em": m.get("em"),
+            "passos": [ROTULO_PASSO.get(n, n) for n in m.get("passos", [])],
+            # proposta apagada no fallback simplesmente não aparece
+            "propostas": [props[i] for i in m.get("propostas", []) if i in props],
+        }
+        for m in s.historico
+        if isinstance(m.get("content"), str)
+    ]
+    return {"id": s.id, "falas": falas}
+
+
+@router.delete("/conversas/{int:sessao_id}", response={204: None})
+def apagar_conversa(request, sessao_id: int):
+    """Apaga o texto (LGPD / "Limpar conversa"). Auditoria e propostas confirmadas ficam:
+    são registros da loja. Pendentes dessa conversa viram rejeitadas."""
+    s = _minha_sessao(request, sessao_id)
+    s.historico = []
+    s.save(update_fields=["historico"])
+    PropostaAgente.objects.da_loja(s.loja).filter(
+        sessao=s, status=PropostaAgente.Status.PENDENTE
+    ).update(status=PropostaAgente.Status.REJEITADA, decidido_em=timezone.now())
+    return 204, None

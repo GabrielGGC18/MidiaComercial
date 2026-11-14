@@ -165,9 +165,11 @@ export function AeroShards({
 
   return (
     <div aria-hidden className={cn("pointer-events-none overflow-hidden", className)}>
-      <canvas ref={ref} className="absolute inset-0 size-full" />
-      {/* vinheta: o centro fica limpo para o texto e o palco */}
-      <div className={cn("absolute inset-0", claro ? "bg-[radial-gradient(ellipse_at_50%_35%,transparent_25%,var(--color-background)_80%)]" : "bg-[radial-gradient(ellipse_at_50%_35%,transparent_20%,var(--color-background)_78%)]")} />
+      {/* vinheta por máscara (não pinta cor): o centro fica limpo e as bordas somem no fundo de qualquer painel */}
+      <canvas
+        ref={ref}
+        className="absolute inset-0 size-full [mask-image:radial-gradient(ellipse_70%_65%_at_50%_40%,transparent_18%,black_45%,transparent_85%)]"
+      />
     </div>
   );
 }

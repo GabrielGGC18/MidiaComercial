@@ -1,8 +1,7 @@
-// Página pública (/): hero com a demonstração de uma venda (features/apresentacao), faixa de funcionalidades, cards com foto,
-// segmentos do shopping, como funciona e rodapé. Fotos: public/fotos (Unsplash, ver CREDITOS.md).
+// Seções da página pública (/): quem somos, segmentos, como funciona e rodapé. A abertura, o bento e os
+// caminhos estão em vitrine.tsx. Fotos: public/fotos (Unsplash, ver CREDITOS.md).
 // Prints: public/telas (demo com dados sintéticos).
 import {
-  ArrowRight,
   BadgeCheck,
   Bot,
   CalendarClock,
@@ -14,11 +13,8 @@ import {
   ShieldCheck,
   Smartphone,
   Users,
-  Play,
-  Receipt,
 } from "lucide-react";
-import { Link } from "react-router";
-import { AcaoPrincipal, CartaoExploravel, Entrada, FaixaRolante, FundoEstilhacos, TextoEmRotacaoGradiente, TituloAnimado } from "./destaques";
+import { CartaoExploravel, Entrada, FaixaRolante, Revelar, TextoEmRotacaoGradiente } from "./destaques";
 import { cn } from "@/lib/utils";
 
 /* ───────────────────────── peças ───────────────────────── */
@@ -55,7 +51,9 @@ function FotoCard({
   return (
     <CartaoExploravel className={cn("group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-shadow hover:shadow-bloco", className)}>
       <div className="relative h-44 overflow-hidden">
-        <img src={foto} alt="" loading="lazy" decoding="async" className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+        <Revelar modo="recorte" className="size-full">
+          <img src={foto} alt="" loading="lazy" decoding="async" className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+        </Revelar>
         <div className="absolute inset-0 bg-gradient-to-t from-tinta-950/70 via-tinta-950/10 to-transparent" aria-hidden />
         <span className="absolute bottom-3 left-3 rounded-sm bg-card/90 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-violeta-700 backdrop-blur dark:text-violeta-100">
           {etiqueta}
@@ -73,86 +71,11 @@ function CabecalhoSecao({ sobre, titulo, texto, id }: { sobre: string; titulo: s
   return (
     <div className="mx-auto max-w-2xl text-center">
       <p className="sobretitulo text-coral-700 dark:text-coral-500">{sobre}</p>
-      <h2 id={id} className="mt-2 font-display text-[clamp(1.6rem,3.2vw,2.25rem)] font-extrabold leading-tight tracking-tight">
+      <h2 id={id} className="titulo-fino mt-2 font-display text-[clamp(1.8rem,3.6vw,2.75rem)] font-bold leading-tight">
         {titulo}
       </h2>
       {texto && <p className="mt-3 text-base leading-7 text-muted-foreground">{texto}</p>}
     </div>
-  );
-}
-
-/* ───────────────────────── hero ───────────────────────── */
-
-/**
- * Primeira dobra (melhoria-design §1 e §3): abertura compacta e o palco como maior superfície.
- * Fundo de estilhaços só atrás da abertura. A demonstração vem em `children` (lazy na HomePage).
- */
-export function Hero({ onComecar, children }: { onComecar: () => void; children?: React.ReactNode }) {
-  return (
-    <section className="relative isolate">
-      <FundoEstilhacos className="absolute inset-x-0 top-0 -z-10 h-[620px]" />
-      <div className="mx-auto w-full max-w-[1280px] px-5 pb-14 pt-8 sm:px-8 lg:px-10 lg:pt-10">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="sobretitulo text-coral-700 dark:text-coral-500">Inteligência comercial para lojas de moda e acessórios</p>
-            <h1 className="mt-3 font-display text-[clamp(2rem,4.2vw,3.25rem)] font-extrabold leading-[1.06] tracking-tight">
-              <TituloAnimado texto="Sua equipe fala." />{" "}
-              <span className="destaque-titulo text-violeta-600 dark:text-violeta-300">
-                <TituloAnimado texto="O MídiaComercial organiza o próximo passo." atraso={120} />
-              </span>
-            </h1>
-            <p className="mt-3 max-w-xl text-[17px] leading-7 text-muted-foreground">
-              Veja uma conversa virar registro, informação da loja e uma ação que o vendedor revisa.
-            </p>
-          </div>
-          <div className="flex shrink-0 flex-wrap gap-3">
-            <AcaoPrincipal>
-              <button
-                type="button"
-                onClick={onComecar}
-                className="inline-flex h-12 items-center gap-2 rounded-md bg-violeta-500 px-6 text-sm font-semibold text-white shadow-md hover:bg-violeta-600"
-              >
-                <Play className="size-4" aria-hidden /> Assistir à demonstração
-              </button>
-            </AcaoPrincipal>
-            <Link
-              to="/login"
-              className="inline-flex h-12 items-center gap-2 rounded-md border border-border bg-card px-6 text-sm font-semibold hover:bg-muted"
-            >
-              Entrar na loja <ArrowRight className="size-4" aria-hidden />
-            </Link>
-          </div>
-        </div>
-        <div className="mt-8">{children}</div>
-      </div>
-    </section>
-  );
-}
-
-/** Resumo estático do percurso, lido no próprio ritmo (substitui a faixa rolante, §2). */
-export function ResumoPercurso() {
-  const passos = [
-    { Icone: Receipt, t: "Recebe a venda", d: "Do arquivo ou do sistema da loja." },
-    { Icone: Users, t: "Liga ao cliente", d: "Só quando o código existe e confere." },
-    { Icone: LayoutDashboard, t: "Atualiza os números", d: "Histórico, receita e ticket médio." },
-    { Icone: Bot, t: "Sugere a próxima oferta", d: "Por combinação cadastrada pela loja." },
-    { Icone: ShieldCheck, t: "Vendedor decide", d: "Nada é enviado sem revisão." },
-  ];
-  return (
-    <section aria-label="Resumo do percurso" className="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
-      <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {passos.map(({ Icone, t, d }, i) => (
-          <li key={t} className="rounded-lg border border-border bg-card p-4">
-            <p className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-              <span className="grid size-5 place-items-center rounded-sm bg-violeta-50 text-[11px] font-bold text-violeta-700 dark:bg-violeta-900/60 dark:text-violeta-100">{i + 1}</span>
-              <Icone className="size-4 text-violeta-500" aria-hidden />
-            </p>
-            <p className="mt-2 font-semibold">{t}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{d}</p>
-          </li>
-        ))}
-      </ol>
-    </section>
   );
 }
 
@@ -197,7 +120,7 @@ const EQUIPE = [
 
 export function SobreNos() {
   return (
-    <section id="sobre" aria-labelledby="sobre-titulo" className="mx-auto w-full max-w-6xl scroll-mt-20 px-5 py-20 sm:px-8">
+    <section id="sobre" aria-labelledby="sobre-titulo" className="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8">
       <CabecalhoSecao
         id="sobre-titulo"
         sobre="Quem somos e o que somos"
@@ -276,7 +199,7 @@ const SEGMENTOS = [
 
 export function Segmentos() {
   return (
-    <section id="segmentos" aria-labelledby="segmentos-titulo" className="mx-auto w-full max-w-6xl scroll-mt-20 px-5 py-20 sm:px-8">
+    <section id="segmentos" aria-labelledby="segmentos-titulo" className="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8">
       <CabecalhoSecao
         id="segmentos-titulo"
         sobre="Para cada loja do shopping"
@@ -364,7 +287,7 @@ const PASSOS: Passo[] = [
 
 export function ComoFunciona() {
   return (
-    <section id="como-funciona" aria-labelledby="como-funciona-titulo" className="relative scroll-mt-20 border-y border-border bg-card/60 py-20">
+    <section id="como-funciona" aria-labelledby="como-funciona-titulo" className="relative scroll-mt-24 py-16">
       <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
         <CabecalhoSecao
           id="como-funciona-titulo"

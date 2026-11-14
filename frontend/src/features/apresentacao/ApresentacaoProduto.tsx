@@ -80,7 +80,7 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
         onKeyDown={teclas}
         className={cn(
           "scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-background/90 shadow-[0_30px_80px_-30px_rgb(11_16_32/0.6)] backdrop-blur",
-          ampliado && "dark fixed inset-3 z-50 overflow-y-auto bg-tinta-950 text-tinta-50 sm:inset-6",
+          ampliado && "fixed inset-3 z-50 overflow-y-auto bg-background sm:inset-6",
         )}
       >
         <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border px-4 py-3">
@@ -98,12 +98,17 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
                 aria-selected={percurso === id}
                 onClick={() => trocar(id)}
                 className={cn(
-                  "h-9 rounded-md px-3 text-sm font-medium transition-colors",
+                  "h-9 whitespace-nowrap rounded-md px-2.5 text-sm font-medium transition-colors sm:px-3",
                   percurso === id ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {rotulo}
-                {id === "posvenda" && <span className="ml-1.5 text-[11px] text-coral-700 dark:text-coral-500">em evolução</span>}
+                {id === "posvenda" && (
+                  <span className="ml-1.5 text-[11px] text-coral-700 dark:text-coral-500">
+                    <span className="sm:hidden" aria-hidden>•</span>
+                    <span className="max-sm:sr-only">em evolução</span>
+                  </span>
+                )}
               </button>
             ))}
           </div>

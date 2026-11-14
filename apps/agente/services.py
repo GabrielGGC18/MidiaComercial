@@ -126,3 +126,43 @@ def marcar_enviada(*, loja, usuario, proposta: PropostaAgente) -> PropostaAgente
         campanha=proposta.campanha_id,
     )
     return proposta
+
+
+# ── retenção (P2-04, LGPD): texto do agente não fica para sempre ──────────────
+
+
+@transaction.atomic
+def limpar(*, dias_conversa=90, dias_auditoria=180, dias_rejeitada=30, simular=False) -> dict:
+    """Manutenção de TODAS as lojas (sem request, sem .da_loja() de propósito).
+
+    - texto da conversa parada há N dias → esvaziado;
+    - auditoria de ferramentas com mais de N dias → apagada;
+    - proposta de CLIENTE rejeitada há N dias (tem nome e WhatsApp) → apagada.
+    Propostas confirmadas/enviadas ficam: são registro de negócio (objeto criado, medição).
+    """
+    from datetime import timedelta
+
+    from .models import ChamadaFerramenta, SessaoAgente
+
+    agora = timezone.now()
+    conversas = SessaoAgente.objects.filter(
+        atualizado_em__lt=agora - timedelta(days=dias_conversa)
+    ).exclude(historico=[])
+    chamadas = ChamadaFerramenta.objects.filter(
+        criado_em__lt=agora - timedelta(days=dias_auditoria)
+    )
+    rejeitadas = PropostaAgente.objects.filter(
+        tipo=PropostaAgente.Tipo.CLIENTE,
+        status=PropostaAgente.Status.REJEITADA,
+        decidido_em__lt=agora - timedelta(days=dias_rejeitada),
+    )
+    resumo = {
+        "conversas": conversas.count(),
+        "chamadas": chamadas.count(),
+        "rejeitadas": rejeitadas.count(),
+    }
+    if not simular:
+        conversas.update(historico=[])  # update() não mexe no auto_now: é o que queremos
+        chamadas.delete()
+        rejeitadas.delete()
+    return resumo

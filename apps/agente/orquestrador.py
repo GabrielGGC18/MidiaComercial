@@ -12,6 +12,7 @@ import logging
 import time
 
 from django.conf import settings
+from django.utils import timezone
 
 from .ferramentas import Contexto, obter, validar_args
 from .models import ChamadaFerramenta, PropostaAgente, SessaoAgente
@@ -23,6 +24,31 @@ log = logging.getLogger(__name__)
 # frase de cadastro traz nome de pessoa, que não dá para mascarar com segurança:
 # ela nunca vai para o LLM e também não entra na memória que o LLM lê depois
 _CADASTRO_LOCAL = "[cadastro de cliente tratado localmente]"
+
+
+# nome técnico da ferramenta → o que a pessoa lê na conversa
+ROTULO_PASSO = {
+    "buscar_variante": "Buscou no catálogo",
+    "propor_demanda": "Preparou registro de procura",
+    "propor_cliente": "Preparou cadastro de cliente",
+    "buscar_clientes": "Buscou clientes",
+    "prospectar_produtos_em_baixa": "Procurou produtos parados",
+    "resumo_publico": "Leu o resumo do público",
+}
+
+
+def janela_llm(historico: list[dict]) -> list[dict]:
+    """Últimas MIDIA_AGENTE_HISTORICO falas, só com role e content (a API da Anthropic
+    rejeita chave extra). Número par: a janela sempre começa numa fala do usuário."""
+    n = settings.MIDIA_AGENTE_HISTORICO
+    n -= n % 2
+    if not n:
+        return []
+    return [
+        {"role": m["role"], "content": m["content"]}
+        for m in historico[-n:]
+        if isinstance(m.get("content"), str)
+    ]
 
 
 class SessaoInvalida(Exception):
@@ -81,12 +107,14 @@ def processar(
     ctx = Contexto(loja=loja, usuario=usuario, papel=papel, sessao=sessao)
     mascarado, mapa = mascarar(texto)
     passos = {"n": 0}
+    passos_nomes: list[str] = []
 
     def chamar(nome: str, args: dict):
         passos["n"] += 1
         if passos["n"] > settings.MIDIA_AGENTE_MAX_PASSOS:
             raise RuntimeError("Limite de passos do agente atingido.")
         f = obter(nome, papel)  # bloqueia ferramenta acima do papel
+        passos_nomes.append(nome)
         t1 = time.monotonic()
         ok, resumo = True, ""
         try:
@@ -107,7 +135,7 @@ def processar(
 
     fallback = ""
     try:
-        resposta = provedor.executar(ctx, mascarado, chamar, list(sessao.historico))
+        resposta = provedor.executar(ctx, mascarado, chamar, janela_llm(sessao.historico))
     except Exception as exc:  # noqa: BLE001
         if provedor.nome == "offline":
             raise
@@ -118,19 +146,28 @@ def processar(
         PropostaAgente.objects.filter(id__in=ids, status=PropostaAgente.Status.PENDENTE).delete()
         ctx.propostas.clear()
         passos["n"] = 0
+        passos_nomes.clear()
         uso_llm = provedor.uso
         provedor = ProvedorOffline()
         provedor.uso = uso_llm  # tokens gastos antes da falha contam
         resposta = provedor.executar(ctx, mascarado, chamar, [])
 
     fala = _CADASTRO_LOCAL if local else mascarado
+    agora = timezone.now().isoformat()
     historico = [
         *sessao.historico,
-        {"role": "user", "content": fala},
-        {"role": "assistant", "content": resposta or "-"},
+        {"role": "user", "content": fala, "em": agora},
+        {
+            "role": "assistant",
+            "content": resposta or "-",
+            "em": agora,
+            "propostas": [p.id for p in ctx.propostas],
+            "passos": passos_nomes,
+        },
     ]
-    n = settings.MIDIA_AGENTE_HISTORICO
-    sessao.historico = historico[-(n - n % 2) :] if n else []  # sempre começa no usuário
+    # guardamos a conversa inteira para a tela (mascarada); ao LLM vai só a janela curta
+    g = settings.MIDIA_AGENTE_HISTORICO_GUARDADO
+    sessao.historico = historico[-(g - g % 2) :]  # sempre começa no usuário
     sessao.provedor = provedor.nome
     sessao.modelo = getattr(provedor, "modelo", "") or sessao.modelo
     sessao.canal = canal
@@ -146,4 +183,5 @@ def processar(
         "provedor": sessao.provedor,
         "resposta": restaurar(resposta, mapa),
         "propostas": list(ctx.propostas),
+        "passos": [ROTULO_PASSO.get(n, n) for n in passos_nomes],
     }

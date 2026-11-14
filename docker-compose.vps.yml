@@ -55,7 +55,8 @@ services:
     env_file: .env
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.prod
-    entrypoint: ["sh", "-c", "sleep 60; while true; do python manage.py verificar_prazos; sleep 3600; done"]
+    # de hora em hora: prazos; uma vez por dia (a cada 24 voltas): retenção LGPD do agente
+    entrypoint: ["sh", "-c", "sleep 60; i=0; while true; do python manage.py verificar_prazos; [ $$((i % 24)) -eq 0 ] && python manage.py limpar_agente; i=$$((i + 1)); sleep 3600; done"]
     depends_on:
       web:
         condition: service_healthy

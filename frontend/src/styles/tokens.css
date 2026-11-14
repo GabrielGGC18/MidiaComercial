@@ -254,3 +254,83 @@
     transition-duration: 1ms !important;
   }
 }
+
+/* ── Página inicial: painéis em camadas (ref. Dribbble "Maritime Fusion", adaptado à marca) ── */
+/* noite → violeta → luz: o palco "amanhece" no fim do painel */
+.painel-noite {
+  background:
+    radial-gradient(120% 60% at 50% 108%, color-mix(in oklab, var(--color-violeta-300) 70%, white) 0%, transparent 55%),
+    linear-gradient(180deg, #04060d 0%, var(--color-tinta-950) 28%, #17154a 62%, #3a2f9e 88%, #6d5ae0 100%);
+}
+/* brilho do "sinal": o dado que acabou de chegar */
+.brilho-sinal {
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--color-coral-500) 55%, transparent), transparent);
+  filter: blur(24px);
+}
+/* raios coral com núcleo escuro (cartão de afirmação) */
+.painel-raios {
+  background:
+    radial-gradient(circle at 50% 50%, #1a0b06 0 33%, rgb(26 11 6 / 0.85) 37%, transparent 52%),
+    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-coral-500) 90%, #ffd27a) 0 30%, transparent 70%),
+    repeating-conic-gradient(from 0deg at 50% 50%, #ff8a3d 0deg 2deg, #b8380f 2deg 5deg, #ff6a3d 5deg 7deg, #7a1f06 7deg 11deg);
+}
+/* estrias verticais violeta (cartão de número) */
+.painel-estrias {
+  background:
+    linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--color-tinta-950) 85%, transparent) 78%),
+    repeating-linear-gradient(90deg, #2b2580 0 3px, #3f36b8 3px 5px, #241f6b 5px 9px, #5446d6 9px 10px);
+}
+/* superfície de seção: leve, segue o tema */
+.painel-secao {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--color-card) 92%, transparent), color-mix(in oklab, var(--color-card) 55%, transparent));
+}
+.titulo-fino { letter-spacing: -0.035em; }
+
+/* ── Movimento de entrada (ref. pibaru.com, refeito em CSS; só com "movimento ok") ─────────────
+   [data-visivel] é ligado por useNaTela (IntersectionObserver). Sem JS ou com movimento reduzido,
+   tudo aparece no estado final. */
+@media (prefers-reduced-motion: no-preference) {
+  /* título: cada palavra sobe de dentro da própria máscara */
+  .sobe-palavra { display: inline-block; transform: translateY(110%); animation: sobe-palavra 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  @keyframes sobe-palavra { to { transform: translateY(0); } }
+
+  /* degraus da escada: entram da esquerda, cada um mais longe */
+  [data-revelar="escada"] > * { opacity: 0; transform: translateX(calc(-24px - var(--i, 0) * 14px)); transition: opacity 0.7s ease-out, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1); transition-delay: calc(var(--i, 0) * 110ms); }
+  [data-revelar="escada"][data-visivel] > * { opacity: 1; transform: none; }
+
+  /* cartão que entra inclinado e depois "respira" */
+  [data-revelar="cartao"] { opacity: 0; transform: translateY(80px) rotate(12deg); transition: opacity 0.6s ease-out, transform 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  [data-revelar="cartao"][data-visivel] { opacity: 1; transform: rotate(3deg); animation: respira 3.2s ease-in-out 1.2s infinite alternate; }
+  @keyframes respira { from { translate: 0 0; } to { translate: 0 -8px; } }
+  [data-revelar="cartao"] .pulo { transform: scale(0.8); transition: transform 0.6s cubic-bezier(0.34, 1.9, 0.64, 1) 0.6s; }
+  [data-revelar="cartao"][data-visivel] .pulo { transform: scale(1); }
+
+  /* foto revelada de baixo para cima por recorte */
+  [data-revelar="recorte"] { clip-path: inset(100% 0 0 0 round 16px); transition: clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+  [data-revelar="recorte"][data-visivel] { clip-path: inset(0 0 0 0 round 16px); }
+
+  /* grupo: filhos sobem em cascata */
+  [data-revelar="grupo"] > * { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); transition-delay: calc(var(--i, 0) * 80ms); }
+  [data-revelar="grupo"][data-visivel] > * { opacity: 1; transform: none; }
+
+  /* marca-texto: o fundo preenche da esquerda para a direita */
+  .marca-texto { background-size: 0% 100%; transition: background-size 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s; }
+  [data-visivel] .marca-texto, .marca-texto[data-visivel] { background-size: 100% 100%; }
+}
+.marca-texto {
+  background-image: linear-gradient(color-mix(in oklab, var(--color-coral-500) 32%, transparent), color-mix(in oklab, var(--color-coral-500) 32%, transparent));
+  background-repeat: no-repeat; background-position: 0 85%; background-size: 100% 100%;
+  padding: 0 0.12em; border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+@media (prefers-reduced-motion: no-preference) { .marca-texto { background-size: 0% 100%; } }
+
+/* sanfona: painéis que abrem na horizontal */
+.sanfona-painel { transition: flex-basis 450ms cubic-bezier(0.16, 1, 0.3, 1), filter 200ms; }
+
+/* pilha isométrica (camadas do produto): as camadas começam juntas e se separam ao entrar */
+.pilha-camada { transform: perspective(900px) rotateX(56deg) rotateZ(-36deg); transform-style: preserve-3d; }
+@media (prefers-reduced-motion: no-preference) {
+  .pilha[data-revelar="grupo"] > * { opacity: 0; transform: translateY(calc((2 - var(--i, 0)) * 34px)); transition: opacity 0.6s ease-out, transform 1.1s cubic-bezier(0.16, 1, 0.3, 1); transition-delay: calc(var(--i, 0) * 70ms); }
+  .pilha[data-revelar="grupo"][data-visivel] > * { opacity: 1; transform: none; }
+  .pilha-camada:hover { transform: perspective(900px) rotateX(56deg) rotateZ(-36deg) translateZ(14px); transition: transform 0.3s; }
+}

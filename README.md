@@ -308,3 +308,6 @@ Alternativa com Docker (tudo na VPS):
 - O áudio é transcrito pelo navegador e o servidor recebe só o texto.
 - O LLM recebe texto mascarado e números agregados.
 - Nada é enviado ao cliente sem uma pessoa aprovar, e o envio é feito por essa pessoa.
+- **Retenção do agente** (`manage.py limpar_agente`, todo dia): texto de conversa parada há 90 dias é apagado,
+  a auditoria de ferramentas sai depois de 180 dias e a proposta de cadastro rejeitada (tem nome e WhatsApp),
+  depois de 30. Propostas confirmadas ficam, porque são registro da loja.

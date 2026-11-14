@@ -112,6 +112,7 @@ MIDIA_IA_MODELO = env("MIDIA_IA_MODELO", default="claude-haiku-4-5")
 MIDIA_IA_TIMEOUT = env.float("MIDIA_IA_TIMEOUT", default=20.0)
 MIDIA_IA_MAX_TOKENS = env.int("MIDIA_IA_MAX_TOKENS", default=1024)
 MIDIA_AGENTE_MAX_PASSOS = 6
+MIDIA_AGENTE_HISTORICO_GUARDADO = 100  # falas guardadas para reabrir a conversa (mascaradas)
 MIDIA_AGENTE_HISTORICO = 6  # últimas falas (mascaradas) reenviadas ao LLM na mesma sessão
 
 # Hermes (GPT via OAuth na VPS): o container fala com a ponte do host por socket unix.

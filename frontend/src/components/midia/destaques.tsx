@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { AeroShards } from "@/components/efeitos/AeroShards";
 import { Aurora } from "@/components/efeitos/Aurora";
+export { indice, Revelar, TituloSubindo, useNaTela } from "@/components/efeitos/Revelar";
 import { BlurText } from "@/components/efeitos/BlurText";
 import { CardSwap } from "@/components/efeitos/CardSwap";
 import { Marquee } from "@/components/efeitos/Marquee";
@@ -16,9 +17,9 @@ import { Squares } from "@/components/efeitos/Squares";
 import { StarBorder } from "@/components/efeitos/StarBorder";
 
 /** Fundo da página inicial: estilhaços de vidro (AeroShards), segue o tema claro/escuro da página. */
-export function FundoEstilhacos({ className }: { className?: string }) {
+export function FundoEstilhacos({ className, sempreEscuro = false }: { className?: string; sempreEscuro?: boolean }) {
   const escuro = useSyncExternalStore(assinarTema, () => document.documentElement.classList.contains("dark"), () => true);
-  return <AeroShards className={className} claro={!escuro} />;
+  return <AeroShards className={className} claro={!sempreEscuro && !escuro} />;
 }
 function assinarTema(cb: () => void) {
   const mo = new MutationObserver(cb);

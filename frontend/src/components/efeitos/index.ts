@@ -3,6 +3,7 @@
 // AnimatedList (usa motion) NÃO entra no barril: importe de "@/components/midia/lista-ao-vivo"
 export { AeroShards } from "./AeroShards";
 export { Aurora } from "./Aurora";
+export { indice, Revelar, TituloSubindo, useNaTela } from "./Revelar";
 export { BlurText } from "./BlurText";
 export { CardSwap } from "./CardSwap";
 export { ClickSpark } from "./ClickSpark";

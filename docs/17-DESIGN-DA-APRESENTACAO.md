@@ -78,3 +78,21 @@ A pessoa entende o MídiaComercial **assistindo a uma conversa**: o funcionário
 | P1 | Banner de vídeo e controle de foco sonoro, quando o MP4 e o poster aprovados existirem |
 | P1 | Conferir no projetor 16:9 e no tema claro durante o ensaio |
 | P2 | Teste com a voz do visitante (microfone), com permissão e tratamento de erro |
+
+## 7. Rodada de referências visuais (13/11, noite)
+
+| Referência | O que entrou, adaptado à marca | Onde |
+| --- | --- | --- |
+| Dribbble "Maritime Fusion Reactor" (Flexy LLC) | Painéis empilhados com cantos de 28 px; hero "noite → violeta → luz" com o palco no fim; nav em pílula com botão branco; bento com cartões altos (estrias, raios coral); lista "Escolha seu caminho" | `components/midia/vitrine.tsx`, `tokens.css` (`.painel-*`) |
+| pibaru.com | Título que sobe palavra por palavra; nav que assume a cor do capítulo embaixo; "escada" de frases com cartão inclinado que respira; marca-texto; sanfona horizontal; foto revelada por recorte | `components/efeitos/Revelar.tsx`, `components/midia/capitulos.tsx` |
+| helenacrm.com | Parte técnica: camadas explodidas, faixa de fatos, blocos com a rota da API, "Feito para ser auditado" (código em abas e eventos), modelo em 3 colunas | `components/midia/tecnico.tsx` |
+
+**Regras seguidas:**
+- **Nada copiado:** nenhum código, texto, mascote ou imagem das referências. O Pibaru usa GSAP, SplitText e Rive; aqui é CSS, Tailwind e `IntersectionObserver`, que respeitam o "menos movimento".
+- **Só fatos do código:** a parte técnica mostra apenas o que existe:
+  - rotas de `config/api.py`;
+  - contratos de `apps/importacao/schemas.py`;
+  - versões das regras;
+  - os 7 eventos de `apps/notificacoes/eventos.py`.
+- **Números honestos:** a faixa de números não traz métricas de mercado, só características verificáveis.
+- **Favicon novo:** mesmas 3 barras sobre um azulejo "noite → violeta", com o brilho coral. Arquivos: `favicon.svg` e `favicon.ico` (16, 32 e 48 px), `apple-touch-icon.png` (180 px), `icon-192.png`, `icon-512.png` e `manifest.webmanifest`.
