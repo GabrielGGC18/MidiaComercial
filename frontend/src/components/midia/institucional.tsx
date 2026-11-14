@@ -1,7 +1,7 @@
 // Seções da página pública (/): quem somos, segmentos, como funciona e rodapé. A abertura, o bento e os
 // caminhos estão em vitrine.tsx. Fotos: public/fotos (Unsplash, ver CREDITOS.md).
 // Prints: public/telas (demo com dados sintéticos).
-import { LogoAnimado } from "./marca";
+import { LogoAnimado, LogoIcone } from "./marca";
 import {
   BadgeCheck,
   Bot,
@@ -349,7 +349,7 @@ export function FraseSinais() {
 export function RodapeLogin() {
   return (
     <footer className="relative isolate overflow-hidden bg-tinta-950 text-tinta-300">
-      {/* efeitos: linha de luz que corre, brilho da marca e o letreiro gigante em contorno */}
+      {/* efeitos: linha de luz que corre, brilho da marca e o monograma gigante */}
       <span className="rodape-linha absolute inset-x-0 top-0 h-px" aria-hidden />
       <span className="brilho-marca pointer-events-none absolute -bottom-40 left-1/2 -z-10 h-80 w-[min(90%,720px)] -translate-x-1/2 opacity-70" aria-hidden />
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 pt-12 sm:px-8 md:flex-row md:items-end md:justify-between">
@@ -361,9 +361,11 @@ export function RodapeLogin() {
           Demonstração com dados sintéticos. Contato com cliente só com autorização (LGPD) e revisão de uma pessoa. Fotos: Unsplash e equipe.
         </p>
       </div>
-      <p className="rodape-letreiro pointer-events-none mt-6 select-none whitespace-nowrap text-center font-display font-extrabold leading-[0.8]" aria-hidden>
-        MIDIA
-      </p>
+      {/* monograma gigante, em cores cheias, com a faixa de luz passando por cima */}
+      <div className="relative mx-auto mt-8 w-fit overflow-hidden" aria-hidden>
+        <LogoIcone className="-mb-[3%] h-[clamp(6.5rem,26vw,19rem)]" />
+        <span className="rodape-faixa pointer-events-none absolute inset-0" />
+      </div>
     </footer>
   );
 }

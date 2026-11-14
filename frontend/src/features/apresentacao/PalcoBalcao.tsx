@@ -124,7 +124,7 @@ function Resultado({ e, r }: { e: EstadoBalcao; r: Relogio }) {
         {e.registrado && (
           <motion.section layout {...surge} aria-label="Procuras desse item" className={cn("rounded-xl border bg-card p-4", e.foco === "registro" || e.foco === "grafico" ? "border-violeta-500/60" : "border-border")}>
             <div className="flex flex-wrap items-end justify-between gap-3">
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm text-muted-foreground">Procuras sem estoque · últimos 7 dias</p>
                 <p className="font-display text-4xl font-extrabold">
                   <ValorNarrado valor={e.total} formatar={(v) => String(Math.round(v))} />
@@ -132,8 +132,16 @@ function Resultado({ e, r }: { e: EstadoBalcao; r: Relogio }) {
                 </p>
               </div>
               {e.foco !== "registro" && (
-                <p className="flex items-center gap-1.5 rounded-md bg-sinal-atencao-bg px-2.5 py-1.5 text-sm font-medium text-sinal-atencao-tx dark:bg-sinal-atencao/15 dark:text-sinal-atencao">
-                  <TriangleAlert className="size-4" aria-hidden /> Saldo informado: {SALDO_INFORMADO.valor} · importado {SALDO_INFORMADO.importadoEm}
+                <p className="flex min-w-0 max-w-full items-start gap-2 rounded-lg bg-sinal-atencao-bg px-3 py-2 text-sm text-sinal-atencao-tx dark:bg-sinal-atencao/15 dark:text-sinal-atencao">
+                  <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
+                  <span className="min-w-0">
+                    <span className="block font-semibold">
+                      {SALDO_INFORMADO.produto}: saldo {SALDO_INFORMADO.valor}
+                    </span>
+                    <span className="block text-xs opacity-90">
+                      {SALDO_INFORMADO.origem} · importada {SALDO_INFORMADO.importadoEm}
+                    </span>
+                  </span>
                 </p>
               )}
             </div>
