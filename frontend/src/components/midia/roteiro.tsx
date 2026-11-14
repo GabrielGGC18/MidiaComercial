@@ -5,6 +5,7 @@ import { ArrowRight, BadgeCheck, CalendarDays, Check, FileText, ListChecks, Mic,
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { indice, Revelar } from "./destaques";
+import { DURACAO_FILME, FilmeAnimado } from "./filme";
 
 const PAINEL = "mx-auto w-full max-w-[1280px] overflow-hidden rounded-[28px] border px-5 py-14 sm:px-10 lg:px-14 lg:py-20";
 const ETIQUETA = "text-xs font-semibold uppercase tracking-[0.14em]";
@@ -76,15 +77,14 @@ export function ProblemaSecao() {
   );
 }
 
-/* ───────────── Foto 4 · o filme (ainda sem vídeo: roteiro em três quadros) ───────────── */
-
-const QUADROS = [
-  { tempo: "00–08 s", titulo: "Uma procura no balcão", fala: "“Procuraram calça jeans azul, tamanho 42, e não tinha.”", quem: "Funcionária" },
-  { tempo: "08–17 s", titulo: "Um registro conferido", fala: "“Calça jeans azul, 42. Item indisponível. Confere?”", quem: "Assistente" },
-  { tempo: "17–32 s", titulo: "Uma ação para acompanhar", fala: "6 procuras nos últimos 7 dias. Conferir o estoque e consultar o fornecedor.", quem: "Próximo passo" },
-];
+/* ───────────── Foto 4 · o filme (ainda sem vídeo: prévia animada em filme.tsx) ───────────── */
 
 export function FilmeProduto({ onExplorar }: { onExplorar: () => void }) {
+  // ?filme=18 abre a prévia parada naquele segundo (ensaio e conferência visual)
+  const [inicial] = useState(() => {
+    const v = Number(new URLSearchParams(window.location.search).get("filme"));
+    return Number.isFinite(v) && v > 0 ? Math.min(v, DURACAO_FILME) : 0;
+  });
   return (
     <div className="px-3 pt-3" data-capitulo="claro">
       <section id="filme" aria-labelledby="filme-titulo" className={cn(PAINEL, "painel-secao scroll-mt-24 border-border")}>
@@ -95,24 +95,14 @@ export function FilmeProduto({ onExplorar }: { onExplorar: () => void }) {
           </h2>
           <p className="mt-3 text-lg leading-7 text-muted-foreground">Uma procura no balcão. Um registro conferido. Uma ação para a loja acompanhar.</p>
         </div>
-        <Revelar modo="grupo" as="ol" className="mt-10 grid gap-4 md:grid-cols-3">
-          {QUADROS.map((q, i) => (
-            <li key={q.titulo} style={indice(i)} className="flex min-w-0 flex-col rounded-[20px] border border-border bg-tinta-950 p-5 text-white sm:p-6">
-              <div className="flex items-center justify-between gap-3 text-xs text-tinta-300">
-                <span className="font-display text-2xl font-bold text-violeta-300">{i + 1}</span>
-                <span className="tabular">{q.tempo}</span>
-              </div>
-              <h3 className="mt-4 text-xl font-semibold leading-tight">{q.titulo}</h3>
-              <p className="mt-auto pt-8 text-xs font-medium text-tinta-300">{q.quem}</p>
-              <p className={cn("mt-2 rounded-2xl px-4 py-3 text-[15px] leading-6", i === 0 ? "rounded-tl-sm bg-violeta-600" : "border border-white/10 bg-[#141c34]")}>{q.fala}</p>
-            </li>
-          ))}
-        </Revelar>
+        <div className="mt-10">
+          <FilmeAnimado inicial={inicial} />
+        </div>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <button type="button" onClick={onExplorar} className="inline-flex h-12 items-center gap-2 rounded-xl bg-violeta-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-violeta-700">
             Explorar o fluxo completo <Seta />
           </button>
-          <span className={SELO}>Roteiro do filme de 32 s · vídeo em produção</span>
+          <span className={SELO}>Prévia animada (animatic), sem áudio · o vídeo final está em produção</span>
           <span className={SELO}>Demonstração ilustrativa · dados fictícios</span>
         </div>
       </section>
@@ -192,7 +182,7 @@ export function GradeBeneficios({ onVerDemo }: { onVerDemo: () => void }) {
           <article className={cn(CARTAO, "md:col-span-2 lg:col-span-7 lg:row-span-2")}>
             <h3 className="text-[22px] font-semibold leading-tight">Fale do seu jeito</h3>
             <p className="text-[15px] leading-6 text-muted-foreground">Uma frase do balcão pode virar um registro que a equipe consegue conferir.</p>
-            <div className="my-1 flex flex-col gap-2.5 rounded-2xl bg-[radial-gradient(120%_90%_at_80%_0%,rgb(109_74_255/0.16),transparent_60%)] p-1 text-[15px] leading-6">
+            <div className="my-2 flex flex-1 flex-col justify-center gap-3 rounded-2xl bg-[radial-gradient(120%_90%_at_80%_0%,rgb(109_74_255/0.16),transparent_60%)] p-2 text-base leading-7 sm:p-4 lg:text-lg">
               <p className="max-w-[88%] self-end rounded-2xl rounded-tr-sm bg-violeta-600 px-4 py-2.5 text-white">
                 <Mic className="mr-1.5 inline size-4 align-[-2px]" aria-hidden />
                 “Procuraram calça jeans azul, tamanho 42, e não tinha.”
