@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { RodapeLogin, SobreNos } from "@/components/midia/institucional";
 import { FilmeProduto, GradeBeneficios, ProblemaSecao, RotinaLoja } from "@/components/midia/roteiro";
 import { Caminhos, Hero, PainelSecao } from "@/components/midia/vitrine";
+import { PesquisaSecao } from "@/components/midia/pesquisa";
 import { CabecalhoPublico } from "./CabecalhoPublico";
 
 // Palco animado (motion + recharts) carrega depois do texto; a área fica reservada (ANIMACAO-Tela §19)
@@ -54,6 +55,7 @@ export default function HomePage() {
           </Suspense>
         </Hero>
         <ProblemaSecao />
+        <PesquisaSecao />
         <FilmeProduto onExplorar={verDemo} />
         <GradeBeneficios onVerDemo={verDemo} />
         <RotinaLoja onVerDemo={verDemo} />

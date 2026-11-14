@@ -411,3 +411,14 @@
 .jason-surge { animation: jason-surge 0.7s cubic-bezier(0.16, 1, 0.3, 1) both, jason-treme 0.12s linear 0.7s 4; }
 @keyframes jason-surge { from { opacity: 0; transform: translateY(40px) scale(0.85); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
 @keyframes jason-treme { 50% { transform: translateX(2px) rotate(0.6deg); } }
+
+/* Tela do celular do anúncio (seção Pesquisa): violeta no alto, neon embaixo, aura que respira */
+.celular-tela {
+  background:
+    radial-gradient(120% 70% at 15% 0%, rgb(109 74 255 / 0.6), transparent 60%),
+    radial-gradient(90% 55% at 100% 100%, rgb(182 255 59 / 0.22), transparent 60%),
+    linear-gradient(180deg, #120f3a 0%, #0b1020 55%, #0d1a14 100%);
+  background-size: 140% 140%, 140% 140%, 100% 100%;
+  animation: celular-aura 9s ease-in-out infinite alternate;
+}
+@keyframes celular-aura { to { background-position: 30% 20%, 70% 80%, 0 0; } }
