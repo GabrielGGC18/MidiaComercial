@@ -140,7 +140,7 @@ Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `
 | P3-02 | Pessoa 3 | ⬜ |
 | P3-03 | Pessoa 3 | ⬜ |
 | P3-04 | Pessoa 3 | ⬜ |
-| PV-01 | Pessoa 2 | ⬜ |
+| PV-01 | Pessoa 2 | ✅ (sem "separamos"; tamanho só se confirmado; `campos_incertos`; ver docs/18) |
 | PV-02 | Pessoa 1 | ⬜ |
 | PV-03 | Pessoa 1 | ⬜ |
 | PV-04 | Pessoa 1 | ⬜ |
@@ -158,6 +158,6 @@ Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `
 | UX-04 | Pessoa 1 | ⬜ |
 | UX-05 | Pessoa 2 | ⬜ |
 | UX-06 | Todos | ⬜ |
-| UX-07 | Pessoa 3 + 2 | 🟡 tela feita (data, ordem de decisão, sem SKU/regra fora de "Ver detalhes", selos novos, template sem repetição); falta o backend de `numeros`/`alternativas`/`adiar` |
+| UX-07 | Pessoa 3 + 2 | 🟡 tela feita (data, ordem de decisão, sem SKU/regra fora de "Ver detalhes", selos novos, template sem repetição); backend pronto (`resumo`, `numeros`, `passos`, `alternativas`, `frescor`, `POST /adiar`; docs/18); falta a tela usar os campos novos |
 
 Legenda: ⬜ a fazer · 🟨 fazendo · 🟦 em revisão (PR aberto) · ✅ feito
