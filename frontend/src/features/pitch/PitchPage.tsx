@@ -94,7 +94,7 @@ const SLIDES: { titulo: string; Corpo: () => React.ReactNode; notas: string }[] 
   {
     titulo: "Como funciona",
     Corpo: () => <FilmeProduto onExplorar={irDemo} />,
-    notas: "Clique em Assistir à prévia. Primeiro só o sistema da loja: a procura some. Depois com a nossa camada ao lado: registro, contagem e próximo passo. É uma prévia sem áudio; o vídeo final está em produção. A entrada é por planilha: não diga que está integrado ao caixa.",
+    notas: "A prévia começa sozinha; use pausa, barra e velocidade. Primeiro só o sistema da loja: a procura some. Depois com a nossa camada ao lado: o agente de IA preenche o registro, vêm os números da semana, o contato com clientes que autorizaram e o próximo passo. É uma prévia sem áudio; o vídeo final está em produção. A entrada é por planilha: não diga que está integrado ao caixa.",
   },
   {
     titulo: "Como ajuda",

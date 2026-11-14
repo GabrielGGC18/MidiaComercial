@@ -91,3 +91,35 @@ Saíram da página pública e do pitch: rotas de API, JSON, contratos, eventos e
 | P1 | Conferir as telas novas em 320, 768 e 1024 px e no tema claro |
 | P1 | Um só foco de som entre filme, demonstração e exemplos, quando o filme tiver áudio |
 | P2 | Teste de compreensão com cinco pessoas do público (APRESENTACAO1 §17.6) |
+
+## 8. Revisão de 14/11: filme de 40 s, com agente de IA e números
+
+Esta revisão **substitui os tempos das seções 4 e 5**. A ideia e os dados do exemplo continuam os mesmos.
+
+| Tempo | Título na tela | O que aparece |
+| --- | --- | --- |
+| 00–04 s | O cliente pediu. Não tinha. | A fala do cliente chega ao sistema da loja |
+| 04–08 s | Só com o sistema da loja | "Procuras sem estoque: sem campo"; a fala fica riscada, sem registro |
+| 08–12 s | Com o MidiaComercial ao lado | O painel entra ao lado do caixa; fala da funcionária |
+| 12–17 s | O agente de IA preenche os dados | Produto, cor, tamanho e motivo se preenchem sozinhos a partir da fala |
+| 17–20 s | Uma pessoa confirma | "Confere. Pode registrar." → "Registrado (simulação)" |
+| 20–25 s | A loja volta a esse sinal | Contagem de 5 para 6; saldo 0 pela planilha |
+| 25–30 s | Os números da semana, prontos | Vendas 80, receita R$ 12.800, ticket médio R$ 160, Calças 37,5% (ilustrativos) |
+| 30–35 s | O agente vai atrás dos clientes | Produto parado → 3 clientes que autorizaram contato → mensagem em rascunho; o vendedor revisa e envia |
+| 35–40 s | Um próximo passo, com motivo | "Sua equipe conversa. A IA organiza. A loja decide." |
+
+**Comportamento novo da prévia:**
+- começa sozinha quando a seção entra na tela (não tem som); com "menos movimento", espera o clique;
+- pausa ao sair da tela e retoma ao voltar, a não ser que a pessoa tenha pausado;
+- controles: pausar, reiniciar, barra de posição e velocidade 1x, 1,5x e 2x.
+
+**Limites do que o filme afirma:**
+- o agente preenche os campos, mas quem grava é a pessoa que confirma;
+- o agente só sugere clientes que autorizaram contato e nunca envia mensagem sozinho;
+- os números vêm da planilha enviada pela loja; não há conexão direta com o caixa.
+
+**Também nesta revisão:**
+- cards viraram cinco passos ligados por uma linha;
+- a seção da rotina mostra o relatório da semana (7 dias) e do mês (30 dias), que aparecem na tela Meu público;
+- rodapé com a logo nova e efeitos;
+- demonstração em tela cheia corrigida: abria presa dentro da animação da abertura; agora cobre a tela e já inicia o fluxo.

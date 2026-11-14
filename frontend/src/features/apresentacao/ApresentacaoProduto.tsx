@@ -43,6 +43,9 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
   const abrirAmpliado = () => {
     origemFoco.current = document.activeElement as HTMLElement | null;
     setAmpliado(true);
+    // tela cheia já começa mostrando o fluxo inteiro do balcão (o clique autoriza o som)
+    setPercurso("balcao");
+    if (r.status === "pronto") tocar(true);
   };
   const fecharAmpliado = () => {
     setAmpliado(false);
@@ -53,7 +56,21 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
     if (!ampliado) return;
     const sair = (ev: KeyboardEvent) => ev.key === "Escape" && fecharAmpliado();
     window.addEventListener("keydown", sair);
-    return () => window.removeEventListener("keydown", sair);
+    // `position: fixed` fica preso a qualquer ancestral com transform/filter (GSAP na abertura, escala do
+    // slide no /apresentar). Enquanto estiver ampliado, esses ancestrais ficam sem transformação.
+    const presos: HTMLElement[] = [];
+    for (let el = palco.current?.parentElement ?? null; el && el !== document.body; el = el.parentElement) {
+      // todos os ancestrais: transformação prende o `fixed`; `isolate`/z-index prendem a camada abaixo da navbar
+      el.setAttribute("data-solto", "");
+      presos.push(el);
+    }
+    const rolagem = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", sair);
+      presos.forEach((el) => el.removeAttribute("data-solto"));
+      document.documentElement.style.overflow = rolagem;
+    };
   }, [ampliado]);
 
   const teclas = (ev: React.KeyboardEvent) => {
@@ -79,8 +96,8 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
         aria-label="Demonstração do MidiaComercial"
         onKeyDown={teclas}
         className={cn(
-          "scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-background/90 text-foreground shadow-[0_30px_80px_-30px_rgb(11_16_32/0.6)] backdrop-blur",
-          ampliado && "fixed inset-3 z-dialogo overflow-y-auto bg-background sm:inset-6",
+          "scroll-mt-20 rounded-2xl border border-border text-foreground shadow-[0_30px_80px_-30px_rgb(11_16_32/0.6)]",
+          ampliado ? "fixed inset-3 z-dialogo overflow-y-auto bg-background sm:inset-6" : "overflow-hidden bg-background/90 backdrop-blur",
         )}
       >
         <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border px-4 py-3">

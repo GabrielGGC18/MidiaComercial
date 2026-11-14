@@ -1,6 +1,7 @@
 // Seções da página pública (/): quem somos, segmentos, como funciona e rodapé. A abertura, o bento e os
 // caminhos estão em vitrine.tsx. Fotos: public/fotos (Unsplash, ver CREDITOS.md).
 // Prints: public/telas (demo com dados sintéticos).
+import { LogoAnimado } from "./marca";
 import {
   BadgeCheck,
   Bot,
@@ -347,19 +348,22 @@ export function FraseSinais() {
 
 export function RodapeLogin() {
   return (
-    <footer className="bg-tinta-950 text-tinta-300">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3">
-          <img src="/equipe/sinais.svg" alt="" className="size-10 shrink-0" />
-          <div>
-            <p className="font-display font-extrabold text-white">MidiaComercial</p>
-            <p className="text-xs">Equipe NidoQueen · Palmas, Tocantins</p>
-          </div>
+    <footer className="relative isolate overflow-hidden bg-tinta-950 text-tinta-300">
+      {/* efeitos: linha de luz que corre, brilho da marca e o letreiro gigante em contorno */}
+      <span className="rodape-linha absolute inset-x-0 top-0 h-px" aria-hidden />
+      <span className="brilho-marca pointer-events-none absolute -bottom-40 left-1/2 -z-10 h-80 w-[min(90%,720px)] -translate-x-1/2 opacity-70" aria-hidden />
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 pt-12 sm:px-8 md:flex-row md:items-end md:justify-between">
+        <div className="min-w-0">
+          <LogoAnimado sobreEscuro />
+          <p className="mt-3 text-sm">Equipe NidoQueen · Palmas, Tocantins</p>
         </div>
         <p className="max-w-md text-xs leading-5">
           Demonstração com dados sintéticos. Contato com cliente só com autorização (LGPD) e revisão de uma pessoa. Fotos: Unsplash.
         </p>
       </div>
+      <p className="rodape-letreiro pointer-events-none mt-6 select-none whitespace-nowrap text-center font-display font-extrabold leading-[0.8]" aria-hidden>
+        MIDIA
+      </p>
     </footer>
   );
 }
