@@ -92,5 +92,31 @@ As 6 frases que falham estão marcadas como `conhecida_falha` (xfail estrito): t
 parser a elas, para o número não ser inflado. A avaliação já pegou bugs reais: "cara" não era preço, o produto
 não era achado com palavras antes dele e cumprimentos viravam registro de procura.
 
-O número do Hermes sai rodando o comando na VPS (`--provedor hermes`); cada frase leva de 6 a 20 s.
+### 8.1 Hermes (GPT, produção) × offline — 14/11/2026
+
+`avaliar_agente --provedor hermes`, rodado num container avulso na VPS (cerca de 30 min; cada frase leva de 6 a 20 s):
+
+| Campo | Offline | Hermes |
+| --- | --- | --- |
+| Frases inteiras certas | **47/53** | **25/53** |
+| ferramenta | 53/53 (100%) | 47/53 (89%) |
+| produto (`sku_produto`) | 38/38 (100%) | 22/38 (58%) |
+| faixa etária | 11/12 (92%) | 7/12 (58%) |
+| tamanho | 28/31 (90%) | 28/31 (90%) |
+| motivo | 35/36 (97%) | 33/36 (92%) |
+| cor | 21/23 (91%) | 23/23 (100%) |
+
+Onde o Hermes erra:
+
+1. **Produto:** pede `buscar_variante` e `propor_demanda` na **mesma rodada**, antes de ver o resultado. A procura
+   fica como texto livre, sem `produto_id`, o que enfraquece a regra A, que conta procuras por SKU.
+2. **Perguntas de público:** respondeu 5 de 5 **sem chamar** `resumo_publico`, com risco de número inventado.
+3. **Faixa etária:** ignora pistas como "senhora", "rapaz" e "moça".
+4. **Frase curta** ("calça jeans 42 azul"): pergunta de volta em vez de propor.
+
+**Conclusão:** no balcão, o parser offline é mais preciso e instantâneo. Próximos passos, ainda **não aplicados**:
+rotear o registro de procura para o offline e deixar o Hermes para perguntas abertas
+([#16](https://github.com/GabrielGGC18/MidiaComercial/issues/16)); exigir a busca antes da proposta e a
+ferramenta antes de responder sobre público
+([#17](https://github.com/GabrielGGC18/MidiaComercial/issues/17)); medir de novo com o mesmo comando.
 

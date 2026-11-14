@@ -59,10 +59,41 @@ Repositório público: gitleaks (pre-commit e CI), bloqueio de arquivos sensíve
 - CD da API: timer na VPS publica a `main` só com CI verde, com rollback automático
   ([14 §5](14-DEPLOY-E-OPERACAO.md#5-cd-da-api-timer-na-vps)).
 
-## 7. Pendências conhecidas
+## 7. Backend de oportunidades, agente e base de produção (13–14/11)
 
-- Backup agendado do banco (`pg_dump`) na VPS.
-- `ConfiguracaoLoja.c_min_cobertura_cliente` com padrão em texto (`"0.30"`): comparação `Decimal < str` em loja
-  recém-criada.
-- O Hermes não informa tokens: `/api/agente/uso` mostra a quantidade de conversas com LLM, mas não o custo.
-- Conferir que `API_SEGREDO` está definido na Vercel (sem ele, o rate limit vê todos os visitantes como um IP).
+- **Oportunidades** ([docs/18](18-BACKEND-DE-OPORTUNIDADES.md)): o GET só lê; as análises são imutáveis;
+  recalcular com os mesmos dados devolve a mesma análise; a publicação é curta e travada por loja, com o LLM fora
+  da transação; campos estruturados da decisão; "Lembrar depois"; uma ação aberta por alvo.
+- **Agente:** histórico de conversas (até 100 falas guardadas, 6 ao LLM); escolha de provedor por tabela com
+  queda para o offline; retenção LGPD diária; confirmação travada (sem registro duplicado); mensagem de contato
+  sem promessa (PV-01); frases que não são de balcão não viram registro.
+- **Avaliação do agente:** 53 frases e o comando `avaliar_agente`. Offline 47/53, Hermes 25/53 (docs/09 §8).
+- **Telas:** detalhe da oportunidade com a decisão primeiro (UX-07); clientes paginados (P1-06).
+- **Produção:** o dev sobe sem `.env`; a produção recusa chave de dev; saúde com 503; HTTPS forçado, HSTS e
+  sessão de 12 h; correção do limiar `Decimal` em loja nova.
+- **Proxy da Vercel:** `API_SEGREDO` e `API_ORIGEM` tolerantes a valor colado; `API_ORIGEM` apontando para a
+  própria Vercel vira "em manutenção" com o motivo no log, em vez de `NOT_FOUND`.
+
+## 8. Fluxo de entrega e documentação técnica (14/11)
+
+- **Branches:** `feat/… → develop → main`. A `develop` só integra (CI); a `main` é a produção. O CI recusa PR
+  para a `main` que não venha da `develop` ou de `hotfix/…`. Checklist obrigatório antes da `main`
+  ([docs/14 §0](14-DEPLOY-E-OPERACAO.md#0-fluxo-de-branches)).
+- **Ambiente de teste:** chegou a ser montado na VPS (projeto separado, porta própria) e foi **removido** por
+  decisão da equipe. O compose ainda aceita `MC_PROJETO`/`MC_PORTA` se um dia for preciso.
+- **Docs técnicas:** [docs/tecnico/](tecnico/README.md), com seis guias e a referência gerada do código
+  (`manage.py gerar_referencia`: 55 rotas com o papel mínimo, modelos, comandos e settings).
+- **Acompanhamento:** milestones e issues no GitHub (#15 a #27).
+
+## 9. Pendências conhecidas
+
+| Pendência | Issue |
+| --- | --- |
+| Rate limit pelo site não bloqueia: conferir o `API_SEGREDO` de Production na Vercel | [#20](https://github.com/GabrielGGC18/MidiaComercial/issues/20) |
+| Balcão no offline e Hermes só para perguntas abertas; prompt do Hermes | [#16](https://github.com/GabrielGGC18/MidiaComercial/issues/16), [#17](https://github.com/GabrielGGC18/MidiaComercial/issues/17) |
+| Tempo de resposta do Hermes (17–34 s) | [#18](https://github.com/GabrielGGC18/MidiaComercial/issues/18) |
+| Ferramentas de vendas, oportunidades e ações no agente | [#19](https://github.com/GabrielGGC18/MidiaComercial/issues/19) |
+| Backup agendado do banco | [#21](https://github.com/GabrielGGC18/MidiaComercial/issues/21) |
+| Chat com histórico (P3-04) · tela do dono (P2-05) · layout e rotina (P3, UX) | [#22](https://github.com/GabrielGGC18/MidiaComercial/issues/22), [#23](https://github.com/GabrielGGC18/MidiaComercial/issues/23), [#24](https://github.com/GabrielGGC18/MidiaComercial/issues/24) |
+| Importação fiel ao sistema da loja · pós-venda · conector da loja piloto | [#25](https://github.com/GabrielGGC18/MidiaComercial/issues/25), [#26](https://github.com/GabrielGGC18/MidiaComercial/issues/26), [#27](https://github.com/GabrielGGC18/MidiaComercial/issues/27) |
+| O Hermes não informa tokens: `/api/agente/uso` conta conversas, não custo | — |
