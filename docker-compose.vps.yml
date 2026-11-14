@@ -7,7 +7,11 @@
 # - O web roda com o uid/gid do usuário `midiacomercial` do host (MC_UID/MC_GID no .env)
 #   para usar o socket da ponte do Hermes (/var/lib/midiacomercial-hermes).
 # - Estáticos do /admin servidos pelo whitenoise dentro do container.
-name: midiacomercial
+# - Mesmo arquivo para produção e teste: MC_PROJETO e MC_PORTA no .env de cada pasta
+#   separam projeto Docker (rede, volume do banco), imagem e porta. Sem eles = produção.
+#     produção: /srv/midiacomercial      (main)    → midiacomercial      · 127.0.0.1:8001
+#     teste:    /srv/midiacomercial-dev  (develop) → midiacomercial-dev  · 127.0.0.1:8002
+name: ${MC_PROJETO:-midiacomercial}
 
 services:
   db:
@@ -27,13 +31,13 @@ services:
 
   web:
     build: { context: ., target: web }
-    image: midiacomercial-web:latest
+    image: ${MC_PROJETO:-midiacomercial}-web:latest
     env_file: .env
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.prod
     user: "${MC_UID:?defina MC_UID no .env}:${MC_GID:?defina MC_GID no .env}"
     ports:
-      - "127.0.0.1:8001:8000"
+      - "127.0.0.1:${MC_PORTA:-8001}:8000"
     volumes:
       - /var/lib/midiacomercial-hermes:/var/lib/midiacomercial-hermes
     healthcheck:
@@ -51,7 +55,7 @@ services:
   # Avisos "ação atrasada" e "estoque desatualizado" (Observer) de hora em hora.
   # O observer agrupa repetições em 24 h, então rodar várias vezes não gera spam.
   prazos:
-    image: midiacomercial-web:latest
+    image: ${MC_PROJETO:-midiacomercial}-web:latest
     env_file: .env
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.prod
