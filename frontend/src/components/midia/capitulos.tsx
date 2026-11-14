@@ -5,6 +5,14 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { indice, Revelar } from "./destaques";
 
+// Ranking fictício do cartão, já em ordem (o mais procurado primeiro)
+const RANKING = [
+  { nome: "Calça jeans azul", tam: "42", n: 6 },
+  { nome: "Tênis branco", tam: "41", n: 4 },
+  { nome: "Camiseta básica", tam: "M", n: 3 },
+];
+const TOTAL_RANKING = RANKING.reduce((t, r) => t + r.n, 0);
+
 /** Problema: a venda perdida que o caixa não registra. */
 export function EscadaProblema() {
   const linhas = [
@@ -48,21 +56,42 @@ export function EscadaProblema() {
             </Revelar>
           </div>
 
-          {/* cartão que entra inclinado e "respira" (o boletim do Pibaru, aqui: o ranking do balcão) */}
-          <Revelar modo="cartao" className="rounded-2xl bg-white p-5 text-tinta-950 shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)]">
-            <p className="text-sm font-bold">Procuraram e não tinha · esta semana</p>
-            <ul className="mt-4 flex flex-col gap-2 text-sm">
-              <li className="flex items-center justify-between rounded-lg bg-tinta-50 px-3 py-2">
-                Tênis branco 41 <span className="font-semibold tabular">4</span>
-              </li>
-              <li className="pulo flex items-center justify-between rounded-lg bg-coral-500 px-3 py-2 font-semibold text-white">
-                Calça jeans azul 42 <span className="tabular">6</span>
-              </li>
-              <li className="flex items-center justify-between rounded-lg bg-tinta-50 px-3 py-2">
-                Camiseta básica M <span className="font-semibold tabular">3</span>
-              </li>
-            </ul>
-            <p className="mt-4 text-xs leading-5 text-tinta-500">Dados fictícios. São atendimentos, não compradores únicos.</p>
+          {/* cartão que entra inclinado e "respira" (o boletim do Pibaru, aqui: o ranking do balcão).
+              Linhas na mesma grade: posição · produto + tamanho · contagem, com a barra embaixo. */}
+          <Revelar modo="cartao" className="w-full rounded-2xl bg-white p-5 text-tinta-950 shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)] lg:self-center">
+            <div className="flex items-start gap-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-coral-500/10 text-coral-600" aria-hidden>
+                <PackageSearch className="size-[18px]" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-bold leading-5">Procuraram e não tinha</p>
+                <p className="text-xs leading-5 text-tinta-500">Esta semana · {TOTAL_RANKING} procuras</p>
+              </div>
+            </div>
+            <ol className="mt-4 flex flex-col gap-1.5 text-sm">
+              {RANKING.map((r, i) => (
+                <li
+                  key={r.nome}
+                  className={cn(
+                    "grid grid-cols-[1.25rem_minmax(0,1fr)_auto] items-center gap-x-2.5 gap-y-2 rounded-lg px-3 py-2.5",
+                    i === 0 ? "pulo bg-coral-500 font-semibold text-white" : "bg-tinta-50",
+                  )}
+                >
+                  <span className={cn("tabular text-xs font-semibold", i === 0 ? "text-white/80" : "text-tinta-500")}>{i + 1}º</span>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className="truncate">{r.nome}</span>
+                    <span className={cn("tabular shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-semibold leading-4", i === 0 ? "bg-white/20" : "bg-white text-tinta-700")}>
+                      {r.tam}
+                    </span>
+                  </span>
+                  <span className="tabular w-5 text-right font-semibold">{r.n}</span>
+                  <span className={cn("col-span-3 h-1 overflow-hidden rounded-full", i === 0 ? "bg-white/25" : "bg-tinta-200")} aria-hidden>
+                    <span className={cn("block h-full rounded-full", i === 0 ? "bg-white" : "bg-coral-500")} style={{ width: `${(r.n / RANKING[0].n) * 100}%` }} />
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-4 border-t border-tinta-100 pt-3 text-xs leading-5 text-tinta-500">Dados fictícios. São atendimentos, não compradores únicos.</p>
           </Revelar>
         </div>
       </section>
