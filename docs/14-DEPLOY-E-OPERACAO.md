@@ -4,6 +4,30 @@
 > Os comandos reais e os scripts de infraestrutura ficam fora do Git (pasta `deploy/` e um runbook local, os
 > dois no `.gitignore`).
 
+## 0. Ambientes e fluxo de branches
+
+| Branch | Ambiente | Front | API | Publicação |
+| --- | --- | --- | --- | --- |
+| `develop` | **Teste** | Vercel *Preview* da `develop` (`midia-comercial-dev.midia63.com.br`) | VPS, projeto `midiacomercial-dev`, porta 8002, banco próprio | Automática com CI verde |
+| `main` | **Produção** | `midia-comercial.midia63.com.br` | VPS, projeto `midiacomercial`, porta 8001 | Automática com CI verde |
+
+```mermaid
+flowchart LR
+    F["branch de trabalho<br/>feat/… · fix/…"] -->|"PR"| D["develop"]
+    D -->|"CI verde → CD"| T["ambiente de teste"]
+    T -->|"validado"| PR["PR develop → main"]
+    PR -->|"CI verde → CD"| P["produção"]
+```
+
+1. Trabalhe numa branch a partir da `develop` (`feat/...`, `fix/...`) e abra PR para a `develop`.
+2. Mergeou na `develop`: o CI roda, a Vercel gera o preview e a VPS publica a API de teste.
+3. Validou no teste: PR `develop → main`. Mergeou: produção.
+4. Correção urgente de produção: `hotfix/...` a partir da `main`, PR para a `main` e depois traga para a `develop`.
+
+Os dois ambientes usam o **mesmo** `docker-compose.vps.yml`: `MC_PROJETO` e `MC_PORTA` no `.env` de cada pasta
+separam projeto Docker (rede, volume do banco), imagem e porta. Sem eles, vale a produção. O teste tem segredos
+próprios (chave, senha do banco, segredo do proxy) e banco com a demo; compartilha só a ponte do Hermes.
+
 ## 1. Desenho
 
 | Parte | Onde | Publicação |
@@ -40,6 +64,9 @@ Variáveis de ambiente (Production):
 | --- | --- |
 | `API_ORIGEM` | Endereço da API (`https://<dominio-da-api>`). Tolera aspas, espaços, `API_ORIGEM=` colado, falta de `https://` e barra no fim |
 | `API_SEGREDO` | Igual a `MIDIA_PROXY_SEGREDO` da API. Autentica o IP real do visitante para o rate limit |
+
+No ambiente **Preview** (branch `develop`), as mesmas variáveis apontam para a API de teste
+(`https://<dominio-da-api-de-teste>`) e para o segredo do `.env` do teste.
 
 Variável nova só vale depois de um **Redeploy**. Se `API_ORIGEM` faltar ou for inválida, o visitante vê
 "O sistema está em manutenção" e o motivo vai só para o log da Vercel.
