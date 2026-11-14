@@ -11,17 +11,17 @@ arquivo versionado.
 
 ## Fluxo de branches
 
-- `develop` = **teste** (API de teste na VPS, porta 8002, e preview da Vercel). `main` = **produção**.
-- Trabalho novo: branch a partir da `develop` → PR para a `develop` → valida no teste → PR `develop → main`.
+- `develop` = integração (CI a cada push). `main` = **produção** (CI + Vercel + CD da VPS).
+- Trabalho novo: branch a partir da `develop` → PR para a `develop` → PR `develop → main` quando for ao ar.
 - Nunca commitar direto na `main`, exceto `hotfix/...` (depois trazer para a `develop`).
-- O CD de cada ambiente só publica commit com o CI **daquela branch** verde.
+- O CD da produção só publica commit da `main` com CI verde. Não há ambiente de teste publicado.
 
 ## Publicar
 
 1. Garanta CI verde localmente:
    - `ruff check . && ruff format --check . && python manage.py makemigrations --check --dry-run && pytest`
    - `cd frontend && npm run typecheck && npm test && npm run build`
-2. Commit e push na `develop` (só com ordem do usuário); depois do teste, PR para a `main`.
+2. Commit e push na `develop` (só com ordem do usuário); para ir ao ar, PR `develop → main`.
 3. Front: a Vercel publica sozinha.
 4. API: o timer da VPS publica em até ~3 min **depois** que o CI passa. Acompanhe com `gh run list -L 1` e, na
    VPS, pelo journal do serviço de autodeploy (comando no runbook).
