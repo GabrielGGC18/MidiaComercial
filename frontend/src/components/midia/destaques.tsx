@@ -1,5 +1,7 @@
 // Ponte entre efeitos (components/efeitos) e as telas (docs/08 §4.2): features usam estes nomes
 // de domínio; trocar um efeito muda só aqui.
+import { useSyncExternalStore } from "react";
+import { AeroShards } from "@/components/efeitos/AeroShards";
 import { Aurora } from "@/components/efeitos/Aurora";
 import { BlurText } from "@/components/efeitos/BlurText";
 import { CardSwap } from "@/components/efeitos/CardSwap";
@@ -12,6 +14,17 @@ import { ShinyText } from "@/components/efeitos/ShinyText";
 import { SpotlightCard } from "@/components/efeitos/SpotlightCard";
 import { Squares } from "@/components/efeitos/Squares";
 import { StarBorder } from "@/components/efeitos/StarBorder";
+
+/** Fundo da página inicial: estilhaços de vidro (AeroShards), segue o tema claro/escuro da página. */
+export function FundoEstilhacos({ className }: { className?: string }) {
+  const escuro = useSyncExternalStore(assinarTema, () => document.documentElement.classList.contains("dark"), () => true);
+  return <AeroShards className={className} claro={!escuro} />;
+}
+function assinarTema(cb: () => void) {
+  const mo = new MutationObserver(cb);
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => mo.disconnect();
+}
 
 /** "Agente pensando…", "Processando planilha…" */
 export const Processando = ShinyText;

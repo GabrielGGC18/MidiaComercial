@@ -2,11 +2,10 @@
 import { Bot, TriangleAlert } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef } from "react";
-import { Processando } from "@/components/midia/destaques";
 import { cn } from "@/lib/utils";
 import type { Fala } from "./cenario";
 
-export function ChatDemonstracao({ falas, preparando }: { falas: Fala[]; preparando: boolean }) {
+export function ChatDemonstracao({ falas }: { falas: Fala[] }) {
   const fim = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = fim.current?.parentElement;
@@ -47,11 +46,6 @@ export function ChatDemonstracao({ falas, preparando }: { falas: Fala[]; prepara
             </motion.p>
           ))}
         </AnimatePresence>
-        {preparando && falas.length > 0 && (
-          <p className="text-xs text-muted-foreground" aria-hidden>
-            <Processando>organizando a próxima etapa…</Processando>
-          </p>
-        )}
         <div ref={fim} />
       </div>
     </div>

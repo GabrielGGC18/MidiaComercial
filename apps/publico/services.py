@@ -24,7 +24,11 @@ DOIS = Decimal("0.01")
 
 
 def configuracao(loja) -> ConfiguracaoLoja:
-    cfg, _ = ConfiguracaoLoja.objects.get_or_create(loja=loja)
+    cfg, criada = ConfiguracaoLoja.objects.get_or_create(loja=loja)
+    if criada:
+        # o default dos DecimalField é texto ("0.30"); sem reler, a loja nova comparava
+        # Decimal < str no motor e quebrava
+        cfg.refresh_from_db()
     return cfg
 
 

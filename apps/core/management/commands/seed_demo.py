@@ -17,3 +17,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, reset=False, semente=42, **opts):
         criar_demo(reset=reset, semente=semente, log=self.stdout.write)
+        # a demo abre com a análise pronta (o GET de oportunidades só lê)
+        from apps.contas.models import Loja
+        from apps.inteligencia.motor import calcular
+
+        for loja in Loja.objects.filter(demo=True):
+            r = calcular(loja)
+            self.stdout.write(f"[ok] {loja.nome}: análise {r.execucao.id} pronta")

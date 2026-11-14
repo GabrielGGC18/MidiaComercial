@@ -86,7 +86,7 @@ def test_balcao_dispara_limiar_de_procuras(demo, django_capture_on_commit_callba
 def test_motor_e_agente_disparam(demo, django_capture_on_commit_callbacks):
     g = _cli("gerente.centro")
     with django_capture_on_commit_callbacks(execute=True):
-        g.get("/api/oportunidades/")
+        g.post("/api/oportunidades/gerar")
     assert Notificacao.objects.filter(tipo=ev.OPORTUNIDADE_NOVA).count() >= 1
     antes = Notificacao.objects.filter(tipo=ev.OPORTUNIDADE_NOVA).count()
     with django_capture_on_commit_callbacks(execute=True):

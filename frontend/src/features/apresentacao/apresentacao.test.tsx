@@ -3,6 +3,9 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ApresentacaoProduto from "./ApresentacaoProduto";
+import { PalcoPosVenda } from "./PalcoPosVenda";
+import { inicioDe, SEGMENTOS, TOTAL_MS } from "./cenario-balcao";
+import { estadoBalcao } from "./seletores-balcao";
 import { DURACAO_MS, ULTIMO } from "./cenario";
 import { ESCOLHAS_INICIAIS, estadoNo } from "./seletores";
 
@@ -42,7 +45,7 @@ describe("estado da demonstração (função pura)", () => {
   });
 });
 
-describe("palco", () => {
+describe("palco pós-venda", () => {
   beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }));
   afterEach(() => vi.useRealTimers());
 
@@ -51,13 +54,13 @@ describe("palco", () => {
   const montar = () =>
     render(
       <MemoryRouter>
-        <ApresentacaoProduto />
+        <PalcoPosVenda />
       </MemoryRouter>,
     );
 
   it("avança sozinho até a revisão e espera ação explícita", async () => {
     montar();
-    await act(async () => screen.getByRole("button", { name: /Começar/ }).click());
+    await act(async () => screen.getByRole("button", { name: /Ver a visão de pós-venda/ }).click());
     expect(capitulo(/Receber/)).toHaveAttribute("aria-current", "step");
 
     for (const ms of DURACAO_MS.slice(0, ULTIMO)) await act(async () => vi.advanceTimersByTime(ms + 10));
@@ -75,9 +78,76 @@ describe("palco", () => {
 
   it("pausar congela o capítulo", async () => {
     montar();
-    await act(async () => screen.getByRole("button", { name: /Começar/ }).click());
+    await act(async () => screen.getByRole("button", { name: /Ver a visão de pós-venda/ }).click());
     await act(async () => screen.getByRole("button", { name: "Pausar" }).click());
     await act(async () => vi.advanceTimersByTime(30_000));
     expect(capitulo(/Receber/)).toHaveAttribute("aria-current", "step");
+  });
+});
+
+describe("balcão por voz (estado puro)", () => {
+  const confirma = SEGMENTOS.find((s) => s.aguardar)!;
+
+  it("sem confirmação nada é registrado, nem depois do tempo", () => {
+    const e = estadoBalcao(TOTAL_MS, false);
+    expect(e.registrado).toBe(false);
+    expect(e.total).toBe(5);
+    expect(e.falas.some((f) => f.id === "f-confirma")).toBe(false);
+  });
+
+  it("confirmado: 5 → 6 uma vez só, em qualquer posição depois do registro", () => {
+    for (const p of [inicioDe("a-registrado"), inicioDe("a-saldo"), TOTAL_MS]) {
+      expect(estadoBalcao(p, true).total).toBe(6);
+    }
+    expect(estadoBalcao(confirma.inicioMs - 1, true).total).toBe(5);
+  });
+
+  it("foco segue a conversa: proposta → confirmar → registro → gráfico → decisão", () => {
+    expect(estadoBalcao(inicioDe("a-confere") + 10, false).foco).toBe("proposta");
+    expect(estadoBalcao(confirma.inicioMs, false).foco).toBe("confirmar");
+    expect(estadoBalcao(inicioDe("a-registrado"), true).foco).toBe("registro");
+    expect(estadoBalcao(inicioDe("a-saldo"), true).foco).toBe("grafico");
+    expect(estadoBalcao(inicioDe("a-decide"), true).foco).toBe("decisao");
+  });
+
+  it("a onda usa os picos do arquivo e o progresso da posição", () => {
+    const meio = SEGMENTOS[0]!.audioMs / 2;
+    const f = estadoBalcao(meio, false).falas[0]!;
+    expect(f.picos.length).toBeGreaterThan(10);
+    expect(f.progresso).toBeCloseTo(0.5, 1);
+  });
+});
+
+describe("balcão por voz (palco)", () => {
+  beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }));
+  afterEach(() => vi.useRealTimers());
+
+  const montar = () =>
+    render(
+      <MemoryRouter>
+        <ApresentacaoProduto />
+      </MemoryRouter>,
+    );
+
+  it("para na confirmação, só segue com clique, e pausar guarda a posição", async () => {
+    montar();
+    await act(async () => screen.getByRole("button", { name: "Assistir sem som" }).click());
+    await act(async () => vi.advanceTimersByTime(SEGMENTOS.find((s) => s.aguardar)!.inicioMs + 5_000));
+    const confirmar = screen.getByRole("button", { name: /Confirmar registro/ });
+    expect(screen.queryByText("Registrado")).not.toBeInTheDocument();
+
+    await act(async () => confirmar.click());
+    await act(async () => vi.advanceTimersByTime(3_000));
+    await act(async () => screen.getByRole("button", { name: "Pausar" }).click());
+    const fala = screen.getByText("Isso, pode registrar.");
+    expect(fala).toBeInTheDocument();
+    // pausado: nada avança
+    const antes = screen.queryAllByText(/Registrado/).length;
+    await act(async () => vi.advanceTimersByTime(20_000));
+    expect(screen.queryAllByText(/Registrado/).length).toBe(antes);
+
+    await act(async () => screen.getByRole("button", { name: "Continuar" }).click());
+    await act(async () => vi.advanceTimersByTime(TOTAL_MS));
+    expect(screen.getByText("Repor calça jeans azul 42?")).toBeInTheDocument();
   });
 });

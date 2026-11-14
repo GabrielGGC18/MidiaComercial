@@ -44,6 +44,7 @@ class SaldoEstoque:
 class InfoSku:
     nome: str  # "Camiseta básica Azul M"
     categoria: str
+    produto: str = ""  # id do produto-pai: variantes irmãs (outra cor/tamanho)
 
 
 @dataclass(frozen=True)

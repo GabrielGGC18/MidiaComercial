@@ -18,7 +18,10 @@ def gerente_centro(db):
 
 def test_fluxo_completo(gerente_centro):
     c = gerente_centro
-    painel = c.get("/api/oportunidades/").json()
+    vazio = c.get("/api/oportunidades/").json()  # GET só lê: loja nunca analisada
+    assert vazio["estado"] == "sem_execucao" and vazio["execucao"] is None
+    painel = c.post("/api/oportunidades/gerar").json()
+    assert painel["estado"] == "pronto" and not painel["reaproveitada"]
     assert 1 <= len(painel["cartoes"]) <= 3
     primeiro = painel["cartoes"][0]
     assert primeiro["regra"] == "A_LACUNA_MIX"
@@ -70,7 +73,7 @@ def test_fluxo_completo(gerente_centro):
 
 def test_descartar_oportunidade(gerente_centro):
     c = gerente_centro
-    op = c.get("/api/oportunidades/").json()["cartoes"][-1]
+    op = c.post("/api/oportunidades/gerar").json()["cartoes"][-1]
     r = c.post(
         f"/api/oportunidades/{op['id']}/descartar",
         {"justificativa": "Fornecedor parou de fabricar"},

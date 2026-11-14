@@ -18,7 +18,7 @@ import {
   Receipt,
 } from "lucide-react";
 import { Link } from "react-router";
-import { AcaoPrincipal, CartaoExploravel, Entrada, FaixaRolante, TextoEmRotacaoGradiente, TituloAnimado } from "./destaques";
+import { AcaoPrincipal, CartaoExploravel, Entrada, FaixaRolante, FundoEstilhacos, TextoEmRotacaoGradiente, TituloAnimado } from "./destaques";
 import { cn } from "@/lib/utils";
 
 /* ───────────────────────── peças ───────────────────────── */
@@ -84,46 +84,47 @@ function CabecalhoSecao({ sobre, titulo, texto, id }: { sobre: string; titulo: s
 /* ───────────────────────── hero ───────────────────────── */
 
 /**
- * Primeira dobra (ANIMACAO-Tela §4.2): título curto + CTA; a demonstração (palco) vem em `children`,
- * carregada sob demanda pela HomePage. O texto renderiza antes do palco.
+ * Primeira dobra (melhoria-design §1 e §3): abertura compacta e o palco como maior superfície.
+ * Fundo de estilhaços só atrás da abertura. A demonstração vem em `children` (lazy na HomePage).
  */
 export function Hero({ onComecar, children }: { onComecar: () => void; children?: React.ReactNode }) {
   return (
-    <section className="mx-auto w-full max-w-[1280px] px-5 pb-16 pt-10 sm:px-8 lg:px-10 lg:pt-14">
-      <div className="mx-auto max-w-3xl text-center">
-        <p className="inline-flex items-center gap-2 rounded-md border border-border bg-card/80 px-3 py-1.5 text-xs font-medium shadow-xs backdrop-blur">
-          <span className="size-2 rounded-full bg-coral-500" aria-hidden />
-          <span className="text-violeta-700 dark:text-violeta-100">Inteligência comercial</span>
-          <span className="text-muted-foreground">· para lojas de moda e acessórios</span>
-        </p>
-        <h1 className="mt-5 font-display text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold leading-[1.05] tracking-tight">
-          <TituloAnimado texto="Da venda ao" />{" "}
-          <span className="destaque-titulo text-violeta-600 dark:text-violeta-300">
-            <TituloAnimado texto="próximo contato." atraso={140} />
-          </span>
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-[17px] leading-7 text-muted-foreground">
-          Acompanhe como o MídiaComercial organiza uma venda, atualiza as informações da loja e prepara uma sugestão de pós-venda.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <AcaoPrincipal>
-            <button
-              type="button"
-              onClick={onComecar}
-              className="inline-flex h-12 items-center gap-2 rounded-md bg-violeta-500 px-6 text-sm font-semibold text-white shadow-md hover:bg-violeta-600"
+    <section className="relative isolate">
+      <FundoEstilhacos className="absolute inset-x-0 top-0 -z-10 h-[620px]" />
+      <div className="mx-auto w-full max-w-[1280px] px-5 pb-14 pt-8 sm:px-8 lg:px-10 lg:pt-10">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="sobretitulo text-coral-700 dark:text-coral-500">Inteligência comercial para lojas de moda e acessórios</p>
+            <h1 className="mt-3 font-display text-[clamp(2rem,4.2vw,3.25rem)] font-extrabold leading-[1.06] tracking-tight">
+              <TituloAnimado texto="Sua equipe fala." />{" "}
+              <span className="destaque-titulo text-violeta-600 dark:text-violeta-300">
+                <TituloAnimado texto="O MídiaComercial organiza o próximo passo." atraso={120} />
+              </span>
+            </h1>
+            <p className="mt-3 max-w-xl text-[17px] leading-7 text-muted-foreground">
+              Veja uma conversa virar registro, informação da loja e uma ação que o vendedor revisa.
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-3">
+            <AcaoPrincipal>
+              <button
+                type="button"
+                onClick={onComecar}
+                className="inline-flex h-12 items-center gap-2 rounded-md bg-violeta-500 px-6 text-sm font-semibold text-white shadow-md hover:bg-violeta-600"
+              >
+                <Play className="size-4" aria-hidden /> Assistir à demonstração
+              </button>
+            </AcaoPrincipal>
+            <Link
+              to="/login"
+              className="inline-flex h-12 items-center gap-2 rounded-md border border-border bg-card px-6 text-sm font-semibold hover:bg-muted"
             >
-              <Play className="size-4" aria-hidden /> Ver uma venda acontecer
-            </button>
-          </AcaoPrincipal>
-          <Link
-            to="/login"
-            className="inline-flex h-12 items-center gap-2 rounded-md bg-tinta-900 px-6 text-sm font-semibold text-white hover:bg-tinta-800 dark:bg-card dark:hover:bg-muted"
-          >
-            Entrar na sua loja <ArrowRight className="size-4" aria-hidden />
-          </Link>
+              Entrar na loja <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </div>
         </div>
+        <div className="mt-8">{children}</div>
       </div>
-      <div className="mt-10">{children}</div>
     </section>
   );
 }

@@ -11,10 +11,20 @@ export function usePercurso({ automatico = true }: { automatico?: boolean } = {}
   const [escolhas, setEscolhas] = useState<Escolhas>(ESCOLHAS_INICIAIS);
 
   // Avanço automático. Para no capítulo Revisar: aprovar exige ação explícita.
+  // Pausar guarda o tempo que faltava no capítulo; continuar usa só o restante.
+  const restante = useRef<{ cap: number; ms: number } | null>(null);
   useEffect(() => {
     if (!tocando || cap < 0 || cap >= ULTIMO) return;
-    const t = window.setTimeout(() => setCap((c) => Math.min(c + 1, ULTIMO)), DURACAO_MS[cap]);
-    return () => window.clearTimeout(t);
+    const ms = restante.current?.cap === cap ? restante.current.ms : DURACAO_MS[cap]!;
+    const inicio = Date.now();
+    const t = window.setTimeout(() => {
+      restante.current = null;
+      setCap((c) => Math.min(c + 1, ULTIMO));
+    }, ms);
+    return () => {
+      window.clearTimeout(t);
+      restante.current = { cap, ms: Math.max(0, ms - (Date.now() - inicio)) };
+    };
   }, [tocando, cap]);
 
   useEffect(() => {
@@ -30,6 +40,7 @@ export function usePercurso({ automatico = true }: { automatico?: boolean } = {}
 
   const irPara = useCallback((n: number) => {
     const alvo = Math.max(0, Math.min(ULTIMO, n));
+    restante.current = null;
     setCap(alvo);
     // voltar antes da revisão invalida a aprovação anterior
     if (alvo < ULTIMO) setEscolhas((e) => (e.revisao === "pendente" ? e : { ...e, revisao: "pendente" }));

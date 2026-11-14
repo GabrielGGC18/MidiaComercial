@@ -31,6 +31,8 @@ def confirmar(
 ) -> PropostaAgente:
     from apps.core.permissoes import HIERARQUIA
 
+    # relê com trava: duas confirmações simultâneas não criam dois registros
+    proposta = PropostaAgente.objects.select_for_update().get(pk=proposta.pk)
     _pendente(proposta)
     dados = proposta.dados | (ajustes or {})
     minimo = "atendente" if proposta.tipo == PropostaAgente.Tipo.DEMANDA else "gerente"

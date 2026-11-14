@@ -31,6 +31,7 @@ def montar_contexto(loja, fim: date | None = None) -> ContextoAnalise:
         v.sku: InfoSku(
             nome=f"{v.produto.nome} {v.cor} {v.tamanho}".replace("  ", " ").strip(),
             categoria=v.produto.categoria,
+            produto=str(v.produto_id),
         )
         for v in variantes.values()
     }

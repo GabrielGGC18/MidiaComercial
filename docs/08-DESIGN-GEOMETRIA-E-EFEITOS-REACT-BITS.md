@@ -336,3 +336,5 @@ A página inicial (`/`) ganhou um palco que mostra uma venda fictícia em 6 cap�
 | **Carregamento sob demanda** | O palco é `lazy`; o título e o CTA aparecem antes, com a área do palco reservada |
 | **Sem backend** | Dados fictícios em `cenario.ts`. Nada é gravado nem enviado; "Aprovar sugestão" só muda o estado local |
 | **Movimento reduzido e celular** | Avanço manual por padrão; no celular, abas "Resultado" e "Conversa" |
+
+**Atualização (v0.5):** o percurso principal virou "balcão por voz" (áudio com onda real e confirmação explícita) e entrou o fundo Aero Shards em Canvas 2D (sem WebGPU). Detalhes e decisões em [docs/17](17-DESIGN-DA-APRESENTACAO.md).

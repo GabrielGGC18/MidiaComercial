@@ -34,7 +34,8 @@ export default function OportunidadesPage() {
 
   const p = q.data;
   const qual = p?.qualidade;
-  const janela = p ? periodo(p.execucao.janela_inicio, p.execucao.janela_fim) : "";
+  const janela = p?.execucao ? periodo(p.execucao.janela_inicio, p.execucao.janela_fim) : "";
+  const semAnalise = p?.estado === "sem_execucao";
 
   return (
     <>
@@ -46,9 +47,10 @@ export default function OportunidadesPage() {
             : undefined
         }
         subtitulo={
-          p ? (
+          p?.execucao ? (
             <>
               Janela {janela} · calculado {relativo(p.execucao.executado_em)}
+              {p.execucao.desatualizada && " · há dados novos, recalcule"}
             </>
           ) : (
             "Até 3 decisões priorizadas, cada uma com evidência e limitação."
@@ -128,7 +130,18 @@ export default function OportunidadesPage() {
             onDetalhes={() => setDetalhe(o)}
           />
         ))}
-        {p && p.cartoes.length === 0 && (
+        {semAnalise && (
+          <EmptyState
+            titulo="Gere a primeira análise"
+            descricao="A loja ainda não foi analisada. Gere a análise com as vendas, o estoque e as procuras já registradas."
+            acao={
+              <Button size="sm" onClick={() => recalcular.mutate()} carregando={recalcular.isPending}>
+                Gerar primeira análise
+              </Button>
+            }
+          />
+        )}
+        {p && !semAnalise && p.cartoes.length === 0 && (
           <EmptyState
             titulo="Nenhuma oportunidade nesta janela"
             descricao="Isso pode ser bom sinal. Para a análise ficar mais rica, importe vendas recentes e peça ao balcão para registrar o que os clientes procuram e não encontram."

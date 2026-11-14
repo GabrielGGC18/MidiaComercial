@@ -40,6 +40,8 @@ class PropostaOut(Schema):
     decidido_em: datetime | None
     enviado_em: datetime | None
     objeto_criado: str
+    # o que a tela deve recarregar depois da confirmação (em vez de somar +1 por conta)
+    atualizar: list[str] = []
 
 
 class MensagemIn(Schema):
@@ -89,6 +91,12 @@ class FerramentaOut(Schema):
     papel_minimo: str
 
 
+_ATUALIZAR = {
+    "demanda": ["demandas", "oportunidades", "qualidade", "notificacoes"],
+    "cliente": ["clientes"],
+}
+
+
 def _p_out(p: PropostaAgente, ver_pessoal: bool) -> dict:
     c = p.cliente
     dados = dict(p.dados)
@@ -123,6 +131,7 @@ def _p_out(p: PropostaAgente, ver_pessoal: bool) -> dict:
         "decidido_em": p.decidido_em,
         "enviado_em": p.enviado_em,
         "objeto_criado": p.objeto_criado,
+        "atualizar": _ATUALIZAR.get(p.objeto_criado.split(":")[0], []) if p.objeto_criado else [],
     }
 
 

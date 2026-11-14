@@ -14,7 +14,7 @@ MAX_CANDIDATAS = 3
 class RegraPoucaSaida:
     codigo = "B_POUCA_SAIDA"
     nome = "Estoque com pouca saída"
-    versao = "1.0"
+    versao = "1.1"
     campos_necessarios = {"estoque_atualizado"}
 
     def avaliar(self, ctx) -> ResultadoRegra:
@@ -72,6 +72,16 @@ class RegraPoucaSaida:
                     acao_sugerida="Checar cadastro, exposição na loja e sazonalidade antes de remarcar preço.",
                     limitacao="Ausência de venda não prova desinteresse: pode ser exposição, cadastro ou época.",
                     alvo={"sku": s.sku, "rotulo": nome},
+                    resumo=f"{s.saldo} unidades no estoque e {desc_venda[0].lower()}{desc_venda[1:]}.",
+                    numeros=[
+                        {"rotulo": "saldo informado", "valor": s.saldo, "unidade": "unidades"},
+                        {"rotulo": "dias sem venda", "valor": dias, "unidade": "dias"},
+                    ],
+                    passos=[
+                        "Conferir cadastro e preço no sistema",
+                        "Melhorar a exposição na loja",
+                        "Só depois avaliar remarcar o preço",
+                    ],
                     urgencia=2 if s.saldo >= 10 else 1,
                     esforco=1,
                     evidencias=[
@@ -92,7 +102,7 @@ class RegraPoucaSaida:
                             amostra=max(dias, 1),
                         ),
                     ],
-                    medicao_sugerida=f"Unidades vendidas de {s.sku} nos próximos 14 dias",
+                    medicao_sugerida=f"Unidades vendidas de {nome} nos próximos 14 dias",
                 )
             )
         status = "amostra_limitada" if historico_curto else "suficiente"

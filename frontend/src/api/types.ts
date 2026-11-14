@@ -67,7 +67,9 @@ export interface Qualidade {
 }
 
 export interface Painel {
-  execucao: { id: number; janela_inicio: string; janela_fim: string; executado_em: string };
+  /** sem_execucao: loja nunca analisada (o GET só lê; quem calcula é o POST /gerar) */
+  estado?: "pronto" | "sem_execucao";
+  execucao: { id: number; janela_inicio: string; janela_fim: string; executado_em: string; desatualizada?: boolean } | null;
   qualidade: Qualidade;
   cartoes: Oportunidade[];
   bloqueios: Bloqueio[];

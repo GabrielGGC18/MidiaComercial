@@ -37,6 +37,15 @@ def criar_plano(*, loja, usuario, dados) -> PlanoAcao:
             raise AcaoErro("Essa oportunidade já tem um plano de ação.")
         if oportunidade.descartada_em:
             raise AcaoErro("Essa oportunidade foi descartada.")
+        # a mesma sugestão em outra análise (cartão antigo ainda aberto na tela) não vira
+        # uma segunda ação para o mesmo alvo
+        if (
+            oportunidade.chave
+            and PlanoAcao.objects.da_loja(loja)
+            .filter(oportunidade__chave=oportunidade.chave, situacao=PlanoAcao.Situacao.ABERTA)
+            .exists()
+        ):
+            raise AcaoErro("Já existe uma ação aberta para essa sugestão.")
     titulo = (dados.titulo or (oportunidade.titulo if oportunidade else "")).strip()
     indicador = (dados.indicador or (oportunidade.medicao_sugerida if oportunidade else "")).strip()
     if not titulo or not indicador:

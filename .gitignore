@@ -47,6 +47,8 @@ pgdata/
 
 # ── Dados de clientes e arquivos enviados (LGPD) ─────────────────────
 media/
+# exceção: áudio fictício da demonstração pública (voz sintética, sem dado de cliente)
+!frontend/public/media/
 uploads/
 # planilhas e CSVs exportados/importados (podem ter nome e WhatsApp)
 *.csv

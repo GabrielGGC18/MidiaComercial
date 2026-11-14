@@ -8,11 +8,34 @@ from collections import Counter, defaultdict
 
 from .base import EvidenciaCandidata, OportunidadeCandidata, ResultadoRegra
 
+MOTIVOS = {
+    "indisponivel": "sem estoque",
+    "variacao_ausente": "sem o tamanho ou a cor",
+    "preco": "preço",
+    "prazo": "prazo",
+    "outro": "outro motivo",
+}
+MAX_ALTERNATIVAS = 4
+
+
+def alternativas(ctx, sku: str | None) -> list[dict]:
+    """Outras cores/tamanhos do MESMO produto com saldo, só se o estoque estiver dentro do
+    prazo da loja. Estoque velho → lista vazia (nunca oferecer o que pode não existir)."""
+    info = ctx.catalogo.get(sku) if sku else None
+    if not info or not info.produto or not ctx.estoque_atualizado:
+        return []
+    out = []
+    for s in sorted(ctx.estoque, key=lambda s: -s.saldo):
+        irma = ctx.catalogo.get(s.sku)
+        if s.sku != sku and s.saldo > 0 and irma and irma.produto == info.produto:
+            out.append({"sku": s.sku, "rotulo": irma.nome, "saldo": s.saldo})
+    return out[:MAX_ALTERNATIVAS]
+
 
 class RegraLacunaMix:
     codigo = "A_LACUNA_MIX"
     nome = "Lacuna de mix"
-    versao = "1.0"
+    versao = "1.1"
     campos_necessarios = {"demanda"}
 
     def avaliar(self, ctx) -> ResultadoRegra:
@@ -45,6 +68,7 @@ class RegraLacunaMix:
             motivos = Counter(r.motivo for r in regs)
             rotulo = regs[0].rotulo
             n = len(regs)
+            horas = int((ctx.agora - saldo.capturado_em).total_seconds() // 3600) if saldo else None
 
             evid = [
                 EvidenciaCandidata(
@@ -57,11 +81,10 @@ class RegraLacunaMix:
                 )
             ]
             if saldo is not None:
-                horas = int((ctx.agora - saldo.capturado_em).total_seconds() // 3600)
                 evid.append(
                     EvidenciaCandidata(
                         fonte="estoque",
-                        descricao=f"Saldo informado = 0, atualizado há {horas} h",
+                        descricao=f"Saldo informado: 0, atualizado há {horas} h",
                         valor=0,
                         periodo_inicio=saldo.capturado_em.date(),
                         periodo_fim=saldo.capturado_em.date(),
@@ -85,10 +108,36 @@ class RegraLacunaMix:
             )
             if not atualizado:
                 limitacao += f" O estoque está desatualizado (há {int(idade or 0)} h): confira antes de agir."
+            numeros = [{"rotulo": "registros de procura", "valor": n, "unidade": "registros"}]
+            numeros += [
+                {"rotulo": MOTIVOS.get(m, m), "valor": q, "unidade": "registros"}
+                for m, q in motivos.most_common()
+            ]
+            if saldo is not None:
+                numeros.append(
+                    {
+                        "rotulo": "saldo informado",
+                        "valor": 0,
+                        "unidade": "unidades",
+                        "detalhe": f"contado há {horas} h",
+                    }
+                )
             oportunidades.append(
                 OportunidadeCandidata(
                     regra=self.codigo,
                     titulo=f"Investigar reposição: {rotulo}",
+                    resumo=(
+                        f"{n} registros de procura nesta janela e o saldo informado é zero."
+                        if saldo is not None
+                        else f"{n} registros de procura por uma variação que a loja não tem no catálogo."
+                    ),
+                    numeros=numeros,
+                    passos=(
+                        ["Conferir o estoque físico", "Consultar o fornecedor antes de comprar"]
+                        if sku
+                        else ["Consultar fornecedor e custo", "Decidir se a variação entra no mix"]
+                    ),
+                    alternativas=alternativas(ctx, sku),
                     acao_sugerida=(
                         "Conferir estoque físico e consultar fornecedor antes de comprar."
                         if sku
@@ -99,7 +148,9 @@ class RegraLacunaMix:
                     urgencia=3 if n >= 2 * n_min else 2,
                     esforco=2,
                     evidencias=evid,
-                    medicao_sugerida=f"Novos registros de falta para {sku or rotulo} nos próximos 7 dias",
+                    medicao_sugerida=(
+                        f"Novos registros de procura sem estoque de {rotulo} nos próximos 7 dias"
+                    ),
                 )
             )
 

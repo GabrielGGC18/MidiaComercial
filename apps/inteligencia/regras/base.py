@@ -39,6 +39,11 @@ class OportunidadeCandidata:
     esforco: int  # 1..3
     evidencias: list[EvidenciaCandidata] = field(default_factory=list)
     medicao_sugerida: str = ""
+    # Campos estruturados (UX-07). Vazios → o motor deriva das evidências e da ação.
+    resumo: str = ""  # 1 frase com o porquê, em linguagem de loja
+    numeros: list[dict] = field(default_factory=list)  # [{"rotulo", "valor", "unidade"}]
+    passos: list[str] = field(default_factory=list)  # checklist curto do que fazer
+    alternativas: list[dict] = field(default_factory=list)  # o que oferecer hoje (saldo fresco)
 
 
 @dataclass

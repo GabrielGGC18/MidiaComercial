@@ -98,7 +98,9 @@ def _faixa_que_mais_compra(loja, categoria: str) -> str | None:
 
 def candidatos(
     loja, alvo: dict, tamanhos_em_estoque: set[str]
-) -> list[tuple[Cliente, int, list[str]]]:
+) -> list[tuple[Cliente, int, list[str], bool]]:
+    """(cliente, pontos, motivos, tamanho_confirmado). tamanho_confirmado só é True quando o
+    cadastro do cliente traz o tamanho do alvo; sem isso a mensagem não cita tamanho (PV-01)."""
     agora = timezone.now()
     descanso = agora - timedelta(days=DESCANSO_DIAS)
     base = [
@@ -125,7 +127,8 @@ def candidatos(
         if not (comprou or any(x.lower() == cat for x in c.categorias_interesse)):
             continue  # sem relação com o nicho: não incomoda o cliente
         tams = {t.upper() for t in c.tamanhos}
-        if alvo["tamanho"] and alvo["tamanho"].upper() in tams:
+        confirmado = bool(alvo["tamanho"]) and alvo["tamanho"].upper() in tams
+        if confirmado:
             pontos += 3
             motivos.append(f"Veste {alvo['tamanho']} (tem em estoque)")
         elif alvo["tamanho"] and tams:
@@ -145,25 +148,27 @@ def candidatos(
             dias = (agora - h["ultima_compra"]).days
             motivos.append(f"Cliente ativo (última compra há {dias} dias)")
         if pontos >= PONTUACAO_MINIMA:
-            out.append((c, pontos, motivos))
+            out.append((c, pontos, motivos, confirmado))
     out.sort(key=lambda x: x[1], reverse=True)
     return out[:MAX_CONTATOS_POR_ALVO]
 
 
 # ── 3. mensagem e link ────────────────────────────────────────────────────────
-def mensagem(loja, cliente: Cliente, alvo: dict) -> str:
+def mensagem(loja, cliente: Cliente, alvo: dict, tamanho_confirmado: bool = False) -> str:
+    """Só afirma o que foi verificado (PV-01): nada de "separamos" (ninguém separou) nem
+    "seu tamanho" sem o tamanho no cadastro do cliente. A reserva é uma pergunta."""
     nome = cliente.primeiro_nome or "tudo bem"
     if alvo["sku"]:
-        oferta = f"separamos {alvo['rotulo']}"
-        if alvo["tamanho"] and alvo["tamanho"] != "U":
-            oferta += f" no seu tamanho ({alvo['tamanho']})"
+        oferta = f"temos {alvo['rotulo']}"
+        if tamanho_confirmado and alvo["tamanho"] not in ("", "U"):
+            oferta += f" no tamanho {alvo['tamanho']}, que você costuma usar"
     else:
         oferta = (
             f"chegaram novidades em {alvo['categoria']} que combinam com o que você costuma levar"
         )
     return (
         f"Oi, {nome}! Aqui é da {loja.nome}. Lembramos de você: {oferta}. "
-        "Quer que a gente guarde uma peça para você provar? "
+        "Quer que a gente confira a disponibilidade e guarde uma peça para você provar? "
         "(Responda SAIR para não receber mensagens.)"
     )
 
@@ -220,7 +225,8 @@ def rodar(ctx, termo: str | None = None) -> list[Campanha]:
             motivo=alvo["motivo"],
             criado_por=ctx.usuario,
         )
-        for cliente, pontos, motivos in achados:
+        for cliente, pontos, motivos, confirmado in achados:
+            incertos = [] if confirmado or alvo["tamanho"] in ("", "U") else ["tamanho"]
             p = PropostaAgente.objects.create(
                 loja=loja,
                 sessao=ctx.sessao,
@@ -228,7 +234,8 @@ def rodar(ctx, termo: str | None = None) -> list[Campanha]:
                 cliente=cliente,
                 tipo=PropostaAgente.Tipo.CONTATO,
                 resumo=f"Contatar {cliente.nome or cliente.ref} sobre {alvo['rotulo']}",
-                dados={"mensagem": mensagem(loja, cliente, alvo)},
+                dados={"mensagem": mensagem(loja, cliente, alvo, confirmado)},
+                campos_incertos=incertos,
                 motivos=motivos,
                 limitacao="Interesse provável, não garantido. Envie só se fizer sentido para o cliente.",
                 pontuacao=pontos,
