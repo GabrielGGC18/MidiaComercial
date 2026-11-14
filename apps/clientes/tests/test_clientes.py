@@ -115,8 +115,12 @@ def test_paginacao_da_lista(db):
     c = Client(enforce_csrf_checks=True)
     api_login(c, "gerente.centro", "demo1234")
     p = c.get("/api/clientes/?por_pagina=10").json()
-    assert len(p["itens"]) == 10 and p["total"] == 139 and p["paginas"] == 14 and p["pagina"] == 1
-    assert 0 < p["autorizados"] < p["total"]
+    # a demo é gerada a partir da data de hoje: o total de clientes muda de um dia para o outro,
+    # então as páginas são conferidas pelo total devolvido, e não por um número fixo
+    total = p["total"]
+    paginas = -(-total // 10)
+    assert total > 10 and len(p["itens"]) == 10 and p["paginas"] == paginas and p["pagina"] == 1
+    assert 0 < p["autorizados"] < total
     ultima = c.get("/api/clientes/?por_pagina=10&pagina=999").json()
-    assert ultima["pagina"] == 14 and len(ultima["itens"]) == 9
+    assert ultima["pagina"] == paginas and len(ultima["itens"]) == total - (paginas - 1) * 10
     assert c.get("/api/clientes/?por_pagina=1000").json()["por_pagina"] == 100

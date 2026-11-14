@@ -36,3 +36,4 @@ Skills para agentes de código (Claude Code) em [`.claude/skills/`](../.claude/s
 - **Stack:** Python 3.12 · Django 5 + Django Ninja · PostgreSQL 16 · React + TypeScript + Tailwind v4 + shadcn/ui (design system Mídia UI) · Docker · nginx · Hostinger VPS (API) · Vercel (front).
 - **IA:** agente que ajuda a preencher dados e indica clientes para o produto parado; ele propõe e uma pessoa confirma. Offline por padrão; GPT via Hermes em produção.
 - **Dados da demo:** 100% sintéticos.
+- [19 · Roteiro do filme de 32 s e nova página pública](19-ROTEIRO-FILME-32S.md): prévia animada, cena por cena, e o que ainda falta produzir.

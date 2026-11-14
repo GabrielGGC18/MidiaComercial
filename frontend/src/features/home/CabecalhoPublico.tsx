@@ -1,6 +1,6 @@
 // Navegação pública: uma barra de vidro só (logo · seções · ações). O tom segue o capítulo que passa
 // por baixo e o tema: vidro escuro sobre seção escura, vidro claro sobre seção clara (tema claro).
-import { ArrowLeft, ChevronRight, LayoutDashboard, Menu, Moon, Presentation, Sun, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, LayoutDashboard, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useAuth } from "@/api/sessao";
@@ -11,9 +11,9 @@ import { cn } from "@/lib/utils";
 
 const LINKS = [
   { href: "#percurso", rotulo: "Demonstração" },
-  { href: "#como-funciona", rotulo: "Como funciona" },
-  { href: "#plataforma", rotulo: "Plataforma" },
-  { href: "#sobre", rotulo: "Quem somos" },
+  { href: "#diferenciais", rotulo: "Como ajuda" },
+  { href: "#rotina", rotulo: "Na rotina" },
+  { href: "#sobre", rotulo: "Equipe" },
 ];
 
 type Capitulo = "noite" | "coral" | "violeta" | "claro";
@@ -102,11 +102,6 @@ export function CabecalhoPublico({ pagina }: { pagina: "inicio" | "login" }) {
         )}
 
         <div className={cn("ml-auto flex shrink-0 items-center gap-1.5", pagina === "inicio" && "lg:ml-0")}>
-          {pagina === "inicio" && (
-            <Link to="/apresentar" className={cn("hidden h-10 items-center gap-1.5 rounded-xl px-3 text-sm font-medium transition-colors xl:inline-flex", link)}>
-              <Presentation className="size-4" aria-hidden /> Apresentar
-            </Link>
-          )}
           {acao}
           <button
             type="button"
@@ -153,13 +148,6 @@ export function CabecalhoPublico({ pagina }: { pagina: "inicio" | "login" }) {
               {l.rotulo} <ChevronRight className={cn("size-4", claro ? "text-tinta-500" : "text-tinta-300")} aria-hidden />
             </a>
           ))}
-          <Link
-            to="/apresentar"
-            onClick={() => setMenu(false)}
-            className={cn("flex h-12 items-center justify-between rounded-lg border-b px-3 text-base", claro ? "border-tinta-100 hover:bg-tinta-50" : "border-white/10 hover:bg-white/5")}
-          >
-            Modo apresentação <Presentation className="size-4" aria-hidden />
-          </Link>
           {/* no celular, o tema fica aqui para a barra caber em 320 px */}
           <button
             type="button"

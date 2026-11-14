@@ -13,11 +13,11 @@ arquivo versionado.
 
 - **Sempre primeiro na `develop`, depois na `main`.** Nunca commit ou merge direto na `main` (exceto
   `hotfix/…`, que depois volta para a `develop`).
-- `develop` = integração e teste: o CD publica a API de teste na VPS (porta 8002, só interna).
+- `develop` = integração: só precisa passar no CI. **Não há ambiente de teste publicado.**
 - `main` = produção: CI + Vercel + CD da VPS.
 - Depois do merge `develop → main`, alinhar a `develop` com a `main` (fast-forward).
 - **Sempre tratar antes de enviar para a `main`:** checklist em `docs/14` §0 (CI verde na develop, teste
-  conferido na VPS, erros resolvidos, migração revisada, sem dado sensível, docs em dia). O CI recusa PR para a
+  local com a demo, erros resolvidos, migração revisada, sem dado sensível, docs em dia). O CI recusa PR para a
   `main` que não venha da `develop` ou de `hotfix/…`.
 
 ## Publicar
@@ -25,9 +25,9 @@ arquivo versionado.
 1. Garanta CI verde localmente:
    - `ruff check . && ruff format --check . && python manage.py makemigrations --check --dry-run && pytest`
    - `cd frontend && npm run typecheck && npm test && npm run build`
-2. Commit e push na `develop` (só com ordem do usuário); conferir no teste; para ir ao ar, PR `develop → main`.
+2. Commit e push na `develop` (só com ordem do usuário); para ir ao ar, PR `develop → main`.
 3. Front: a Vercel publica sozinha.
-4. API: o timer da VPS publica em até ~3 min **depois** que o CI passa. Acompanhe com `gh run list -L 1` e, na
+4. API: o timer da VPS publica a `main` em até ~3 min **depois** que o CI passa. Acompanhe com `gh run list -L 1` e, na
    VPS, pelo journal do serviço de autodeploy (comando no runbook).
 5. Verifique: `/api/saude` pelo domínio do front, login da demo, agente, `/admin/` com CSS.
 

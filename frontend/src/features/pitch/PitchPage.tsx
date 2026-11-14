@@ -5,10 +5,9 @@ import { ChevronLeft, ChevronRight, Expand, NotebookPen, X } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react";
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
-import { EscadaProblema, SemanaNaLoja } from "@/components/midia/capitulos";
+import { SemanaNaLoja } from "@/components/midia/capitulos";
 import { LogoAnimado } from "@/components/midia/marca";
-import { BlocosProduto, CamadasProduto, FaixaFatos, FeitoParaAuditar, FluxoTresColunas } from "@/components/midia/tecnico";
-import { Diferenciais } from "@/components/midia/vitrine";
+import { FilmeProduto, GradeBeneficios, ProblemaSecao, RotinaLoja } from "@/components/midia/roteiro";
 import { FundoEstilhacos } from "@/components/midia/destaques";
 import { useMenosMovimento } from "@/lib/movimento";
 import { cn } from "@/lib/utils";
@@ -73,56 +72,44 @@ function Demonstracao() {
   );
 }
 
+// CTAs dentro dos slides levam ao slide da demonstração
+const irDemo = () => window.location.assign("/apresentar?slide=3");
+
 const SLIDES: { titulo: string; Corpo: () => React.ReactNode; notas: string }[] = [
   {
     titulo: "Abertura",
     Corpo: Abertura,
-    notas: "A loja registra a venda. Mas essa informação ajuda no próximo passo? Nas visitas ao shopping, lojistas menores contaram que têm dificuldade de organizar dados e acompanhamento.",
+    notas: "A loja sabe o que vende. E o porquê? Nas visitas ao shopping, lojistas menores contaram que têm dificuldade de organizar dados e acompanhamento.",
   },
   {
     titulo: "O problema",
-    Corpo: EscadaProblema,
-    notas: "Quem procurou e saiu sem levar não aparece em relatório nenhum. É venda perdida invisível. Ranking com dados fictícios.",
+    Corpo: ProblemaSecao,
+    notas: "O cliente pediu, não tinha. No dia corrido essa informação se perde. Exemplo fictício: não diga que é receita perdida.",
   },
   {
     titulo: "Demonstração",
     Corpo: Demonstracao,
-    notas: "Clique em Ouvir apresentação. O funcionário fala, o assistente confere e só grava depois da confirmação. Ligue o Modo guiado se for falar por cima. Diga: dados fictícios, voz sintética.",
+    notas: "Clique em Ouvir apresentação. A funcionária fala, o assistente confere e só grava depois da confirmação. Ligue o Modo guiado se for falar por cima. Diga: dados fictícios, voz sintética.",
   },
   {
-    titulo: "Por que nós",
-    Corpo: Diferenciais,
-    notas: "Conversa vira registro; 4 toques no balcão; no máximo 3 decisões por semana; nenhuma mensagem sai sem revisão. Entrada por arquivo hoje.",
+    titulo: "Como funciona",
+    Corpo: () => <FilmeProduto onExplorar={irDemo} />,
+    notas: "Clique em Assistir à prévia. Primeiro só o sistema da loja: a procura some. Depois com a nossa camada ao lado: registro, contagem e próximo passo. É uma prévia sem áudio; o vídeo final está em produção. A entrada é por planilha: não diga que está integrado ao caixa.",
   },
   {
-    titulo: "A rotina",
+    titulo: "Como ajuda",
+    Corpo: () => <GradeBeneficios onVerDemo={irDemo} />,
+    notas: "Cada card tem um exemplo: fala, ranking, sugestão com motivo, conferência e contexto. Seis procuras não são seis pessoas nem seis vendas.",
+  },
+  {
+    titulo: "Na rotina",
+    Corpo: () => <RotinaLoja onVerDemo={irDemo} />,
+    notas: "Troque os três momentos: no balcão, depois do expediente, na próxima decisão. A loja continua nas mãos da equipe.",
+  },
+  {
+    titulo: "A semana",
     Corpo: SemanaNaLoja,
-    notas: "Abra os dias: segunda os números chegam; terça o balcão conta o que faltou; quarta 3 decisões; sexta quem chamar; sábado medir.",
-  },
-  {
-    titulo: "Como é feito",
-    Corpo: () => (
-      <>
-        <CamadasProduto />
-        <FaixaFatos />
-      </>
-    ),
-    notas: "Cinco camadas, uma decisão no fim. Fatos verificáveis: 3 regras versionadas, 7 eventos, base isolada por loja, zero mensagens sem revisão.",
-  },
-  {
-    titulo: "Plataforma",
-    Corpo: BlocosProduto,
-    notas: "Cada bloco tem a sua rota de API, com permissão por papel e por loja.",
-  },
-  {
-    titulo: "Auditável",
-    Corpo: FeitoParaAuditar,
-    notas: "Número sem origem não vira decisão: contrato de importação, regras versionadas, eventos depois de gravar. Mostre as abas CSV, curl e JSON.",
-  },
-  {
-    titulo: "O modelo",
-    Corpo: FluxoTresColunas,
-    notas: "O caixa continua o mesmo. SETA e outros sistemas estão em investigação: não diga que está integrado.",
+    notas: "Como entra na rotina: importar, registrar, decidir, chamar e medir. Entrada por planilha hoje; conexão direta em estudo.",
   },
   {
     titulo: "Próximo passo",

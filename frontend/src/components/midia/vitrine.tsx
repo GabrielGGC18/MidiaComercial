@@ -46,22 +46,24 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
         </div>
         <div className="px-3 pb-5 pt-28 sm:px-8 lg:px-12 lg:pt-32">
           <div className="mx-auto max-w-5xl text-center">
-            <p data-gsap="sobe" className="text-sm font-medium text-tinta-300">Para lojas de moda e acessórios</p>
-            <h1 className="titulo-hero mt-4 text-white">
-              <TituloSubindo texto="Sua equipe fala." />
+            <p data-gsap="sobe" className="inline-flex items-center gap-2 rounded-full border border-neon-500/40 bg-neon-500/10 px-3.5 py-1.5 text-sm font-semibold text-neon-500">
+              <span className="size-1.5 rounded-full bg-neon-500" aria-hidden /> Para lojas de moda e acessórios
+            </p>
+            <h1 className="titulo-hero mt-5 text-[clamp(2.3rem,6.6vw,5.5rem)] leading-[0.98] text-white">
+              <TituloSubindo texto="Sua loja sabe o que vende?" />
               <br />
-              <span className="text-violeta-300">
-                <TituloSubindo texto="A loja ganha o próximo passo." atraso={180} />
+              <span className="text-neon-500">
+                <TituloSubindo texto="E o porquê?" atraso={220} />
               </span>
             </h1>
-            <p data-gsap="sobe" className="mx-auto mt-5 max-w-xl text-[17px] leading-7 text-tinta-300">
+            <p data-gsap="sobe" className="mx-auto mt-6 max-w-xl text-lg leading-7 text-tinta-200">
               A conversa do balcão vira registro e próxima ação.
             </p>
             <div data-gsap="sobe" className="mt-7 flex flex-wrap justify-center gap-3">
               <button
                 type="button"
                 onClick={onComecar}
-                className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-sm font-semibold text-tinta-950 shadow-[0_8px_30px_-8px_rgb(255_255_255/0.45)] transition-transform hover:-translate-y-0.5"
+                className="inline-flex h-13 items-center gap-2 rounded-xl bg-neon-500 px-7 text-base font-bold text-tinta-950 shadow-[0_10px_40px_-8px_rgb(182_255_59/0.6)] transition-transform hover:-translate-y-0.5 hover:bg-neon-300"
               >
                 <Play className="size-4" aria-hidden /> Ver demonstração
               </button>
@@ -246,12 +248,7 @@ export function Caminhos({ onComecar }: { onComecar: () => void }) {
             </Link>
           </li>
           <li>
-            <Link to="/apresentar" className={linha}>
-              Modo apresentação {seta}
-            </Link>
-          </li>
-          <li>
-            <a href="#como-funciona" className={linha}>
+            <a href="#filme" className={linha}>
               Como funciona {seta}
             </a>
           </li>
