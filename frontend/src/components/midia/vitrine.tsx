@@ -4,6 +4,7 @@ import { ArrowRight, BadgeCheck, ChevronDown, ChevronRight, LayoutDashboard, Pla
 import { useState } from "react";
 import { Link } from "react-router";
 import { cn } from "@/lib/utils";
+import { CelularAnuncio } from "./celular-anuncio";
 import { Entrada, FundoEstilhacos, PilhaAlternada, TituloSubindo } from "./destaques";
 
 /** Seção como painel arredondado empilhado. `escuro`: sempre escuro, nos dois temas. */
@@ -52,7 +53,7 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
           <div className="grid items-center gap-10 lg:min-h-[min(640px,calc(100svh-10rem))] lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-8 xl:gap-16">
           <div data-gsap="recua" className="min-w-0 text-center lg:text-left">
             <h1 className="titulo-hero text-[clamp(2.3rem,7.4vw,6.4rem)] leading-[0.96] text-white lg:text-[clamp(3rem,5.4vw,6.2rem)]">
-              <TituloSubindo texto="Sua loja sabe o que vende?" />
+              <TituloSubindo texto="Sua loja sabe o que vende." />
               <br />
               <span className="text-neon-500">
                 <TituloSubindo texto="Mas e o por quê?" atraso={220} />
@@ -88,7 +89,7 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
 
           <div data-gsap="sobe" className="min-w-0">
             <div data-gsap="painel">
-              <PainelHero />
+              <CelularAnuncio className="max-w-[280px] lg:max-w-[300px]" />
             </div>
           </div>
           </div>

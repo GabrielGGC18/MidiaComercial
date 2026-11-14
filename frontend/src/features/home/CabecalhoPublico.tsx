@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 const LINKS = [
   { href: "#percurso", rotulo: "Demonstração" },
+  { href: "#pesquisa", rotulo: "Pesquisa" },
   { href: "#diferenciais", rotulo: "Como ajuda" },
   { href: "#rotina", rotulo: "Na rotina" },
   { href: "#sobre", rotulo: "Equipe" },
