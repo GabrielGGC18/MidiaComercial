@@ -40,6 +40,10 @@
   <a href="#api">API</a> <sub>(Swagger em <code>/api/docs</code>)</sub>
 </p>
 
+<p align="center">
+  🎬 <strong><a href="https://drive.google.com/drive/folders/13QTQNEHbLM4GtA_Dw93Psi2AXd8rxsKg">Pitch de 90 segundos (Google Drive)</a></strong>
+</p>
+
 ---
 
 ## 🎯 O desafio: Inteligência comercial para lojistas
