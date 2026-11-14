@@ -385,10 +385,12 @@ def conversa(request, sessao_id: int):
     s = _minha_sessao(request, sessao_id)
     ids = {i for m in s.historico for i in m.get("propostas", [])}
     ver = tem_papel(request, "gerente")
-    props = {
-        p.id: _p_out(p, ver)
-        for p in PropostaAgente.objects.da_loja(s.loja).filter(id__in=ids).select_related("cliente")
-    }
+    qs = PropostaAgente.objects.da_loja(s.loja).filter(id__in=ids).select_related("cliente")
+    if not ver:
+        # mesma regra de _buscar: abaixo de gerente só aparecem propostas de demanda
+        # (ex.: quem foi rebaixado não revê propostas de cliente de conversas antigas)
+        qs = qs.filter(tipo="demanda")
+    props = {p.id: _p_out(p, ver) for p in qs}
     falas = [
         {
             "papel": "voce" if m.get("role") == "user" else "agente",

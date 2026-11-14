@@ -52,6 +52,18 @@ def test_abrir_conversa_traz_propostas_e_passos(demo):
     assert [p["id"] for p in agente["propostas"]] == [p["id"] for p in r["propostas"]]
 
 
+def test_rebaixado_nao_reve_proposta_de_cliente_em_conversa_antiga(demo):
+    """Mesma regra de _buscar: abaixo de gerente, só propostas de demanda aparecem."""
+    g = _c("gerente.centro")
+    r = _msg(g, FRASE)
+    ids = [p["id"] for p in r["propostas"]]
+    assert ids
+    PropostaAgente.objects.filter(id__in=ids).update(tipo=PropostaAgente.Tipo.CLIENTE)
+    Vinculo.objects.filter(user__username="gerente.centro").update(papel="atendente")
+    conv = g.get(f"/api/agente/conversas/{r['sessao_id']}").json()
+    assert all(not f["propostas"] for f in conv["falas"])
+
+
 def test_conversa_de_outra_pessoa_404(demo):
     r = _msg(_c("gerente.centro"), FRASE)
     d = _c("dono.centro")  # mesma loja, outra pessoa
