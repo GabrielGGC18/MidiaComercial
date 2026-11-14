@@ -1,8 +1,9 @@
 // Quatro telas da apresentação pública (APRESENTACAO1 v2.0): problema alinhado, roteiro do filme,
 // cards com exemplo e ação, e a cena da rotina da loja. Um exemplo só atravessa tudo (fixture fictícia):
 // calça jeans azul 42, 5 procuras + 1 = 6 nos últimos 7 dias, saldo informado 0. Nada aqui grava no produto.
-import { ArrowRight, BadgeCheck, CalendarDays, Check, FileText, ListChecks, Mic, Pencil } from "lucide-react";
+import { ArrowRight, BadgeCheck, CalendarDays, Check, Download, FileText, ListChecks, Mic, Pencil } from "lucide-react";
 import { useState } from "react";
+import { baixarCsv } from "@/lib/csv";
 import { cn } from "@/lib/utils";
 import { indice, Revelar } from "./destaques";
 import { DURACAO_FILME, FilmeAnimado } from "./filme";
@@ -338,6 +339,14 @@ export function RotinaLoja({ onVerDemo }: { onVerDemo: () => void }) {
               Os números se preenchem sozinhos, com a planilha da loja e os registros do balcão. Ninguém precisa digitar.
             </p>
             <p className="mt-4 inline-flex rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-tinta-300">Na tela Meu público · 7, 30 ou 90 dias</p>
+            <p className="mt-4 text-sm text-tinta-300">Precisa levar para a planilha? O relatório sai em CSV com um clique.</p>
+            <button
+              type="button"
+              onClick={() => baixarCsv("relatorio-exemplo.csv", [["Relatório de exemplo (dados fictícios)"], [], ...RELATORIOS.flatMap((r) => [[r.titulo, r.periodo], ...r.linhas, []])])}
+              className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl border border-neon-500/60 px-4 text-sm font-semibold text-neon-500 transition-colors hover:bg-neon-500/10"
+            >
+              <Download className="size-4" aria-hidden /> Baixar exemplo em CSV
+            </button>
           </div>
           {RELATORIOS.map((r) => (
             <article key={r.titulo} className="min-w-0 rounded-[20px] border border-white/10 bg-[#141c34] p-5">

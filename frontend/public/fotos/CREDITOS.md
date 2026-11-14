@@ -13,3 +13,9 @@ IDs de origem (`https://unsplash.com/photos/<id>` ou `images.unsplash.com/photo-
 | calcados.webp | 1542291026-7eec264c27ff |
 | eletronicos.webp | 1498049794561-7780e7231661 |
 | presentes.webp | 1513201099705-a9746e1e201f |
+
+## Foto fornecida pela equipe
+
+| Arquivo | Origem |
+| --- | --- |
+| capim-dourado.webp | Capim Dourado Shopping (Palmas, TO). Arquivo enviado pela equipe em 14/11/2026, ampliado e tratado. **Autoria e licença não confirmadas:** confirmar antes de uso comercial ou trocar por foto própria. |
