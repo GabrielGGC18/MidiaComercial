@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { limparSegredo, normalizarOrigem } from "../../middleware";
+import { apontaParaVercel, limparSegredo, normalizarOrigem } from "../../middleware";
 import { ApiError, api } from "./client";
 
 describe("normalizarOrigem (API_ORIGEM da Vercel)", () => {
@@ -55,5 +55,16 @@ describe("api: erros do servidor viram mensagem amigável", () => {
       status: 401, headers: { "content-type": "application/json" },
     }));
     expect(e.message).toBe("Usuário ou senha inválidos.");
+  });
+});
+
+describe("apontaParaVercel (API_ORIGEM errado vira 'em manutenção', não 404)", () => {
+  const front = new URL("https://midia-comercial.midia63.com.br/api/saude");
+  it.each([
+    ["https://midia-comercial.midia63.com.br", true],
+    ["https://frontend-abc123.vercel.app", true],
+    ["https://comercial-api.midia63.com.br", false],
+  ])("%s → %s", (origem, esperado) => {
+    expect(apontaParaVercel(new URL(origem), front)).toBe(esperado);
   });
 });
