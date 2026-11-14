@@ -88,6 +88,17 @@ só os próprios dados, com isolamento por loja. Não é um painel da administra
 
 ## 👑 Equipe NidoQueen
 
+<h3 align="center">🎬 Pitch de 90 segundos</h3>
+
+<p align="center">
+  <a href="https://drive.google.com/drive/folders/13QTQNEHbLM4GtA_Dw93Psi2AXd8rxsKg"><img alt="Assistir ao pitch de 90 segundos no Google Drive" src="https://img.shields.io/badge/▶_ASSISTIR_AO_PITCH-90_segundos-B6FF3B?style=for-the-badge&logo=googledrive&logoColor=0B1020&labelColor=6D4AFF" height="44"></a>
+</p>
+
+<p align="center">
+  <strong>Link do vídeo (Google Drive):</strong><br>
+  <a href="https://drive.google.com/drive/folders/13QTQNEHbLM4GtA_Dw93Psi2AXd8rxsKg">https://drive.google.com/drive/folders/13QTQNEHbLM4GtA_Dw93Psi2AXd8rxsKg</a>
+</p>
+
 <table align="center">
   <tr>
     <td align="center" width="170">
