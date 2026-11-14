@@ -38,7 +38,7 @@ export function PainelSecao({
  * Primeira dobra (ref.: ReactBits CardSwap e "scroll-expand", heros em duas colunas do Dribbble): título
  * alinhado à esquerda e painel animado à direita, os dois até perto das bordas. Abaixo, o palco da
  * demonstração começa recuado e se expande até a largura toda conforme a pessoa rola (GSAP, MovimentoLanding).
- * Dados fictícios rotulados. Sobe por baixo da nav flutuante (-mt).
+ * Sobe por baixo da nav flutuante (-mt).
  */
 export function Hero({ onComecar, children }: { onComecar: () => void; children?: React.ReactNode }) {
   return (
@@ -51,14 +51,7 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
         <div className="px-4 pb-5 pt-24 sm:px-8 sm:pt-28 lg:px-14 lg:pt-32 2xl:px-20">
           <div className="grid items-center gap-10 lg:min-h-[min(640px,calc(100svh-10rem))] lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-8 xl:gap-16">
           <div data-gsap="recua" className="min-w-0 text-center lg:text-left">
-            <p data-gsap="sobe" className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-tinta-100 backdrop-blur">
-              <span className="relative flex size-2 shrink-0" aria-hidden>
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-neon-500 opacity-60" />
-                <span className="relative inline-flex size-2 rounded-full bg-neon-500" />
-              </span>
-              <span className="truncate">Assistente do balcão · dados fictícios</span>
-            </p>
-            <h1 className="titulo-hero mt-5 text-[clamp(2.3rem,7.4vw,6.4rem)] leading-[0.96] text-white lg:text-[clamp(3rem,5.4vw,6.2rem)]">
+            <h1 className="titulo-hero text-[clamp(2.3rem,7.4vw,6.4rem)] leading-[0.96] text-white lg:text-[clamp(3rem,5.4vw,6.2rem)]">
               <TituloSubindo texto="Sua loja sabe o que vende?" />
               <br />
               <span className="text-neon-500">
@@ -134,10 +127,7 @@ const ETAPAS_PAINEL = ["Ouvir", "Registrar", "Decidir"];
 function CartaoHero({ etapa, titulo, children }: { etapa: string; titulo: string; children: React.ReactNode }) {
   return (
     <article className="flex h-full flex-col rounded-2xl border border-white/15 bg-[#0d1124] p-4 shadow-[0_30px_70px_-30px_rgb(0_0_0/0.9)] sm:p-5">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violeta-300">{etapa}</span>
-        <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-tinta-300">fictício</span>
-      </div>
+      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violeta-300">{etapa}</span>
       <p className="mt-1.5 font-display text-lg font-bold leading-tight text-white">{titulo}</p>
       <div className="mt-3 flex min-h-0 flex-1 flex-col">{children}</div>
     </article>
@@ -151,7 +141,7 @@ export function PainelHero() {
     <div
       className="relative mx-auto h-[350px] w-full max-w-[580px] sm:h-[400px] lg:mr-0 lg:h-[440px]"
       role="img"
-      aria-label="Exemplo fictício: a fala do balcão vira registro conferido e um sinal com a próxima ação"
+      aria-label="Exemplo: a fala do balcão vira registro conferido e um sinal com a próxima ação"
     >
       <PilhaAlternada
         intervalo={3800}
