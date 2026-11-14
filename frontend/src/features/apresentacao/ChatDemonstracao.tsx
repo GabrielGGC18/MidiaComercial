@@ -15,7 +15,7 @@ export function ChatDemonstracao({ falas }: { falas: Fala[] }) {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <p className="flex items-center gap-2 border-b border-border px-4 py-2.5 text-xs font-semibold text-muted-foreground">
-        <Bot className="size-4 text-violeta-500" aria-hidden /> Assistente MídiaComercial
+        <Bot className="size-4 text-violeta-500" aria-hidden /> Assistente MidiaComercial
       </p>
       <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
         {falas.length === 0 && (

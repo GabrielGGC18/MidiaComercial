@@ -5,6 +5,20 @@ on:
   pull_request:
 
 jobs:
+  # Regra do fluxo (docs/14 §0): tudo passa pela develop antes da main.
+  origem-do-pr:
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR para a main só da develop (ou hotfix/)
+        env:
+          ORIGEM: ${{ github.head_ref }}  # via env: nome de branch não vira código no shell
+        run: |
+          case "$ORIGEM" in
+            develop|hotfix/*) echo "Origem permitida: $ORIGEM" ;;
+            *) echo "::error::PR para a main precisa vir da develop (ou hotfix/...). Faça o merge na develop primeiro."; exit 1 ;;
+          esac
+
   segredos:
     runs-on: ubuntu-latest
     steps:

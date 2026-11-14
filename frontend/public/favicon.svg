@@ -1,29 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="noite" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0B1020"/>
-      <stop offset=".6" stop-color="#1D1760"/>
-      <stop offset="1" stop-color="#3A2F9E"/>
-    </linearGradient>
-    <radialGradient id="sinal" cx=".76" cy=".3" r=".42">
-      <stop offset="0" stop-color="#FF6A3D" stop-opacity=".55"/>
-      <stop offset="1" stop-color="#FF6A3D" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="b2" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#8F78FF"/>
-      <stop offset="1" stop-color="#6D4AFF"/>
-    </linearGradient>
-    <linearGradient id="b3" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FFA07A"/>
-      <stop offset=".35" stop-color="#FF6A3D"/>
-      <stop offset="1" stop-color="#E8502A"/>
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="15" fill="url(#noite)"/>
-  <rect width="64" height="64" rx="15" fill="url(#sinal)"/>
-  <rect x=".75" y=".75" width="62.5" height="62.5" rx="14.25" fill="none" stroke="#fff" stroke-opacity=".14" stroke-width="1.5"/>
-  <rect x="12" y="33" width="11" height="19" rx="3.5" fill="#A898FF"/>
-  <rect x="26.5" y="23" width="11" height="29" rx="3.5" fill="url(#b2)"/>
-  <rect x="41" y="12" width="11" height="40" rx="3.5" fill="url(#b3)"/>
-  <rect x="43" y="14" width="3" height="10" rx="1.5" fill="#fff" fill-opacity=".45"/>
+  <!-- Monograma MC (docs/logo-01-monograma-mc.md) em branco sobre o roxo da marca, com a abertura neon -->
+  <defs><linearGradient id="t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#5B35F0"/></linearGradient></defs>
+  <rect width="64" height="64" rx="15" fill="url(#t)"/>
+  <g transform="translate(4.64 3.2) scale(.72)"><path fill="#fff" d="M6 60V20L24 38 42 20V60H31V45L24 52 17 45V60Z"/><path fill="#fff" d="M70 20H54L44 30V50L54 60H70V49H59L55 45V35L59 31H70Z"/><path fill="#B6FF3B" d="M54 20H70V31H59L54 36Z"/></g>
 </svg>

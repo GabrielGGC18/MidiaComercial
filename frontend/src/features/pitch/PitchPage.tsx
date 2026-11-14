@@ -39,7 +39,7 @@ function Fechamento() {
       <section className="painel-noite relative isolate mx-auto flex min-h-[78vh] w-full max-w-[1280px] flex-col items-center justify-center overflow-hidden rounded-[28px] border border-white/10 px-6 text-center text-white">
         <span className="relative block size-16" aria-hidden>
           <span className="brilho-sinal absolute -inset-6" />
-          <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_35%_30%,#ffd2b8,var(--color-coral-500)_45%,#7a1f06_100%)] shadow-[0_0_40px_var(--color-coral-500)]" />
+          <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_35%_30%,#f6ffe0,var(--color-neon-500)_45%,#2f4a00_100%)] shadow-[0_0_40px_rgb(182_255_59/0.55)]" />
         </span>
         <h2 className="titulo-fino mt-8 font-display text-[clamp(2.4rem,5vw,4.25rem)] font-bold leading-[1.04]">
           Próximo passo:
@@ -261,7 +261,7 @@ export default function PitchPage() {
 
       {notas && (
         <aside className="shrink-0 border-t border-border bg-card px-5 py-3 text-base leading-7" aria-label="Notas do apresentador">
-          <span className="mr-2 text-xs font-semibold uppercase tracking-wide text-coral-700 dark:text-coral-500">Notas</span>
+          <span className="mr-2 text-xs font-semibold uppercase tracking-wide text-neon-700 dark:text-neon-500">Notas</span>
           {slide.notas}
         </aside>
       )}

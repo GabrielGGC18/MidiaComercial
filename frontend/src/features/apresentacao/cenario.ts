@@ -3,7 +3,7 @@
 // Valores em centavos para a conta fechar sem erro de ponto flutuante.
 
 export const CAPITULOS = [
-  { id: "receber", rotulo: "Receber", legenda: "Os dados da venda chegam ao MídiaComercial." },
+  { id: "receber", rotulo: "Receber", legenda: "Os dados da venda chegam ao MidiaComercial." },
   { id: "preencher", rotulo: "Preencher", legenda: "O que já foi registrado pode ser aproveitado." },
   { id: "validar", rotulo: "Validar", legenda: "Dados conferidos. Histórico atualizado." },
   { id: "visualizar", rotulo: "Visualizar", legenda: "A mesma venda aparece nos indicadores." },
