@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ComoFunciona, RodapeLogin, SobreNos } from "@/components/midia/institucional";
-import { BlocosProduto, CamadasProduto, FaixaFatos, FeitoParaAuditar, FluxoTresColunas } from "@/components/midia/tecnico";
+import { BlocosProduto, FaixaFatos, FeitoParaAuditar } from "@/components/midia/tecnico";
 import { EscadaProblema, SemanaNaLoja } from "@/components/midia/capitulos";
 import { Caminhos, Diferenciais, Hero, PainelSecao } from "@/components/midia/vitrine";
 import { CabecalhoPublico } from "./CabecalhoPublico";
@@ -52,11 +52,9 @@ export default function HomePage() {
         <EscadaProblema />
         <Diferenciais />
         <SemanaNaLoja />
-        <CamadasProduto />
         <FaixaFatos />
         <BlocosProduto />
         <FeitoParaAuditar />
-        <FluxoTresColunas />
         <PainelSecao capitulo="violeta">
           <ComoFunciona />
         </PainelSecao>

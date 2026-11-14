@@ -21,7 +21,7 @@ export function EscadaProblema() {
   ];
   const frase = [
     { t: "O caixa não registra.", cls: "pl-[6vw] sm:pl-[14vw] text-white" },
-    { t: "O MídiaComercial anota", cls: "pl-[10vw] sm:pl-[20vw] text-violeta-300" },
+    { t: "O MidiaComercial anota", cls: "pl-[10vw] sm:pl-[20vw] text-violeta-300" },
     { t: "e mostra o que repor.", cls: "pl-[14vw] sm:pl-[26vw] text-sinal-ok" },
   ];
   return (
@@ -50,8 +50,8 @@ export function EscadaProblema() {
               ))}
             </Revelar>
             <Revelar modo="marca" as="p" className="mt-14 max-w-[46ch] text-base leading-7 text-tinta-300">
-              Quem procurou e saiu sem levar não aparece em nenhum relatório. No balcão, o funcionário registra em{" "}
-              <span className="marca-texto text-white">4 toques ou uma frase</span>, e a loja passa a ver a{" "}
+              Quem saiu sem levar não aparece em relatório. Aqui o vendedor registra em{" "}
+              <span className="marca-texto text-white">4 toques ou uma frase</span> e a loja vê a{" "}
               <span className="marca-texto text-white">venda que está perdendo</span>.
             </Revelar>
           </div>
@@ -91,7 +91,7 @@ export function EscadaProblema() {
                 </li>
               ))}
             </ol>
-            <p className="mt-4 border-t border-tinta-100 pt-3 text-xs leading-5 text-tinta-500">Dados fictícios. São atendimentos, não compradores únicos.</p>
+            <p className="mt-4 border-t border-tinta-100 pt-3 text-xs leading-5 text-tinta-500">Dados fictícios. Conta atendimentos, não pessoas.</p>
           </Revelar>
         </div>
       </section>
@@ -102,8 +102,8 @@ export function EscadaProblema() {
 const DIAS = [
   {
     dia: "Segunda",
-    titulo: "Os números chegam sozinhos",
-    texto: "A planilha de vendas e estoque do seu sistema entra com prévia e conferência. Nada duplicado.",
+    titulo: "Os números entram",
+    texto: "Você envia a planilha de vendas e estoque. O sistema confere e não duplica.",
     Icone: Upload,
     tom: "bg-tinta-950 text-white",
     etiquetas: ["vendas", "estoque", "clientes"],
@@ -111,15 +111,15 @@ const DIAS = [
   {
     dia: "Terça",
     titulo: "O balcão conta o que faltou",
-    texto: "Cada procura sem estoque vira registro, por toque ou por voz, com confirmação antes de gravar.",
+    texto: "Cada procura sem estoque vira registro, por toque ou voz.",
     Icone: Mic,
     tom: "bg-[#17154a] text-white",
     etiquetas: ["sem estoque", "sem tamanho"],
   },
   {
     dia: "Quarta",
-    titulo: "Três decisões, com evidência",
-    texto: "O sistema escolhe até 3 oportunidades: o que repor, o que está parado e quando o público compra.",
+    titulo: "Até três decisões",
+    texto: "O que repor, o que está parado e quando o público compra.",
     Icone: ChartColumnBig,
     tom: "bg-violeta-700 text-white",
     etiquetas: ["repor", "parado", "horário forte"],
@@ -127,15 +127,15 @@ const DIAS = [
   {
     dia: "Sexta",
     titulo: "Quem chamar e por quê",
-    texto: "O agente sugere clientes que autorizaram contato e prepara a mensagem. O vendedor revisa e envia.",
+    texto: "O agente sugere clientes que autorizaram contato e escreve a mensagem. O vendedor revisa e envia.",
     Icone: Send,
     tom: "bg-violeta-500 text-white",
     etiquetas: ["com autorização", "revisão humana"],
   },
   {
     dia: "Sábado",
-    titulo: "Medir o que deu certo",
-    texto: "Cada ação tem prazo e indicador. Na semana seguinte, a loja vê se a procura caiu e se a venda veio.",
+    titulo: "Ver o que deu certo",
+    texto: "Cada ação tem prazo e medida. Na semana seguinte, a loja compara.",
     Icone: CalendarCheck,
     tom: "bg-violeta-100 text-tinta-950",
     etiquetas: ["antes e depois"],
@@ -154,7 +154,7 @@ export function SemanaNaLoja() {
             <br />
             na sua loja
           </h2>
-          <p className="max-w-md text-muted-foreground">Uma rotina curta: os dados entram, o balcão conta o que faltou e a loja decide pouco e bem.</p>
+          <p className="max-w-md text-muted-foreground">Os dados entram, o balcão conta o que faltou e a loja decide.</p>
         </div>
 
         <Revelar modo="grupo" className="mt-10 flex flex-col overflow-hidden rounded-2xl lg:h-[440px] lg:flex-row">

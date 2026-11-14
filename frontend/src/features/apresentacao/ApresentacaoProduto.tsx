@@ -76,7 +76,7 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
       <section
         ref={palco}
         id="percurso"
-        aria-label="Demonstração do MídiaComercial"
+        aria-label="Demonstração do MidiaComercial"
         onKeyDown={teclas}
         className={cn(
           "scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-background/90 text-foreground shadow-[0_30px_80px_-30px_rgb(11_16_32/0.6)] backdrop-blur",
@@ -104,7 +104,7 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
               >
                 {rotulo}
                 {id === "posvenda" && (
-                  <span className="ml-1.5 text-[11px] text-coral-700 dark:text-coral-500">
+                  <span className="ml-1.5 text-[11px] text-neon-700 dark:text-neon-500">
                     <span className="sm:hidden" aria-hidden>•</span>
                     <span className="max-sm:sr-only">em evolução</span>
                   </span>

@@ -6,8 +6,8 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { indice, Revelar } from "./destaques";
 
-const SOBRE = "text-sm font-semibold text-coral-700 dark:text-coral-500 inline-flex items-center gap-2";
-const PONTO = <span className="size-2 rounded-full bg-coral-500" aria-hidden />;
+const SOBRE = "text-sm font-semibold text-neon-700 dark:text-neon-500 inline-flex items-center gap-2";
+const PONTO = <span className="size-2 rounded-full bg-neon-600 dark:bg-neon-500" aria-hidden />;
 const TITULO = "titulo-secao";
 
 /* ───────────── 1. camadas explodidas ───────────── */
@@ -15,7 +15,7 @@ const TITULO = "titulo-secao";
 const CAMADAS = [
   { nome: "Sua equipe", nota: "painel, balcão no celular, plano de ação", cor: "bg-violeta-100 border-violeta-300", faixa: "bg-violeta-300" },
   { nome: "Agente de vendas", nota: "propõe contatos; uma pessoa aprova", cor: "bg-violeta-500 border-violeta-300", faixa: "bg-white/60" },
-  { nome: "Inteligência", nota: "regras A, B e C versionadas, com evidência", cor: "bg-coral-500 border-coral-100", faixa: "bg-white/60" },
+  { nome: "Inteligência", nota: "regras A, B e C versionadas, com evidência", cor: "bg-neon-500 border-neon-300", faixa: "bg-tinta-950/35" },
   { nome: "Importação", nota: "formato comum, prévia e anti-duplicação", cor: "bg-tinta-800 border-tinta-700", faixa: "bg-violeta-300/70" },
   { nome: "Seus dados", nota: "planilha do sistema da loja (PDV)", cor: "bg-tinta-950 border-violeta-500/60", faixa: "bg-tinta-700" },
 ];
@@ -63,10 +63,10 @@ export function CamadasProduto() {
 /* ───────────── 2. faixa de fatos ───────────── */
 
 const FATOS = [
-  { v: "3", r: "regras versionadas (A 1.1 · B 1.1 · C 1.0)" },
-  { v: "7", r: "tipos de evento para notificar a equipe" },
-  { v: "1", r: "base isolada por loja: uma não vê a outra" },
-  { v: "0", r: "mensagens enviadas sem revisão humana" },
+  { v: "3", r: "regras de análise, com versão" },
+  { v: "7", r: "avisos automáticos para a equipe" },
+  { v: "1", r: "base separada por loja" },
+  { v: "0", r: "mensagens sem revisão humana" },
 ];
 
 export function FaixaFatos() {
@@ -77,7 +77,7 @@ export function FaixaFatos() {
           <div key={f.r} style={indice(i)} className="border-white/10 px-2 lg:border-l lg:first:border-0 lg:px-6">
             <p className="titulo-fino font-display text-5xl font-bold">
               <span data-conta={f.v}>{f.v}</span>
-              <span className="text-coral-500">.</span>
+              <span className="text-neon-500">.</span>
             </p>
             <p className="mt-1 text-sm leading-5 text-tinta-300">{f.r}</p>
           </div>
@@ -90,12 +90,12 @@ export function FaixaFatos() {
 /* ───────────── 3. blocos com rota real ───────────── */
 
 const BLOCOS = [
-  { Icone: Mic, nome: "Balcão", texto: "Procura sem estoque por toque ou voz, com confirmação antes de gravar.", rota: "POST /api/demandas/", destaque: "violeta" },
-  { Icone: Upload, nome: "Importação", texto: "Vendas e estoque com prévia, validação por linha e lote com hash: reenviar não duplica.", rota: "POST /api/importacoes/preview" },
-  { Icone: Lightbulb, nome: "Oportunidades", texto: "Até 3 por semana, com evidência, limitação, prioridade e como medir.", rota: "POST /api/oportunidades/gerar" },
-  { Icone: ClipboardList, nome: "Plano de ação", texto: "Responsável, prazo e indicador. Antes e depois medidos no mesmo período.", rota: "POST /api/acoes/{id}/medicoes" },
-  { Icone: Send, nome: "Agente de vendas", texto: "Sugere clientes com autorização e prepara a mensagem. Só uma pessoa confirma.", rota: "POST /api/agente/propostas/{id}/confirmar", destaque: "coral" },
-  { Icone: Bell, nome: "Notificações", texto: "Eventos agrupados por chave: o mesmo aviso repetido vira contador, não spam.", rota: "GET /api/notificacoes/contagem" },
+  { Icone: Mic, nome: "Balcão", texto: "Procura sem estoque por toque ou voz. Confirma antes de gravar.", rota: "POST /api/demandas/", destaque: "violeta" },
+  { Icone: Upload, nome: "Importação", texto: "Planilha com prévia e conferência. Reenviar não duplica.", rota: "POST /api/importacoes/preview" },
+  { Icone: Lightbulb, nome: "Oportunidades", texto: "Até 3 por semana, com motivo e próximo passo.", rota: "POST /api/oportunidades/gerar" },
+  { Icone: ClipboardList, nome: "Plano de ação", texto: "Responsável, prazo e medida de antes e depois.", rota: "POST /api/acoes/{id}/medicoes" },
+  { Icone: Send, nome: "Agente de vendas", texto: "Sugere clientes com autorização e escreve a mensagem. Uma pessoa confirma.", rota: "POST /api/agente/propostas/{id}/confirmar", destaque: "neon" },
+  { Icone: Bell, nome: "Notificações", texto: "Aviso repetido vira contador, não spam.", rota: "GET /api/notificacoes/contagem" },
 ];
 
 export function BlocosProduto() {
@@ -104,9 +104,9 @@ export function BlocosProduto() {
       <section id="plataforma" aria-labelledby="blocos-titulo" className="painel-secao scroll-mt-24 mx-auto w-full max-w-[1280px] overflow-hidden rounded-[28px] border border-border px-5 py-16 sm:px-10 lg:px-14">
         <p className={SOBRE}>{PONTO} A plataforma</p>
         <h2 id="blocos-titulo" className={cn(TITULO, "mt-3 max-w-2xl")}>
-          Blocos prontos, <span className="text-violeta-600 dark:text-violeta-300">cada um com a sua API</span>
+          Seis partes, <span className="text-violeta-600 dark:text-violeta-300">uma plataforma</span>
         </h2>
-        <p className="mt-3 max-w-2xl text-muted-foreground">Tudo o que a tela faz passa por uma rota com permissão por papel e por loja.</p>
+        <p className="mt-3 max-w-2xl text-muted-foreground">Cada parte tem rota própria, com permissão por papel e por loja.</p>
         <Revelar modo="grupo" className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {BLOCOS.map((b, i) => (
             <article
@@ -115,16 +115,16 @@ export function BlocosProduto() {
               className={cn(
                 "flex flex-col rounded-2xl border p-6 transition-transform duration-300 hover:-translate-y-1",
                 b.destaque === "violeta" && "border-violeta-500 bg-violeta-500 text-white",
-                b.destaque === "coral" && "border-coral-500 bg-coral-500 text-white",
+                b.destaque === "neon" && "border-neon-500 bg-neon-500 text-tinta-950",
                 !b.destaque && "border-border bg-card",
               )}
             >
-              <span className={cn("grid size-10 place-items-center rounded-xl", b.destaque ? "bg-white/20" : "bg-violeta-50 text-violeta-700 dark:bg-violeta-900/50 dark:text-violeta-100")}>
+              <span className={cn("grid size-10 place-items-center rounded-xl", b.destaque === "neon" ? "bg-tinta-950/10" : b.destaque ? "bg-white/20" : "bg-violeta-50 text-violeta-700 dark:bg-violeta-900/50 dark:text-violeta-100")}>
                 <b.Icone className="size-5" aria-hidden />
               </span>
               <h3 className="mt-5 text-lg font-semibold">{b.nome}</h3>
-              <p className={cn("mt-1 flex-1 text-sm leading-6", b.destaque ? "text-white/85" : "text-muted-foreground")}>{b.texto}</p>
-              <code className={cn("mt-5 self-start rounded-md px-2 py-1 font-mono text-[11px]", b.destaque ? "bg-black/20" : "bg-muted text-muted-foreground")}>{b.rota}</code>
+              <p className={cn("mt-1 flex-1 text-sm leading-6", b.destaque === "neon" ? "text-tinta-950/80" : b.destaque ? "text-white/85" : "text-muted-foreground")}>{b.texto}</p>
+              <code className={cn("mt-5 self-start rounded-md px-2 py-1 font-mono text-[11px]", b.destaque === "neon" ? "bg-tinta-950/10" : b.destaque ? "bg-black/20" : "bg-muted text-muted-foreground")}>{b.rota}</code>
             </article>
           ))}
         </Revelar>
@@ -136,11 +136,11 @@ export function BlocosProduto() {
 /* ───────────── 4. feito para ser auditado ───────────── */
 
 const ITENS = [
-  { t: "Contrato de importação", d: "Pydantic por linha: o que não passa vira erro com o número da linha.", tag: "schemas.py" },
-  { t: "Regras versionadas", d: "Cada cartão guarda regra, versão, evidência e limitação.", tag: "A 1.1 · B 1.1 · C 1.0" },
-  { t: "Isolamento por loja", d: "Toda consulta passa pela loja da sessão; papel mínimo por rota.", tag: "gerente · atendente" },
-  { t: "Eventos após gravar", d: "Notificação só sai depois que o banco confirma a transação.", tag: "on_commit" },
-  { t: "Saúde do serviço", d: "Rota pública para o monitor saber se o serviço está no ar.", tag: "GET /api/saude" },
+  { t: "Contrato de importação", d: "Linha inválida vira erro com o número da linha.", tag: "schemas.py" },
+  { t: "Regras versionadas", d: "Cada cartão guarda regra, versão e evidência.", tag: "A 1.1 · B 1.1 · C 1.0" },
+  { t: "Isolamento por loja", d: "Toda consulta usa a loja da sessão.", tag: "gerente · atendente" },
+  { t: "Eventos após gravar", d: "O aviso só sai depois de o banco confirmar.", tag: "on_commit" },
+  { t: "Saúde do serviço", d: "Rota pública para monitorar o serviço.", tag: "GET /api/saude" },
 ];
 
 const CODIGO = {
@@ -190,11 +190,11 @@ export function FeitoParaAuditar() {
   return (
     <div className="px-3 pt-3" data-capitulo="noite">
       <section aria-labelledby="auditar-titulo" className="mx-auto w-full max-w-[1280px] overflow-hidden rounded-[28px] border border-white/10 bg-tinta-950 px-5 py-16 text-white sm:px-10 lg:px-14">
-        <p className="inline-flex items-center gap-2 text-sm font-semibold text-coral-500">{PONTO} Para quem confere</p>
+        <p className="inline-flex items-center gap-2 text-sm font-semibold text-neon-500">{PONTO} Para quem confere</p>
         <h2 id="auditar-titulo" className={cn(TITULO, "mt-3")}>
           Feito para ser <span className="text-violeta-300">auditado</span>
         </h2>
-        <p className="mt-3 max-w-2xl text-tinta-300">Número sem origem não vira decisão. Cada etapa tem contrato, versão e registro.</p>
+        <p className="mt-3 max-w-2xl text-tinta-300">Cada número tem origem, versão e registro.</p>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_1.15fr]">
           <Revelar modo="grupo" as="ul" className="flex flex-col">
@@ -240,7 +240,7 @@ export function FeitoParaAuditar() {
         </div>
 
         <h3 className="mt-12 text-lg font-semibold">
-          Eventos que avisam a equipe <span className="ml-2 text-sm font-normal text-tinta-300">publicados depois que o dado é gravado</span>
+          Eventos que avisam a equipe <span className="ml-2 text-sm font-normal text-tinta-300">só depois de gravar</span>
         </h3>
         <Revelar modo="grupo" as="ul" className="mt-4 flex flex-wrap gap-2">
           {EVENTOS.map(([k, d], i) => (
@@ -261,7 +261,7 @@ export function FluxoTresColunas() {
   const colunas = [
     { quem: "Seu sistema", titulo: "Registra a venda", itens: ["PDV ou planilha", "Vendas, estoque e clientes", "Nada muda no caixa"], Icone: Boxes, estilo: "border-border bg-card" },
     {
-      quem: "MídiaComercial",
+      quem: "MidiaComercial",
       titulo: "Confere e cruza",
       itens: ["Prévia e anti-duplicação", "Balcão: o que faltou", "Até 3 decisões com evidência"],
       Icone: Lightbulb,

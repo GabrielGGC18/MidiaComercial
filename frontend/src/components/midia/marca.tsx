@@ -1,4 +1,5 @@
-// Logo · DemoRibbon · StoreSwitcher
+// Logo (monograma MC) · DemoRibbon · StoreSwitcher
+// Identidade: docs/logo-01-monograma-mc.md. Roxo #6D4AFF, verde neon #B6FF3B, assinatura "MIDIA | Comercial".
 import { Check, ChevronsUpDown, Store } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { LojaResumo } from "@/api/types";
@@ -6,36 +7,48 @@ import { useMenosMovimento } from "@/lib/movimento";
 import { PAPEL_ROTULO } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 
-/** Três barras de sinal; a terceira em coral = "o sinal que faltava" (§1). */
-export function LogoIcone({ className }: { className?: string }) {
+// Desenho oficial do símbolo (mc-simbolo-*.svg), recortado na caixa do monograma (sem a margem do arquivo)
+const CAIXA = "4 18 68 44";
+const LETRA_M = "M6 60V20L24 38 42 20V60H31V45L24 52 17 45V60Z";
+const LETRA_C = "M70 20H54L44 30V50L54 60H70V49H59L55 45V35L59 31H70Z";
+const ABERTURA = "M54 20H70V31H59L54 36Z";
+
+/** Monograma MC: M e C em roxo, com a abertura do C em verde neon. `mono` usa a cor do texto. */
+export function LogoIcone({ className, mono = false, animado = false }: { className?: string; mono?: boolean; animado?: boolean }) {
+  const roxo = mono ? "currentColor" : "var(--color-violeta-500)";
   return (
-    <svg viewBox="0 0 24 24" className={cn("size-7", className)} aria-hidden>
-      <rect x="2" y="12" width="5" height="10" rx="1.5" fill="var(--color-violeta-300)" />
-      <rect x="9.5" y="7" width="5" height="15" rx="1.5" fill="var(--color-violeta-500)" />
-      <rect x="17" y="2" width="5" height="20" rx="1.5" fill="var(--color-coral-500)" />
+    <svg viewBox={CAIXA} className={cn("h-6 w-auto shrink-0 overflow-visible", className)} aria-hidden>
+      <path className={animado ? "logo-letra" : undefined} fill={roxo} d={LETRA_M} />
+      <path className={animado ? "logo-letra logo-letra-2" : undefined} fill={roxo} d={LETRA_C} />
+      <path className={animado ? "logo-neon" : undefined} fill={mono ? "currentColor" : "var(--color-neon-500)"} d={ABERTURA} />
     </svg>
+  );
+}
+
+/** Assinatura "MIDIA | Comercial": Comercial em neon no escuro e em tinta no claro, para manter a leitura. */
+function NomeMarca({ sobreEscuro = false, className }: { sobreEscuro?: boolean; className?: string }) {
+  return (
+    <span className={cn("inline-flex items-center whitespace-nowrap font-display font-extrabold leading-none tracking-tight", className)} aria-hidden>
+      <span className="text-violeta-500">MIDIA</span>
+      <span className={cn("mx-[0.32em] h-[0.95em] w-px", sobreEscuro ? "bg-white/30" : "bg-tinta-900/30 dark:bg-white/30")} />
+      <span className={cn("text-[0.8em]", sobreEscuro ? "text-neon-500" : "text-tinta-900 dark:text-neon-500")}>Comercial</span>
+    </span>
   );
 }
 
 export function Logo({ compacto, className }: { compacto?: boolean; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
       <LogoIcone />
-      {!compacto && (
-        <span className="font-display text-lg font-extrabold tracking-tight">
-          <span className="text-violeta-500 dark:text-violeta-300">Mídia</span>
-          <span className="text-foreground">Comercial</span>
-        </span>
-      )}
+      {!compacto && <NomeMarca className="text-lg" />}
       <span className="sr-only">MidiaComercial</span>
     </span>
   );
 }
 
 /**
- * Logo de abertura (login): as barras crescem, alternam como um gráfico ao vivo e terminam em alta;
- * a linha de tendência é desenhada por cima e o ponto final "pulsa" (sinal chegando).
- * Com movimento reduzido, mostra a logo estática.
+ * Logo de abertura (página pública, login, apresentação): o M e o C sobem em sequência, a abertura neon
+ * "acende" e o nome é revelado da esquerda para a direita. Com movimento reduzido, mostra a logo estática.
  */
 export function LogoAnimado({
   className,
@@ -45,47 +58,19 @@ export function LogoAnimado({
 }: {
   className?: string;
   compacto?: boolean;
-  /** força cores claras (nav escura sobre qualquer tema) */
+  /** força as cores de fundo escuro (nav escura sobre qualquer tema) */
   sobreEscuro?: boolean;
   /** classes extras do nome (ex.: esconder em tela muito estreita) */
   classeNome?: string;
 }) {
   const menos = useMenosMovimento();
-  const a = (c: string) => (menos ? undefined : c);
   return (
-    <span className={cn("inline-flex items-center", compacto ? "gap-2" : "gap-3", className)}>
-      <svg viewBox="0 0 24 24" className={cn("overflow-visible", compacto ? "size-8" : "size-12 sm:size-14")} aria-hidden>
-        <rect className={cn("logo-barra", a("logo-barra-1"))} x="2" y="12" width="5" height="10" rx="1" fill="var(--color-violeta-300)" />
-        <rect className={cn("logo-barra", a("logo-barra-2"))} x="9.5" y="7" width="5" height="15" rx="1" fill="var(--color-violeta-500)" />
-        <rect className={cn("logo-barra", a("logo-barra-3"))} x="17" y="2" width="5" height="20" rx="1" fill="var(--color-coral-500)" />
-        {!menos && (
-          <>
-            <polyline
-              className="logo-tendencia"
-              pathLength={1}
-              points="1,15 4.5,10 9,12.5 12,5.5 15.5,7.5 21.5,0.5"
-              fill="none"
-              stroke={sobreEscuro ? "#ffffff" : "var(--color-foreground)"}
-              strokeOpacity={0.55}
-              strokeWidth={0.9}
-              strokeLinecap="square"
-              strokeLinejoin="miter"
-            />
-            <circle className="logo-ponto" cx="21.5" cy="0.5" r="1.2" fill="var(--color-coral-500)" />
-          </>
-        )}
-      </svg>
-      <span
-        className={cn("whitespace-nowrap font-display font-extrabold tracking-tight", compacto ? "text-lg sm:text-xl" : "text-2xl sm:text-3xl", a("logo-nome-revela"), classeNome)}
-        aria-hidden
-      >
-        <span className={cn(menos ? (sobreEscuro ? "text-violeta-300" : "text-violeta-500 dark:text-violeta-300") : "logo-brilho logo-brilho-midia", sobreEscuro && !menos && "logo-brilho-midia-escuro")}>
-          Mídia
-        </span>
-        <span className={cn(menos ? (sobreEscuro ? "text-white" : "text-foreground") : "logo-brilho logo-brilho-comercial", sobreEscuro && !menos && "logo-brilho-comercial-escuro")}>
-          Comercial
-        </span>
-      </span>
+    <span className={cn("inline-flex items-center", compacto ? "gap-2.5" : "gap-3.5", className)}>
+      <LogoIcone animado={!menos} className={compacto ? "h-7" : "h-10 sm:h-12"} />
+      <NomeMarca
+        sobreEscuro={sobreEscuro}
+        className={cn(compacto ? "text-base sm:text-xl" : "text-2xl sm:text-3xl", !menos && "logo-nome-revela", classeNome)}
+      />
       <span className="sr-only">MidiaComercial</span>
     </span>
   );

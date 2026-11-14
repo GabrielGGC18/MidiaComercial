@@ -21,18 +21,26 @@ Detalhes no [docs/17 §7](17-DESIGN-DA-APRESENTACAO.md).
 | Família | Tons | Uso |
 | --- | --- | --- |
 | **Violeta** | 50 · 100 · 200 · 300 · 400 · 500 · 600 · 700 · 800 · 900 | Ação, seleção, marca. `500` é a primária; `300` é a ênfase sobre escuro |
-| **Coral** | 100 · 300 · 500 · 600 · 700 | Só "o sinal que acabou de chegar" (procura sem estoque, dado novo). Nunca decoração solta |
+| **Neon** | 100 · 300 · 500 · 600 · 700 · 900 | Destaque da marca (logo 01). `500` (`#B6FF3B`) sobre escuro; no claro, texto em `700` ou `900`. Sobre fundo neon, o texto é `tinta-950`, nunca branco |
+| **Coral** | 100 · 300 · 500 · 600 · 700 | Só a procura sem estoque (o "não tinha") e os avisos do painel. Deixou de ser a cor de destaque da marca |
 | **Tinta** | 50 · 100 · 200 · 300 · 400 · 500 · 600 · 700 · 800 · 900 · 950 | Neutros e superfícies |
 | **Noite** | `#04060d` | Topo dos painéis escuros |
 | **Sinais** | ok · atenção · bloqueado · erro · info (cor, fundo e texto) | Status, sempre com ícone e rótulo |
 
 Novos nesta versão: violeta 200, 400 e 800; coral 300 e 600; tinta 400 e 600; noite.
 
+**Marca** (v2.1, 13/11/2026): a logo passou a ser o monograma MC da proposta [logo 01](logo-01-monograma-mc.md).
+- **Símbolo:** `LogoIcone` em `components/midia/marca.tsx`, com o desenho oficial; M e C em `violeta-500`, abertura do C em `neon-500`.
+- **Assinatura:** "MIDIA | Comercial". "Comercial" fica em neon no escuro e em tinta no claro.
+- **Nome escrito:** MidiaComercial, sem acento.
+- **Ícone do site:** monograma branco sobre o roxo, com a abertura neon (`public/favicon.svg` e PNGs).
+
 **Superfícies de painel** (classes):
 - `painel-noite`: noite → violeta → luz;
 - `painel-secao`: segue o tema;
-- `painel-estrias` e `painel-raios`: cartões de destaque;
-- `brilho-sinal`: brilho coral.
+- `painel-estrias` e `painel-raios`: cartões de destaque (raios violeta com anel neon);
+- `brilho-marca`: brilho neon da marca;
+- `brilho-sinal`: brilho coral, só no capítulo da procura sem estoque.
 
 **Regra de tom sobre escuro:**
 - texto principal branco;

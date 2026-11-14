@@ -24,7 +24,7 @@ function JanelaPrint({ titulo, src, alt, className }: { titulo: string; src: str
   return (
     <figure className={cn("flex h-full flex-col overflow-hidden rounded-lg border border-tinta-700 bg-tinta-900 shadow-[0_24px_60px_-20px_rgb(11_16_32/0.55)]", className)}>
       <figcaption className="flex h-8 shrink-0 items-center gap-1.5 border-b border-tinta-700 px-3">
-        <span className="size-2 rounded-full bg-coral-500" aria-hidden />
+        <span className="size-2 rounded-full bg-neon-600 dark:bg-neon-500" aria-hidden />
         <span className="size-2 rounded-full bg-ambar" aria-hidden />
         <span className="size-2 rounded-full bg-sinal-ok" aria-hidden />
         <span className="ml-2 truncate font-mono text-[11px] text-tinta-300">{titulo}</span>
@@ -70,7 +70,7 @@ function FotoCard({
 function CabecalhoSecao({ sobre, titulo, texto, id }: { sobre: string; titulo: string; texto?: string; id?: string }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
-      <p className="sobretitulo text-coral-700 dark:text-coral-500">{sobre}</p>
+      <p className="sobretitulo text-neon-700 dark:text-neon-500">{sobre}</p>
       <h2 id={id} className="titulo-secao mt-2">
         {titulo}
       </h2>
@@ -99,7 +99,7 @@ export function FaixaFuncoes() {
       <FaixaRolante
         itens={FUNCOES.map(({ Icone, t }) => (
           <span key={t} className="inline-flex items-center gap-2 text-sm font-semibold">
-            <Icone className="size-4 text-coral-500" aria-hidden /> {t}
+            <Icone className="size-4 text-neon-500" aria-hidden /> {t}
           </span>
         ))}
       />
@@ -123,21 +123,19 @@ export function SobreNos() {
     <section id="sobre" aria-labelledby="sobre-titulo" className="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8">
       <CabecalhoSecao
         id="sobre-titulo"
-        sobre="Quem somos e o que somos"
+        sobre="Quem somos"
         titulo="O caixa mostra o que vendeu. Nós mostramos o resto."
-        texto="O shopping reúne lojas de segmentos diferentes, com públicos diferentes. O MidiaComercial ajuda cada lojista a entender o próprio público e as oportunidades da sua loja."
+        texto="Ajudamos cada lojista a entender o próprio público e as oportunidades da loja."
       />
       <div className="mt-12 grid gap-6 md:grid-cols-3">
         <Entrada>
           <FotoCard foto="/fotos/loja.webp" etiqueta="O que somos" titulo="Inteligência comercial ao lado do caixa">
-            Uma camada para <strong className="text-foreground">lojistas de shopping</strong> que junta vendas, estoque, público e o que o cliente
-            procurou e não levou. Os dados continuam com a sua loja.
+            Junta vendas, estoque, público e <strong className="text-foreground">o que o cliente procurou e não levou</strong>.
           </FotoCard>
         </Entrada>
         <Entrada atraso={120}>
           <FotoCard foto="/fotos/sacolas.webp" etiqueta="Para que serve" titulo="Transformar sinais em vendas">
-            Entender <strong className="text-foreground">quem compra, o quê e quando</strong>, o que falta no estoque e o que está parado, e
-            agir com evidência: no máximo 3 decisões por semana.
+            Mostra <strong className="text-foreground">quem compra, o quê e quando</strong>, o que falta e o que está parado.
           </FotoCard>
         </Entrada>
         <Entrada atraso={240}>
@@ -151,7 +149,7 @@ export function SobreNos() {
                   className={cn(
                     "grid size-9 place-items-center rounded-sm text-[11px] font-bold",
                     "orientador" in p
-                      ? "bg-coral-100 text-coral-700 dark:bg-coral-700/25 dark:text-coral-100"
+                      ? "bg-neon-100 text-neon-700 dark:bg-neon-500/15 dark:text-neon-300"
                       : "bg-violeta-50 text-violeta-700 dark:bg-violeta-900/60 dark:text-violeta-100",
                   )}
                 >
@@ -179,7 +177,7 @@ export function PainelEntrada() {
         <ul className="mt-5 flex flex-col gap-2.5 text-sm text-violeta-50">
           {["Gerente vê oportunidades, público e o agente", "Atendente registra no balcão por voz ou toque", "Cada loja vê só os próprios dados"].map((t) => (
             <li key={t} className="flex items-center gap-2">
-              <BadgeCheck className="size-4 shrink-0 text-coral-500" aria-hidden /> {t}
+              <BadgeCheck className="size-4 shrink-0 text-neon-500" aria-hidden /> {t}
             </li>
           ))}
         </ul>
@@ -214,7 +212,7 @@ export function Segmentos() {
               <div className="absolute inset-0 bg-gradient-to-t from-tinta-950 via-tinta-950/40 to-transparent" aria-hidden />
               <div className="absolute inset-x-0 bottom-0 p-5 text-white">
                 <h3 className="font-display text-h3 font-extrabold">{s.nome}</h3>
-                <p className="mt-2 translate-y-1 border-l-2 border-coral-500 pl-3 text-sm leading-5 text-tinta-100 opacity-90 transition group-hover:translate-y-0 group-hover:opacity-100">
+                <p className="mt-2 translate-y-1 border-l-2 border-neon-500 pl-3 text-sm leading-5 text-tinta-100 opacity-90 transition group-hover:translate-y-0 group-hover:opacity-100">
                   {s.sinal}
                 </p>
               </div>
@@ -235,8 +233,8 @@ const PASSOS: Passo[] = [
   {
     n: "01",
     etapa: "Sinal",
-    titulo: "Balcão: o que o cliente procurou e não levou",
-    texto: "No celular, o atendente fala ou toca. Em até 4 toques, sem dado pessoal do cliente.",
+    titulo: "Balcão: o que o cliente não achou",
+    texto: "O atendente fala ou toca no celular. Sem dado pessoal do cliente.",
     exemplo: "“procurou calça jeans 42, uns 40 anos, não tinha”",
     print: "/telas/balcao.webp",
     alt: "Tela do Balcão no celular, com botão de microfone e busca de produto",
@@ -247,7 +245,7 @@ const PASSOS: Passo[] = [
     n: "02",
     etapa: "Sinal",
     titulo: "Procuraram e não tinha: a venda que o caixa não vê",
-    texto: "Ranking por produto e variação, com o motivo (sem estoque, tamanho, preço, prazo) e o saldo atual.",
+    texto: "Ranking por produto, com motivo e saldo atual.",
     exemplo: "Camiseta básica Azul M · 9 procuras · saldo 0",
     print: "/telas/demanda.webp",
     alt: "Ranking de produtos procurados e não encontrados",
@@ -257,7 +255,7 @@ const PASSOS: Passo[] = [
     n: "03",
     etapa: "Entender",
     titulo: "Meu público: quem compra, o quê e quando",
-    texto: "Categoria que lidera, dia e horário de pico por nicho, fase do mês e faixa de idade que mais compra.",
+    texto: "Categoria líder, horário de pico e faixa de idade.",
     exemplo: "Calças lideram (39,5%) · pico sábado 12–14h · 25–34 anos",
     print: "/telas/publico.webp",
     alt: "Painel Meu público com receita, categorias e mapa de horários",
@@ -266,8 +264,8 @@ const PASSOS: Passo[] = [
   {
     n: "04",
     etapa: "Decidir",
-    titulo: "Oportunidades: no máximo 3 decisões por semana",
-    texto: "Cada cartão traz evidência, origem do dado, amostra e limitação. Você cria a ação ou descarta.",
+    titulo: "Oportunidades: até 3 decisões por semana",
+    texto: "Cada cartão mostra a evidência e a limitação. Você cria a ação ou descarta.",
     exemplo: "Investigar reposição: 9 procuraram · saldo informado = 0",
     print: "/telas/oportunidades.webp",
     alt: "Tela de Oportunidades com cartão priorizado e evidências",
@@ -276,8 +274,8 @@ const PASSOS: Passo[] = [
   {
     n: "05",
     etapa: "Agir e medir",
-    titulo: "Agente de vendas: produto parado vira venda",
-    texto: "Encontra clientes que autorizaram contato, explica o motivo e prepara a mensagem. Você aprova e envia; o funil mostra quem comprou.",
+    titulo: "Agente de vendas: quem chamar para o produto parado",
+    texto: "Encontra clientes que autorizaram contato e escreve a mensagem. Você aprova e envia.",
     exemplo: "Oferecer Camisa social Branca G · já comprou Camisas · veste G",
     print: "/telas/agente.webp",
     alt: "Agente de vendas com campanha, funil e clientes sugeridos",
@@ -293,7 +291,7 @@ export function ComoFunciona() {
           id="como-funciona-titulo"
           sobre="Como funciona"
           titulo="Do balcão à venda, em 4 etapas"
-          texto="O sistema observa o que vendeu e o que não vendeu, mostra o que fazer e mede o resultado. Ele propõe; uma pessoa confirma."
+          texto="O sistema mostra o que fazer e mede o resultado. Ele propõe; uma pessoa confirma."
         />
         <ol className="mt-16 flex flex-col gap-20">
           {PASSOS.map((p, i) => {
@@ -305,7 +303,7 @@ export function ComoFunciona() {
                   <div className={cn(inv && "md:order-2")}>
                     <div className="flex items-center gap-3">
                       <span className="font-display text-5xl font-extrabold text-violeta-500/25 tabular dark:text-violeta-300/25" aria-hidden>{p.n}</span>
-                      <span className="sobretitulo inline-flex items-center gap-1.5 rounded-sm bg-coral-100 px-2 py-1 text-coral-700 dark:bg-coral-700/25 dark:text-coral-100">
+                      <span className="sobretitulo inline-flex items-center gap-1.5 rounded-sm bg-neon-100 px-2 py-1 text-neon-700 dark:bg-neon-500/15 dark:text-neon-300">
                         <Icone className="size-3.5" aria-hidden /> {p.etapa}
                       </span>
                     </div>
@@ -359,8 +357,7 @@ export function RodapeLogin() {
           </div>
         </div>
         <p className="max-w-md text-xs leading-5">
-          Dados da demonstração 100% sintéticos. Contato com clientes só com autorização (LGPD); nenhuma mensagem é enviada sem uma pessoa
-          aprovar. Fotos: Unsplash.
+          Demonstração com dados sintéticos. Contato com cliente só com autorização (LGPD) e revisão de uma pessoa. Fotos: Unsplash.
         </p>
       </div>
     </footer>

@@ -25,6 +25,14 @@
   --color-coral-600: #e8552b;
   --color-coral-700: #c9461e;
 
+  /* verde neon da marca (logo 01): destaque sobre escuro; no claro, use 700/900 para texto */
+  --color-neon-100: #f0ffd4;
+  --color-neon-300: #d6ff8f;
+  --color-neon-500: #b6ff3b;
+  --color-neon-600: #8fd41a;
+  --color-neon-700: #4a7300;
+  --color-neon-900: #253a00;
+
   --color-tinta-50: #f7f8fc;
   --color-tinta-100: #eef1f7;
   --color-tinta-200: #dde2ee;
@@ -195,51 +203,32 @@
   24%, 100% { opacity: 0; transform: translateY(-4px); }
 }
 .efeito-texto-gradiente {
-  background: linear-gradient(90deg, var(--color-violeta-700), var(--color-coral-700));
+  background: linear-gradient(90deg, var(--color-violeta-700), var(--color-neon-700));
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
 }
-.dark .efeito-texto-gradiente { background-image: linear-gradient(90deg, var(--color-violeta-300), var(--color-coral-500)); }
+.dark .efeito-texto-gradiente { background-image: linear-gradient(90deg, var(--color-violeta-300), var(--color-neon-500)); }
 
-/* Logo animada (login): barras crescem, alternam como gráfico ao vivo e voltam à pose da marca.
-   Sem movimento reduzido: o componente não aplica estas classes (useMenosMovimento). */
-.logo-barra { transform-box: fill-box; transform-origin: 50% 100%; }
-.logo-barra-1 { animation: logo-cresce 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) 0ms both, logo-oscila-1 4.8s ease-in-out 1.4s infinite; }
-.logo-barra-2 { animation: logo-cresce 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) 140ms both, logo-oscila-2 4.8s ease-in-out 1.4s infinite; }
-.logo-barra-3 { animation: logo-cresce 700ms cubic-bezier(0.2, 0.9, 0.3, 1.2) 280ms both, logo-oscila-3 4.8s ease-in-out 1.4s infinite; }
-@keyframes logo-cresce { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-@keyframes logo-oscila-1 { 0%, 100% { transform: scaleY(1); } 25% { transform: scaleY(1.5); } 50% { transform: scaleY(0.7); } 75% { transform: scaleY(1.2); } }
-@keyframes logo-oscila-2 { 0%, 100% { transform: scaleY(1); } 25% { transform: scaleY(0.6); } 50% { transform: scaleY(1.25); } 75% { transform: scaleY(0.85); } }
-@keyframes logo-oscila-3 { 0%, 100% { transform: scaleY(1); } 25% { transform: scaleY(0.8); } 50% { transform: scaleY(0.9); } 75% { transform: scaleY(1.08); } }
-.logo-tendencia { stroke-dasharray: 1; stroke-dashoffset: 1; animation: logo-traco 900ms ease-out 700ms forwards; }
-@keyframes logo-traco { to { stroke-dashoffset: 0; } }
-.logo-ponto { transform-box: fill-box; transform-origin: center; opacity: 0; animation: logo-ponto 2.4s ease-out 1.5s infinite; }
-@keyframes logo-ponto { 0% { opacity: 1; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(2.6); } }
-
-/* Nome: revela da esquerda para a direita junto com as barras; depois, brilho a cada 7 s.
-   O gradiente fica na própria palavra (que não anima transform), seguro no Chrome. */
-.logo-nome-revela { animation: logo-revela 900ms cubic-bezier(0.4, 0, 0.2, 1) 200ms both; }
+/* Logo animada (monograma MC): o M e o C sobem em sequência, a abertura neon acende e depois pulsa de leve.
+   Com movimento reduzido o componente não aplica estas classes (useMenosMovimento). */
+.logo-letra { animation: logo-entra 620ms cubic-bezier(0.2, 0.9, 0.3, 1.1) both; }
+.logo-letra-2 { animation-delay: 130ms; }
+@keyframes logo-entra { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+.logo-neon {
+  transform-box: fill-box; transform-origin: 100% 0%;
+  animation: logo-neon-entra 520ms cubic-bezier(0.34, 1.7, 0.64, 1) 460ms both, logo-neon-pulsa 4.8s ease-in-out 1.8s infinite;
+}
+@keyframes logo-neon-entra { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: scale(1); } }
+@keyframes logo-neon-pulsa { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+/* Nome: revela da esquerda para a direita junto com o símbolo */
+.logo-nome-revela { animation: logo-revela 900ms cubic-bezier(0.4, 0, 0.2, 1) 250ms both; }
 @keyframes logo-revela { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-.logo-brilho {
-  background-size: 250% 100%;
-  background-position: 100% 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: logo-brilho 7s ease-in-out 1.6s infinite;
-}
-.logo-brilho-midia { background-image: linear-gradient(110deg, var(--color-violeta-500) 40%, var(--color-coral-500) 50%, var(--color-violeta-500) 60%); }
-.logo-brilho-comercial { background-image: linear-gradient(110deg, var(--color-foreground) 40%, var(--color-violeta-300) 50%, var(--color-foreground) 60%); }
-.logo-brilho-midia-escuro, .dark .logo-brilho-midia-escuro { background-image: linear-gradient(110deg, var(--color-violeta-300) 40%, var(--color-coral-500) 50%, var(--color-violeta-300) 60%) !important; }
-.logo-brilho-comercial-escuro { background-image: linear-gradient(110deg, #ffffff 40%, var(--color-violeta-300) 50%, #ffffff 60%) !important; }
-.dark .logo-brilho-midia { background-image: linear-gradient(110deg, var(--color-violeta-300) 40%, var(--color-coral-500) 50%, var(--color-violeta-300) 60%); }
-@keyframes logo-brilho { 0% { background-position: 100% 0; } 18%, 100% { background-position: -100% 0; } }
 
 /* Aurora sem WebGL (components/efeitos/Aurora): manchas radiais derivando */
 .efeito-aurora { position: absolute; width: 60vmax; height: 60vmax; border-radius: 9999px; opacity: 0.55; }
 .efeito-aurora-1 { top: -25vmax; left: -15vmax; background: radial-gradient(closest-side, color-mix(in oklab, var(--color-violeta-500) 45%, transparent), transparent); }
-.efeito-aurora-2 { top: -10vmax; right: -20vmax; background: radial-gradient(closest-side, color-mix(in oklab, var(--color-coral-500) 35%, transparent), transparent); }
+.efeito-aurora-2 { top: -10vmax; right: -20vmax; background: radial-gradient(closest-side, color-mix(in oklab, var(--color-neon-500) 22%, transparent), transparent); }
 .efeito-aurora-3 { bottom: -30vmax; left: 25%; background: radial-gradient(closest-side, color-mix(in oklab, var(--color-turquesa) 22%, transparent), transparent); }
 .dark .efeito-aurora { opacity: 0.4; }
 .efeito-aurora-anima.efeito-aurora-1 { animation: aurora-a 22s ease-in-out infinite alternate; }
@@ -260,7 +249,7 @@
 
 /* Sublinhado de destaque no título (como marca-texto) */
 .destaque-titulo {
-  background: linear-gradient(90deg, color-mix(in oklab, var(--color-violeta-500) 28%, transparent), color-mix(in oklab, var(--color-coral-500) 28%, transparent)) no-repeat 0 88% / 100% 0.28em;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--color-violeta-500) 28%, transparent), color-mix(in oklab, var(--color-neon-500) 55%, transparent)) no-repeat 0 88% / 100% 0.28em;
 }
 
 @utility tabular { font-variant-numeric: tabular-nums; }
@@ -283,17 +272,22 @@
     radial-gradient(120% 60% at 50% 108%, color-mix(in oklab, var(--color-violeta-300) 70%, white) 0%, transparent 55%),
     linear-gradient(180deg, #04060d 0%, var(--color-tinta-950) 28%, #17154a 62%, #3a2f9e 88%, #6d5ae0 100%);
 }
-/* brilho do "sinal": o dado que acabou de chegar */
+/* brilho do "sinal" (coral): só onde o assunto é a procura sem estoque */
 .brilho-sinal {
   background: radial-gradient(closest-side, color-mix(in oklab, var(--color-coral-500) 55%, transparent), transparent);
   filter: blur(24px);
 }
-/* raios coral com núcleo escuro (cartão de afirmação) */
+/* brilho da marca (neon): atrás do palco e dos destaques da página pública */
+.brilho-marca {
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--color-neon-500) 42%, transparent), transparent);
+  filter: blur(28px);
+}
+/* raios violeta com núcleo escuro e anel neon (cartão de afirmação) */
 .painel-raios {
   background:
-    radial-gradient(circle at 50% 50%, #1a0b06 0 33%, rgb(26 11 6 / 0.85) 37%, transparent 52%),
-    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-coral-500) 90%, #ffd27a) 0 30%, transparent 70%),
-    repeating-conic-gradient(from 0deg at 50% 50%, #ff8a3d 0deg 2deg, #b8380f 2deg 5deg, #ff6a3d 5deg 7deg, #7a1f06 7deg 11deg);
+    radial-gradient(circle at 50% 50%, #070a14 0 32%, rgb(7 10 20 / 0.86) 36%, transparent 50%),
+    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-neon-500) 80%, transparent) 0 33%, transparent 58%),
+    repeating-conic-gradient(from 0deg at 50% 50%, #8a70ff 0deg 2deg, #391e9e 2deg 5deg, #6d4aff 5deg 7deg, #1d1760 7deg 11deg);
 }
 /* estrias verticais violeta (cartão de número) */
 .painel-estrias {
