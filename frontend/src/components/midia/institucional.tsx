@@ -140,8 +140,8 @@ export function SobreNos() {
           </FotoCard>
         </Entrada>
         <Entrada atraso={240}>
-          <FotoCard foto="/fotos/shopping.webp" etiqueta="Quem somos" titulo="Equipe NidoQueen">
-            <p>Criado no Hackrun em Palmas, com orientação de Mario Matheus Pombal.</p>
+          <FotoCard foto="/fotos/capim-dourado.webp" etiqueta="Quem somos" titulo="Equipe NidoQueen">
+            <p>Criado no Hackrun em Palmas, depois de visitas a lojistas do Capim Dourado Shopping. Orientação de Mario Matheus Pombal.</p>
             <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Equipe NidoQueen">
               {EQUIPE.map((p) => (
                 <li
@@ -358,7 +358,7 @@ export function RodapeLogin() {
           <p className="mt-3 text-sm">Equipe NidoQueen · Palmas, Tocantins</p>
         </div>
         <p className="max-w-md text-xs leading-5">
-          Demonstração com dados sintéticos. Contato com cliente só com autorização (LGPD) e revisão de uma pessoa. Fotos: Unsplash.
+          Demonstração com dados sintéticos. Contato com cliente só com autorização (LGPD) e revisão de uma pessoa. Fotos: Unsplash e equipe.
         </p>
       </div>
       <p className="rodape-letreiro pointer-events-none mt-6 select-none whitespace-nowrap text-center font-display font-extrabold leading-[0.8]" aria-hidden>

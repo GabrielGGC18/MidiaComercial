@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Lock, Receipt, ShoppingBag, UserCheck, Wallet } from "lucide-react";
+import { Download, Lock, Receipt, ShoppingBag, UserCheck, Wallet } from "lucide-react";
 import { useSearchParams } from "react-router";
 import { api, mensagemErro } from "@/api/client";
 import { useChaveLoja } from "@/api/sessao";
@@ -11,6 +11,7 @@ import { FaixaEtariaBars, PeriodosNicho } from "@/components/midia/publico";
 import { CoverageNote, LimitationNote, SignalBadge } from "@/components/midia/sinais";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { data as dataCurta, isoDaqui, isoHoje, moeda, numero, pct, periodo } from "@/lib/format";
+import { baixarCsv } from "@/lib/csv";
 import { cn } from "@/lib/utils";
 
 const PERIODOS = [
@@ -90,6 +91,28 @@ export default function PublicoPage() {
     ].filter(Boolean).join(" · ");
   })();
 
+  // Relatório do período em CSV, montado com os mesmos números que estão na tela
+  const exportar = () => {
+    if (!d) return;
+    baixarCsv(`relatorio-${dias}-dias-${isoHoje()}.csv`, [
+      ["Relatório", `Últimos ${dias} dias`],
+      ["Gerado em", isoHoje()],
+      [],
+      ["Indicador", "Valor"],
+      ["Receita", d.kpis.receita],
+      ["Devoluções", d.kpis.devolucoes],
+      ["Pedidos", d.kpis.pedidos],
+      ["Ticket médio", d.kpis.ticket_medio],
+      ["Itens", d.kpis.itens],
+      [],
+      ["Categoria", "Receita", "Unidades", "Pedidos", "Participação na receita (%)"],
+      ...d.categorias.map((c) => [c.categoria, c.receita, c.unidades, c.pedidos, c.participacao_receita]),
+      [],
+      ["Dia", "Receita"],
+      ...d.serie_diaria.map((x) => [x.data, x.receita]),
+    ]);
+  };
+
   return (
     <>
       <PageHeader
@@ -97,12 +120,22 @@ export default function PublicoPage() {
         subtitulo="Quem compra, o quê e quando. Só pedidos concluídos; devoluções aparecem à parte."
         destaque={destaque}
         acoes={
-          <Segmentado
-            rotulo="Período"
-            opcoes={PERIODOS.map((p) => ({ v: p.dias, rotulo: p.rotulo }))}
-            valor={dias}
-            onChange={(v) => setParam("dias", String(v))}
-          />
+          <div className="flex flex-wrap items-center gap-2">
+            <Segmentado
+              rotulo="Período"
+              opcoes={PERIODOS.map((p) => ({ v: p.dias, rotulo: p.rotulo }))}
+              valor={dias}
+              onChange={(v) => setParam("dias", String(v))}
+            />
+            <button
+              type="button"
+              disabled={!d || d.kpis.pedidos === 0}
+              onClick={exportar}
+              className="inline-flex h-11 items-center gap-2 rounded-md border border-border bg-card px-3.5 text-sm font-semibold hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Download className="size-4" aria-hidden /> Exportar CSV
+            </button>
+          </div>
         }
       />
 

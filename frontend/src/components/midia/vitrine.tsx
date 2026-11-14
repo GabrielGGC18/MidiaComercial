@@ -46,10 +46,7 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
         </div>
         <div className="px-3 pb-5 pt-28 sm:px-8 lg:px-12 lg:pt-32">
           <div className="mx-auto max-w-5xl text-center">
-            <p data-gsap="sobe" className="inline-flex items-center gap-2 rounded-full border border-neon-500/40 bg-neon-500/10 px-3.5 py-1.5 text-sm font-semibold text-neon-500">
-              <span className="size-1.5 rounded-full bg-neon-500" aria-hidden /> Para lojas de moda e acessórios
-            </p>
-            <h1 className="titulo-hero mt-5 text-[clamp(2.3rem,6.6vw,5.5rem)] leading-[0.98] text-white">
+            <h1 className="titulo-hero text-[clamp(2.3rem,6.6vw,5.5rem)] leading-[0.98] text-white">
               <TituloSubindo texto="Sua loja sabe o que vende?" />
               <br />
               <span className="text-neon-500">
