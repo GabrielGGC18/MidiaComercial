@@ -126,6 +126,12 @@ Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `
    [docs/14 §0](../14-DEPLOY-E-OPERACAO.md#0-fluxo-de-branches-e-ambientes).
 4. PR `develop → main`: produção. O CI recusa PR para a `main` vindo de outra branch.
 
+## Issues e milestones
+
+As pendências viram issues no GitHub, agrupadas em milestones (Documentação e fluxo, Agente, Operação e
+segurança, Telas pendentes, Dados reais e pós-venda). Abra o PR citando a issue (`Closes #N`) para ela fechar no
+merge na `main`.
+
 ## Status
 
 | Task | Dono | Status |

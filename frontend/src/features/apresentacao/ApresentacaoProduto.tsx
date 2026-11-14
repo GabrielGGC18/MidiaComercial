@@ -132,7 +132,7 @@ export default function ApresentacaoProduto({ pedidoInicio = 0 }: { pedidoInicio
             ))}
           </div>
           <span className="text-xs text-muted-foreground">Loja Exemplo · voz sintética</span>
-          <Badge tom="violeta" className="ml-auto">Demonstração · dados fictícios</Badge>
+          <Badge tom="violeta" className="ml-auto">Demonstração</Badge>
           <Button
             size="icon"
             variant="ghost"

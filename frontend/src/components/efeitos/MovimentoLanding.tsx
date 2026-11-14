@@ -28,17 +28,6 @@ export default function MovimentoLanding({ alvo }: { alvo: React.RefObject<HTMLE
           scrollTrigger: { trigger: '[data-capitulo="noite"]', start: "top top", end: "bottom top", scrub: true },
         });
 
-        // 3. Painéis empilhados: cada capítulo chega um pouco menor e "assenta" conforme rola
-        gsap.utils.toArray<HTMLElement>("[data-capitulo]").forEach((cap, i) => {
-          const painel = cap.firstElementChild as HTMLElement | null;
-          if (!painel || i === 0) return;
-          gsap.fromTo(
-            painel,
-            { scale: 0.955, y: 36, transformOrigin: "50% 100%" },
-            { scale: 1, y: 0, ease: "none", scrollTrigger: { trigger: cap, start: "top 98%", end: "top 55%", scrub: 0.5 } },
-          );
-        });
-
         // 4. Números da faixa de fatos contam até o valor quando aparecem
         gsap.utils.toArray<HTMLElement>("[data-conta]").forEach((el) => {
           const fim = Number(el.dataset.conta ?? 0);
@@ -77,6 +66,32 @@ export default function MovimentoLanding({ alvo }: { alvo: React.RefObject<HTMLE
         gsap.to('[data-gsap="recua"]', { yPercent: -10, autoAlpha: 0.45, ease: "none", scrollTrigger: saida });
         gsap.to('[data-gsap="painel"]', { y: -70, rotate: -1.5, ease: "none", scrollTrigger: { ...saida } });
       });
+      // 3. Painéis empilhados com scroll-expand: cada capítulo chega recuado e se expande até a largura toda.
+      //    Responsivo: no celular o recuo é pequeno (a tela já é estreita); da tablet para cima, mais amplo.
+      mm.add(
+        {
+          movel: "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
+          largo: "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+        },
+        (ctx) => {
+          const largo = Boolean(ctx.conditions?.largo);
+          gsap.utils.toArray<HTMLElement>("[data-capitulo]").forEach((cap, i) => {
+            const painel = cap.firstElementChild as HTMLElement | null;
+            if (!painel || i === 0) return;
+            gsap.fromTo(
+              painel,
+              { scale: largo ? 0.88 : 0.96, y: largo ? 64 : 24, borderRadius: largo ? 48 : 32, transformOrigin: "50% 0%" },
+              {
+                scale: 1,
+                y: 0,
+                borderRadius: 28,
+                ease: "none",
+                scrollTrigger: { trigger: cap, start: "top 100%", end: largo ? "top 35%" : "top 60%", scrub: 0.6 },
+              },
+            );
+          });
+        },
+      );
       return () => mm.revert();
     },
     { scope: alvo },

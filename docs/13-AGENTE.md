@@ -119,6 +119,9 @@ container web ──socket unix──► ponte (systemd, usuário de serviço se
 | Retenção LGPD (P2-04) | `manage.py limpar_agente [--simular]`, todo dia no container de rotinas: conversa parada 90 dias, auditoria 180 dias, cadastro rejeitado 30 dias |
 | Confirmação | trava a proposta (duas confirmações simultâneas → um registro) e devolve `atualizar` |
 
+**Qualidade medida (docs/09 §8):** no balcão, o offline acerta 47/53 frases e o Hermes 25/53. Melhorias abertas
+na milestone "Agente: precisão e velocidade no balcão" (#16 a #19).
+
 ## 8. Limites e observabilidade
 
 | Item | Onde |

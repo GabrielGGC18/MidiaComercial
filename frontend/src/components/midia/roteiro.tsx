@@ -1,12 +1,12 @@
 // Quatro telas da apresentação pública (APRESENTACAO1 v2.0): problema alinhado, roteiro do filme,
 // cards com exemplo e ação, e a cena da rotina da loja. Um exemplo só atravessa tudo (fixture fictícia):
 // calça jeans azul 42, 5 procuras + 1 = 6 nos últimos 7 dias, saldo informado 0. Nada aqui grava no produto.
-import { ArrowRight, BadgeCheck, CalendarDays, Check, Download, FileText, ListChecks, Mic, Pencil } from "lucide-react";
+import { ArrowRight, BadgeCheck, CalendarDays, Check, FileText, ListChecks, Mic, Pencil } from "lucide-react";
 import { useState } from "react";
-import { baixarCsv } from "@/lib/csv";
 import { cn } from "@/lib/utils";
 import { indice, Revelar } from "./destaques";
 import { DURACAO_FILME, FilmeAnimado } from "./filme";
+import { RelatorioAgente } from "./relatorio-agente";
 
 const PAINEL = "mx-auto w-full max-w-[1280px] overflow-hidden rounded-[28px] border px-5 py-14 sm:px-10 lg:px-14 lg:py-20";
 const ETIQUETA = "text-xs font-semibold uppercase tracking-[0.14em]";
@@ -66,7 +66,6 @@ export function ProblemaSecao() {
                 <p className="mt-2 text-lg font-semibold">Calça jeans · Azul · 42</p>
                 <p className="mt-1 text-sm text-tinta-300">Item indisponível no momento do atendimento</p>
               </div>
-              <p className="mt-4 text-xs text-tinta-300">Exemplo fictício · situação demonstrativa</p>
             </div>
           </Revelar>
         </div>
@@ -101,7 +100,6 @@ export function FilmeProduto({ onExplorar }: { onExplorar: () => void }) {
             Explorar o fluxo completo <Seta />
           </button>
           <span className={SELO}>Prévia animada (animatic), sem áudio · o vídeo final está em produção</span>
-          <span className={SELO}>Demonstração ilustrativa · dados fictícios</span>
         </div>
       </section>
     </div>
@@ -214,7 +212,7 @@ export function GradeBeneficios({ onVerDemo }: { onVerDemo: () => void }) {
                 </li>
               ))}
             </ol>
-            <p className="mt-2 text-xs text-muted-foreground">Exemplo fictício · últimos 7 dias</p>
+            <p className="mt-2 text-xs text-muted-foreground">Últimos 7 dias</p>
           </Passo>
           <Passo n={4} titulo="Escolha o próximo passo" texto="A sugestão vem com o motivo. Quem decide é você.">
             <ul className="flex flex-col divide-y divide-border rounded-xl border border-border text-sm">
@@ -252,31 +250,8 @@ export function GradeBeneficios({ onVerDemo }: { onVerDemo: () => void }) {
 const MOMENTOS = [
   { rotulo: "No balcão", sobre: "Funcionária da demonstração", texto: "“Hoje perguntaram de novo pela calça azul 42.”", apoio: "A fala vira uma proposta de registro para conferir." },
   { rotulo: "Depois do expediente", sobre: "Resumo da semana", texto: "6 procuras registradas nesta semana.", apoio: "Calça jeans azul 42 · últimos 7 dias · saldo informado 0." },
-  { rotulo: "Na próxima decisão", sobre: "Ação aberta", texto: "Conferir o estoque e consultar o fornecedor.", apoio: "Responsável: gerente · prazo: 7 dias (ilustrativos)." },
+  { rotulo: "Na próxima decisão", sobre: "Ação aberta", texto: "Conferir o estoque e consultar o fornecedor.", apoio: "Responsável: gerente · prazo: 7 dias." },
 ];
-
-const RELATORIOS = [
-  {
-    periodo: "7 dias",
-    titulo: "Relatório da semana",
-    linhas: [
-      ["Receita", "R$ 12.800"],
-      ["Ticket médio", "R$ 160"],
-      ["O que mais vendeu", "Calças"],
-      ["Mais procurado sem estoque", "Calça jeans azul 42"],
-    ],
-  },
-  {
-    periodo: "30 dias",
-    titulo: "Relatório do mês",
-    linhas: [
-      ["Dia e horário mais forte", "Sábado, 10–12h"],
-      ["Quem mais compra", "25 a 34 anos"],
-      ["Clientes que voltaram", "2 ou mais compras"],
-      ["Fase do mês que mais vende", "Início do mês"],
-    ],
-  },
-] as const;
 
 export function RotinaLoja({ onVerDemo }: { onVerDemo: () => void }) {
   const [sel, setSel] = useState(1);
@@ -323,46 +298,12 @@ export function RotinaLoja({ onVerDemo }: { onVerDemo: () => void }) {
               <p className="text-sm font-medium text-violeta-300">{m.sobre}</p>
               <p className="mt-3 font-display text-[clamp(1.5rem,2.6vw,2.25rem)] font-bold leading-[1.15] tracking-tight">{m.texto}</p>
               <p className="mt-3 text-base leading-7 text-tinta-300">{m.apoio}</p>
-              <p className="mt-auto pt-6">
-                <span className="inline-flex rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-tinta-300">Situação demonstrativa · dados fictícios</span>
-              </p>
             </div>
           </div>
         </div>
-        {/* relatórios: o que a loja recebe pronto, sem digitar */}
-        <div className="mt-10 grid gap-4 border-t border-white/10 pt-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1fr)]">
-          <div className="min-w-0">
-            <h3 className="font-display text-2xl font-bold leading-tight tracking-tight">
-              Relatório da semana e do mês, <span className="text-neon-500">pronto.</span>
-            </h3>
-            <p className="mt-3 text-base leading-7 text-tinta-300">
-              Os números se preenchem sozinhos, com a planilha da loja e os registros do balcão. Ninguém precisa digitar.
-            </p>
-            <p className="mt-4 inline-flex rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-tinta-300">Na tela Meu público · 7, 30 ou 90 dias</p>
-            <p className="mt-4 text-sm text-tinta-300">Precisa levar para a planilha? O relatório sai em CSV com um clique.</p>
-            <button
-              type="button"
-              onClick={() => baixarCsv("relatorio-exemplo.csv", [["Relatório de exemplo (dados fictícios)"], [], ...RELATORIOS.flatMap((r) => [[r.titulo, r.periodo], ...r.linhas, []])])}
-              className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl border border-neon-500/60 px-4 text-sm font-semibold text-neon-500 transition-colors hover:bg-neon-500/10"
-            >
-              <Download className="size-4" aria-hidden /> Baixar exemplo em CSV
-            </button>
-          </div>
-          {RELATORIOS.map((r) => (
-            <article key={r.titulo} className="min-w-0 rounded-[20px] border border-white/10 bg-[#141c34] p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-violeta-300">{r.periodo}</p>
-              <h4 className="mt-1 text-lg font-semibold">{r.titulo}</h4>
-              <ul className="mt-3 flex flex-col gap-2 text-sm">
-                {r.linhas.map(([rotulo, valor]) => (
-                  <li key={rotulo} className="flex items-baseline justify-between gap-3 border-b border-white/10 pb-2 last:border-0 last:pb-0">
-                    <span className="text-tinta-300">{rotulo}</span>
-                    <span className="text-right font-semibold">{valor}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
-          <p className="text-xs text-tinta-300 lg:col-span-3">Números ilustrativos de uma loja fictícia.</p>
+        {/* relatórios: o agente preenche a planilha a partir de um pedido em texto */}
+        <div className="mt-10 border-t border-white/10 pt-8">
+          <RelatorioAgente />
         </div>
       </section>
     </div>
