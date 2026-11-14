@@ -55,7 +55,7 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
               <TituloSubindo texto="Sua loja sabe o que vende?" />
               <br />
               <span className="text-neon-500">
-                <TituloSubindo texto="E o porquê?" atraso={220} />
+                <TituloSubindo texto="Mas e o por quê?" atraso={220} />
               </span>
             </h1>
             <p data-gsap="sobe" className="mx-auto mt-6 max-w-xl text-lg leading-7 text-tinta-200 lg:mx-0">

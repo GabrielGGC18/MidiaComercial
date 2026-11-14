@@ -1,13 +1,13 @@
-// Prévia animada (animatic) do filme de 40 s — roteiro em docs/19-ROTEIRO-FILME-32S.md.
+// Apresentação completa (animatic) de 60 s — roteiro em docs/19-ROTEIRO-FILME-32S.md.
 // Ideia: o sistema da loja sozinho não guarda a procura; com a nossa camada ao lado, a mesma conversa
 // vira registro, números, contato com cliente e próximo passo. Não é vídeo: é a interface desenhada.
 // O estado depende apenas do tempo `t` (voltar, pausar e recomeçar reconstroem a cena; nada é somado).
-import { BadgeCheck, CircleSlash, FileSpreadsheet, Pause, Play, RotateCcw, Sparkles, UserCheck } from "lucide-react";
+import { BadgeCheck, CircleSlash, Download, FileSpreadsheet, Pause, Play, RotateCcw, Sparkles, UserCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMenosMovimento } from "@/lib/movimento";
 import { cn } from "@/lib/utils";
 
-export const DURACAO_FILME = 40;
+export const DURACAO_FILME = 60;
 
 /** Cenas do roteiro: início (s), título na tela e legenda (o que a pessoa lê, já que não há áudio). */
 export const CENAS_FILME = [
@@ -18,8 +18,11 @@ export const CENAS_FILME = [
   { de: 17, titulo: "Uma pessoa confirma", legenda: "Funcionária: “Confere. Pode registrar.”" },
   { de: 20, titulo: "A loja volta a esse sinal", legenda: "De 5 para 6 procuras nos últimos 7 dias. O saldo vem da planilha da loja." },
   { de: 25, titulo: "Os números da semana, prontos", legenda: "Vendas, receita e ticket médio saem da planilha. Sem digitar nada." },
-  { de: 30, titulo: "O agente vai atrás dos clientes", legenda: "Ele acha quem autorizou contato e escreve a mensagem. O vendedor revisa e envia." },
-  { de: 35, titulo: "Um próximo passo, com motivo", legenda: "Sua equipe conversa. A IA organiza. A loja decide." },
+  { de: 30, titulo: "Quem compra, o quê e quando", legenda: "Meu público mostra o dia mais forte, a faixa de idade e quem voltou a comprar." },
+  { de: 35, titulo: "O agente preenche o relatório", legenda: "Você pede em texto. A planilha sai preenchida, pronta para baixar." },
+  { de: 41, titulo: "O agente vai atrás dos clientes", legenda: "Ele acha quem autorizou contato e escreve a mensagem. O vendedor revisa e envia." },
+  { de: 47, titulo: "O sinal vira uma ação", legenda: "Com responsável, prazo e evidências. O gerente aprova antes de qualquer passo." },
+  { de: 53, titulo: "Um próximo passo, com motivo", legenda: "Sua equipe conversa. A IA organiza. A loja decide." },
 ] as const;
 
 export function cenaEm(t: number) {
@@ -47,6 +50,20 @@ const METRICAS = [
 ];
 const MENSAGEM = "Oi, Ana! Chegou a camisa social branca no seu tamanho. Quer que eu separe uma para você?";
 const CLIENTES = ["AN", "BR", "CS"];
+const PUBLICO = [
+  { rotulo: "Dia e horário mais forte", valor: "Sábado, 10–12h" },
+  { rotulo: "Quem mais compra", valor: "25 a 34 anos" },
+  { rotulo: "Clientes que voltaram", valor: "2 ou mais compras" },
+  { rotulo: "Fase do mês que mais vende", valor: "Início do mês" },
+];
+const HORAS = [0.35, 0.55, 0.9, 1, 0.7, 0.5, 0.6, 0.8, 0.45]; // vendas por faixa de horário (sábado)
+const PEDIDO_RELATORIO = "Monte o relatório da semana da loja.";
+const PLANILHA = [
+  ["Receita", "R$ 12.800"],
+  ["Ticket médio", "R$ 160"],
+  ["O que mais vendeu", "Calças"],
+  ["Mais procurado sem estoque", "Calça jeans azul 42"],
+] as const;
 
 /** progresso 0–1 entre dois instantes, com saída suave */
 function prog(t: number, de: number, dur: number) {
@@ -64,14 +81,15 @@ function Entra({ on, children, className }: { on: boolean; children: React.React
 }
 
 function tempo(s: number) {
-  return `0:${String(Math.floor(s)).padStart(2, "0")}`;
+  const n = Math.floor(s);
+  return `${Math.floor(n / 60)}:${String(n % 60).padStart(2, "0")}`;
 }
 
 export function FilmeAnimado({ inicial = 0 }: { inicial?: number }) {
   const menos = useMenosMovimento();
   const [t, setT] = useState(inicial);
   const [tocando, setTocando] = useState(false);
-  const [vel, setVel] = useState<(typeof VELOCIDADES)[number]>(1);
+  const [vel, setVel] = useState<(typeof VELOCIDADES)[number]>(2);
   const raiz = useRef<HTMLDivElement>(null);
   // pausa pedida pela pessoa (ou posição escolhida no link): a rolagem não retoma por conta própria
   const pausaManual = useRef(inicial > 0);
@@ -122,9 +140,13 @@ export function FilmeAnimado({ inicial = 0 }: { inicial?: number }) {
   const perdida = t >= 6.4 && t < 8;
   const registrado = t >= 18.6;
   const total = t >= 21.5 ? 6 : 5;
-  const vista = t < 20 ? "conversa" : t < 25 ? "sinal" : t < 30 ? "metricas" : t < 35 ? "agente" : "acao";
+  const vista =
+    t < 20 ? "conversa" : t < 25 ? "sinal" : t < 30 ? "metricas" : t < 35 ? "publico" : t < 41 ? "relatorio" : t < 47 ? "agente" : t < 53 ? "aprovacao" : "acao";
   const preenchendo = t >= 12 && t < 16.2;
-  const letras = Math.round(prog(t, 32, 2.4) * MENSAGEM.length);
+  const letras = Math.round(prog(t, 43, 2.4) * MENSAGEM.length);
+  const letrasPedido = Math.round(prog(t, 35.3, 1.4) * PEDIDO_RELATORIO.length);
+  const celulas = Math.floor(Math.max(0, t - 37.2) / 0.55); // uma célula a cada 0,55 s
+  const aprovada = t >= 50.6;
 
   const alternar = () => {
     if (tocando) {
@@ -201,7 +223,7 @@ export function FilmeAnimado({ inicial = 0 }: { inicial?: number }) {
                 </Entra>
               </Entra>
               <Entra on={t >= 22.5} className="absolute inset-x-0 top-0">
-                <p className={cn("inline-flex items-center gap-2 rounded-xl border bg-white/5 px-3 py-2 text-sm transition-colors duration-500", t >= 25 && t < 30 ? "border-neon-500/60" : "border-[#2c3652]")}>
+                <p className={cn("inline-flex items-center gap-2 rounded-xl border bg-white/5 px-3 py-2 text-sm transition-colors duration-500", (t >= 25 && t < 30) || (t >= 35 && t < 41) ? "border-neon-500/60" : "border-[#2c3652]")}>
                   <FileSpreadsheet className="size-4 shrink-0 text-[#bda7ff]" aria-hidden /> Planilha da loja enviada
                 </p>
               </Entra>
@@ -287,7 +309,67 @@ export function FilmeAnimado({ inicial = 0 }: { inicial?: number }) {
                       </div>
                     ))}
                   </dl>
-                  <p className="text-xs text-[#a8b0c6]">Números ilustrativos. Também dá para ver 30 e 90 dias.</p>
+                  <p className="text-xs text-[#a8b0c6]">Também dá para ver 30 e 90 dias.</p>
+                </div>
+              )}
+
+              {vista === "publico" && (
+                <div key="publico" className="filme-entra mt-3 flex flex-1 flex-col gap-3">
+                  <p className="text-sm text-[#a8b0c6]">Meu público · últimos 30 dias</p>
+                  <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                    <dl className="flex flex-col gap-2 text-sm">
+                      {PUBLICO.map((p, i) => (
+                        <Entra key={p.rotulo} on={t >= 30.4 + i * 0.5}>
+                          <div className="flex justify-between gap-3 rounded-lg bg-white/[0.06] px-3 py-2">
+                            <dt className="text-[#a8b0c6]">{p.rotulo}</dt>
+                            <dd className="text-right font-semibold">{p.valor}</dd>
+                          </div>
+                        </Entra>
+                      ))}
+                    </dl>
+                    <div className="flex min-h-[120px] flex-col rounded-2xl border border-[#2c3652] bg-white/5 p-3">
+                      <p className="text-xs text-[#a8b0c6]">Vendas no sábado, por horário</p>
+                      <ol className="mt-2 flex flex-1 items-end gap-1.5" aria-hidden>
+                        {HORAS.map((h, i) => (
+                          <li key={i} className="flex-1 rounded-t-md" style={{ height: `${h * 100 * prog(t, 30.6 + i * 0.1, 0.8)}%`, background: i === 3 ? "#b6ff3b" : "#8b5cf6" }} />
+                        ))}
+                      </ol>
+                      <p className="mt-2 text-xs font-semibold text-neon-500">Pico: 10–12h</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {vista === "relatorio" && (
+                <div key="relatorio" className="filme-entra mt-3 grid flex-1 content-start gap-3 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+                  <div className="flex min-w-0 flex-col gap-2 text-[15px] leading-6">
+                    <p className="min-h-[2.75rem] rounded-2xl rounded-tr-sm bg-[#6d28d9] px-4 py-2.5">
+                      {PEDIDO_RELATORIO.slice(0, letrasPedido)}
+                      {letrasPedido < PEDIDO_RELATORIO.length && <span className="filme-pisca">▍</span>}
+                    </p>
+                    <Entra on={t >= 36.8}>
+                      <p className="inline-flex items-start gap-1.5 rounded-2xl rounded-tl-sm border border-[#2c3652] bg-white/5 px-4 py-2.5 text-sm">
+                        <Sparkles className={cn("mt-0.5 size-3.5 shrink-0 text-neon-500", celulas < PLANILHA.length && "filme-pisca")} aria-hidden />
+                        {celulas < PLANILHA.length ? "Lendo a planilha da loja e os registros do balcão…" : "Pronto. Confira e baixe a planilha."}
+                      </p>
+                    </Entra>
+                  </div>
+                  <div className="min-w-0 overflow-hidden rounded-2xl border border-[#2c3652] bg-[#0b1020]/60">
+                    <p className="flex items-center gap-1.5 border-b border-[#2c3652] px-3 py-2 text-xs font-semibold">
+                      <FileSpreadsheet className="size-3.5 text-neon-500" aria-hidden /> Relatório da semana
+                    </p>
+                    <dl className="text-sm">
+                      {PLANILHA.map(([rotulo, valor], i) => (
+                        <div key={rotulo} className={cn("flex justify-between gap-3 border-b border-[#2c3652] px-3 py-2 transition-colors duration-300 last:border-0", i === celulas - 1 && "bg-neon-500/15")}>
+                          <dt className="text-[#a8b0c6]">{rotulo}</dt>
+                          <dd className={cn("text-right font-semibold transition-opacity duration-300", i < celulas ? "opacity-100" : "opacity-0")}>{valor}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                    <p className={cn("m-3 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-colors duration-500", celulas >= PLANILHA.length ? "bg-neon-500 text-[#0b1020]" : "bg-white/10 text-[#a8b0c6]")}>
+                      <Download className="size-3.5" aria-hidden /> Baixar planilha preenchida
+                    </p>
+                  </div>
                 </div>
               )}
 
@@ -299,10 +381,10 @@ export function FilmeAnimado({ inicial = 0 }: { inicial?: number }) {
                   <p className="text-[15px] leading-6">
                     Camisa social branca G <span className="text-[#a8b0c6]">· parada há 45 dias</span>
                   </p>
-                  <Entra on={t >= 30.8}>
+                  <Entra on={t >= 41.8}>
                     <div className="flex flex-wrap items-center gap-2 text-sm">
                       {CLIENTES.map((n, i) => (
-                        <span key={n} className={cn("grid size-9 place-items-center rounded-full bg-[#6d28d9] text-xs font-bold transition-all duration-500", t >= 31 + i * 0.3 ? "scale-100 opacity-100" : "scale-50 opacity-0")}>
+                        <span key={n} className={cn("grid size-9 place-items-center rounded-full bg-[#6d28d9] text-xs font-bold transition-all duration-500", t >= 42 + i * 0.3 ? "scale-100 opacity-100" : "scale-50 opacity-0")}>
                           {n}
                         </span>
                       ))}
@@ -311,15 +393,44 @@ export function FilmeAnimado({ inicial = 0 }: { inicial?: number }) {
                       </span>
                     </div>
                   </Entra>
-                  <Entra on={t >= 32} className="mt-auto">
+                  <Entra on={t >= 43} className="mt-auto">
                     <p className="min-h-[5.5rem] rounded-2xl rounded-tl-sm border border-[#2c3652] bg-white/5 px-4 py-3 text-[15px] leading-6">
                       {MENSAGEM.slice(0, letras)}
                       {letras < MENSAGEM.length && <span className="filme-pisca">▍</span>}
                     </p>
-                    <p className={cn("mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-semibold transition-colors duration-500", t >= 34.4 ? "border-neon-500/60 text-neon-500" : "border-white/15 text-[#a8b0c6]")}>
+                    <p className={cn("mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-semibold transition-colors duration-500", t >= 45.4 ? "border-neon-500/60 text-neon-500" : "border-white/15 text-[#a8b0c6]")}>
                       Rascunho · o vendedor revisa e envia
                     </p>
                   </Entra>
+                </div>
+              )}
+
+              {vista === "aprovacao" && (
+                <div key="aprovacao" className="filme-entra mt-3 flex flex-1 flex-col gap-3">
+                  <p className="text-sm text-[#a8b0c6]">Ação aberta a partir do sinal</p>
+                  <div className={cn("rounded-2xl border p-4 transition-colors duration-500", aprovada ? "border-[#70e1b2]/60" : "border-[#2c3652]")}>
+                    <p className="font-display text-xl font-bold leading-tight">Repor calça jeans azul 42?</p>
+                    <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
+                      {[
+                        ["Responsável", "Gerente"],
+                        ["Prazo", "7 dias"],
+                        ["Evidências", "6 procuras · saldo 0"],
+                      ].map(([rotulo, valor], i) => (
+                        <Entra key={rotulo} on={t >= 47.6 + i * 0.5}>
+                          <div className="rounded-lg bg-white/[0.06] px-3 py-2">
+                            <dt className="text-xs text-[#a8b0c6]">{rotulo}</dt>
+                            <dd className="font-semibold">{valor}</dd>
+                          </div>
+                        </Entra>
+                      ))}
+                    </dl>
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      <span className={cn("inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold transition-all duration-300", aprovada ? "bg-[#70e1b2] text-[#0b1020]" : t >= 49.8 ? "scale-95 bg-neon-500 text-[#0b1020]" : "bg-neon-500 text-[#0b1020]")}>
+                        <BadgeCheck className="size-4" aria-hidden /> {aprovada ? "Aprovada pelo gerente" : "Aprovar"}
+                      </span>
+                      <span className="text-xs text-[#a8b0c6]">{aprovada ? "Status: em andamento" : "Aguardando o gerente"}</span>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -328,7 +439,7 @@ export function FilmeAnimado({ inicial = 0 }: { inicial?: number }) {
                   <p className="text-sm text-[#a8b0c6]">Calça jeans azul 42 · 6 procuras · saldo informado 0</p>
                   <p className="font-display text-[clamp(1.4rem,2.6vw,2.25rem)] font-bold leading-[1.15] tracking-tight">Conferir o estoque e consultar o fornecedor.</p>
                   <p className="text-sm text-[#a8b0c6]">São 6 atendimentos, não 6 pessoas nem 6 vendas. Quem decide a compra é a loja.</p>
-                  <Entra on={t >= 37.2}>
+                  <Entra on={t >= 55.2}>
                     <p className="text-lg font-semibold text-neon-500">Sua equipe conversa. A IA organiza. A loja decide.</p>
                   </Entra>
                 </div>

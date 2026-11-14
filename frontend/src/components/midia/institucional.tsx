@@ -1,6 +1,7 @@
 // Seções da página pública (/): quem somos, segmentos, como funciona e rodapé. A abertura, o bento e os
 // caminhos estão em vitrine.tsx. Fotos: public/fotos (Unsplash, ver CREDITOS.md).
 // Prints: public/telas (demo com dados sintéticos).
+import { EasterEggJason } from "./jason";
 import { LogoAnimado } from "./marca";
 import {
   BadgeCheck,
@@ -360,6 +361,19 @@ export function RodapeLogin() {
         <p className="max-w-md text-xs leading-5">
           Demonstração com dados sintéticos. Contato com cliente só com autorização (LGPD) e revisão de uma pessoa. Fotos: Unsplash e equipe.
         </p>
+      </div>
+      {/* barra final: assinatura, atalhos e o easter egg da sexta-feira 13 */}
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-5 text-xs sm:px-8">
+          <p>© 2026 MidiaComercial · Hackrun · Equipe NidoQueen</p>
+          <nav aria-label="Rodapé" className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <a href="/#percurso" className="hover:text-white">Demonstração</a>
+            <a href="/#filme" className="hover:text-white">Como funciona</a>
+            <a href="/#rotina" className="hover:text-white">Na rotina</a>
+            <a href="/#sobre" className="hover:text-white">Equipe</a>
+            <EasterEggJason />
+          </nav>
+        </div>
       </div>
     </footer>
   );
