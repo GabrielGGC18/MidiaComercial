@@ -1,33 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="300" viewBox="0 0 900 300" role="img" aria-labelledby="t d">
   <title id="t">MidiaComercial</title>
-  <desc id="d">Inteligência comercial para pequenos lojistas. Seus sinais de venda, em uma só mídia.</desc>
+  <desc id="d">Monograma MC e assinatura MIDIA | Comercial. Inteligência comercial para pequenos lojistas.</desc>
+  <!-- Identidade: docs/logo-01-monograma-mc.md · roxo #6D4AFF, verde neon #B6FF3B -->
   <defs>
-    <radialGradient id="brilho" cx="78%" cy="45%" r="45%">
-      <stop offset="0" stop-color="#6D4AFF" stop-opacity=".45"/>
+    <radialGradient id="brilho" cx="80%" cy="48%" r="46%">
+      <stop offset="0" stop-color="#6D4AFF" stop-opacity=".5"/>
       <stop offset=".55" stop-color="#2A1677" stop-opacity=".25"/>
       <stop offset="1" stop-color="#0B1020" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="midia" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#E2DCFF"/>
-      <stop offset=".55" stop-color="#A898FF"/>
+      <stop offset="0" stop-color="#A898FF"/>
       <stop offset="1" stop-color="#6D4AFF"/>
     </linearGradient>
-    <linearGradient id="comercial" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FFFFFF"/>
-      <stop offset="1" stop-color="#DDE2EE"/>
+    <linearGradient id="letra" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8E73FF"/>
+      <stop offset="1" stop-color="#6D4AFF"/>
     </linearGradient>
     <linearGradient id="linha" x1="0" x2="1">
-      <stop offset="0" stop-color="#FF6A3D"/>
-      <stop offset="1" stop-color="#FF6A3D" stop-opacity="0"/>
+      <stop offset="0" stop-color="#B6FF3B"/>
+      <stop offset="1" stop-color="#B6FF3B" stop-opacity="0"/>
     </linearGradient>
     <filter id="luz" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feGaussianBlur stdDeviation="5" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    <!-- texto do título (reutilizado nas camadas da extrusão) -->
-    <g id="titulo" font-family="'Segoe UI Black','Arial Black','Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="76" letter-spacing="-1">
-      <text x="0" y="0">Mídia<tspan dx="14">Comercial</tspan></text>
-    </g>
   </defs>
 
   <!-- fundo -->
@@ -35,35 +31,22 @@
   <rect x="1" y="1" width="898" height="298" rx="22" fill="url(#brilho)"/>
 
   <!-- overline -->
-  <text x="48" y="64" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="3.2" fill="#FF6A3D">INTELIGÊNCIA COMERCIAL · PEQUENO VAREJO · PALMAS-TO</text>
+  <text x="48" y="64" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="3.2" fill="#B6FF3B">INTELIGÊNCIA COMERCIAL · PEQUENO VAREJO · PALMAS-TO</text>
 
-  <!-- ÚNICO efeito 3D: extrusão do nome (camadas deslocadas em diagonal) -->
-  <g transform="translate(48 150)">
-    <g fill="#140C3D">
-      <use href="#titulo" x="9" y="9"/><use href="#titulo" x="8" y="8"/><use href="#titulo" x="7" y="7"/>
-      <use href="#titulo" x="6" y="6"/><use href="#titulo" x="5" y="5"/>
-    </g>
-    <g fill="#2A1677">
-      <use href="#titulo" x="4" y="4"/><use href="#titulo" x="3" y="3"/><use href="#titulo" x="2" y="2"/><use href="#titulo" x="1" y="1"/>
-    </g>
-    <g font-family="'Segoe UI Black','Arial Black','Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="76" letter-spacing="-1">
-      <text x="0" y="0"><tspan fill="url(#midia)">Mídia</tspan><tspan dx="14" fill="url(#comercial)">Comercial</tspan></text>
-    </g>
-  </g>
+  <!-- assinatura: MIDIA | Comercial -->
+  <text x="48" y="150" font-family="'Plus Jakarta Sans','Segoe UI Black','Arial Black','Helvetica Neue',Arial,sans-serif" font-weight="800" letter-spacing="-1">
+    <tspan font-size="76" fill="url(#midia)">MIDIA</tspan><tspan dx="16" font-size="64" font-weight="300" fill="#FFFFFF" fill-opacity=".35">|</tspan><tspan dx="16" font-size="60" fill="#B6FF3B">Comercial</tspan>
+  </text>
 
-  <!-- assinatura -->
-  <text x="48" y="204" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="22" font-style="italic" fill="#EEF1F7">Seus sinais de venda, em uma só mídia.</text>
+  <text x="48" y="204" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="22" font-style="italic" fill="#EEF1F7">Sua loja sabe o que vende? E o porquê?</text>
   <rect x="48" y="218" width="460" height="3" rx="1.5" fill="url(#linha)"/>
   <text x="48" y="256" font-family="Consolas,'JetBrains Mono',Menlo,monospace" font-size="13" fill="#B9C0D4">django 5.2 · ninja 1.8 · react 19 · vite 8 · tailwind 4 · postgresql 16</text>
 
-  <!-- marca: três barras de sinal (plano); a terceira em coral = o sinal que faltava -->
-  <g transform="translate(704 74)" filter="url(#luz)">
-    <rect x="0" y="80" width="34" height="70" rx="9" fill="#A898FF"/>
-    <rect x="50" y="42" width="34" height="108" rx="9" fill="#6D4AFF"/>
-    <rect x="100" y="0" width="34" height="150" rx="9" fill="#FF6A3D"/>
+  <!-- marca: monograma MC, com a abertura do C em verde neon -->
+  <g transform="translate(676 92) scale(2.6) translate(-4 -18)">
+    <path fill="url(#letra)" d="M6 60V20L24 38 42 20V60H31V45L24 52 17 45V60Z"/>
+    <path fill="url(#letra)" d="M70 20H54L44 30V50L54 60H70V49H59L55 45V35L59 31H70Z"/>
+    <path fill="#B6FF3B" filter="url(#luz)" d="M54 20H70V31H59L54 36Z"/>
   </g>
-  <g fill="none" stroke-linecap="round" transform="translate(682 250)">
-    <path d="M0 0c18 0 18-12 36-12s18 12 36 12 18-12 36-12 18 12 36 12 18-12 36-12" stroke="#A898FF" stroke-opacity=".55" stroke-width="2"/>
-    <path d="M0 14c18 0 18-8 36-8s18 8 36 8 18-8 36-8 18 8 36 8 18-8 36-8" stroke="#FF6A3D" stroke-width="2" stroke-dasharray="4 6"/>
-  </g>
+  <rect x="676" y="226" width="177" height="3" rx="1.5" fill="#B6FF3B" fill-opacity=".85"/>
 </svg>

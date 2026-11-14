@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/banner.svg" alt="MidiaComercial: seus sinais de venda, em uma só mídia" width="900">
+  <img src="docs/assets/banner.svg" alt="MidiaComercial: monograma MC e assinatura MIDIA | Comercial" width="900">
 </p>
 
 <p align="center">
@@ -21,8 +21,8 @@
   <img alt="React 19" src="https://img.shields.io/badge/react-19-2A1677?style=for-the-badge&logo=react&logoColor=white&labelColor=0B1020">
   <img alt="Vite 8" src="https://img.shields.io/badge/vite-8-2A1677?style=for-the-badge&logo=vite&logoColor=white&labelColor=0B1020">
   <img alt="Tailwind CSS 4" src="https://img.shields.io/badge/tailwind_css-4-2A1677?style=for-the-badge&logo=tailwindcss&logoColor=white&labelColor=0B1020">
-  <img alt="CI: pytest, vitest, ruff" src="https://img.shields.io/badge/ci-pytest_·_vitest_·_ruff-FF6A3D?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=0B1020">
-  <img alt="Dados 100% sintéticos" src="https://img.shields.io/badge/dados-100%25_sintéticos-FF6A3D?style=for-the-badge&labelColor=0B1020">
+  <img alt="CI: pytest, vitest, ruff" src="https://img.shields.io/badge/ci-pytest_·_vitest_·_ruff-B6FF3B?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=0B1020">
+  <img alt="Dados 100% sintéticos" src="https://img.shields.io/badge/dados-100%25_sintéticos-B6FF3B?style=for-the-badge&labelColor=0B1020">
 </p>
 
 <p align="center">
