@@ -90,7 +90,7 @@ export function FilmeProduto({ onExplorar }: { onExplorar: () => void }) {
           <h2 id="filme-titulo" className={cn(TITULO, "mt-2")}>
             Veja a conversa virar o próximo passo.
           </h2>
-          <p className="mt-3 text-lg leading-7 text-muted-foreground">Uma procura no balcão. Um registro conferido. Uma ação para a loja acompanhar.</p>
+          <p className="mt-3 text-lg leading-7 text-muted-foreground">O sistema completo em um minuto: balcão, registro, números, público, relatório, clientes e a ação aprovada pela loja.</p>
         </div>
         <div className="mt-10">
           <FilmeAnimado inicial={inicial} />
@@ -99,7 +99,7 @@ export function FilmeProduto({ onExplorar }: { onExplorar: () => void }) {
           <button type="button" onClick={onExplorar} className="inline-flex h-12 items-center gap-2 rounded-xl bg-violeta-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-violeta-700">
             Explorar o fluxo completo <Seta />
           </button>
-          <span className={SELO}>Prévia animada (animatic), sem áudio · o vídeo final está em produção</span>
+          <span className={SELO}>Apresentação completa · 1 min · sem áudio</span>
         </div>
       </section>
     </div>

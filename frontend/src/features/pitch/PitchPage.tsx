@@ -79,7 +79,7 @@ const SLIDES: { titulo: string; Corpo: () => React.ReactNode; notas: string }[] 
   {
     titulo: "Abertura",
     Corpo: Abertura,
-    notas: "A loja sabe o que vende. E o porquê? Nas visitas ao shopping, lojistas menores contaram que têm dificuldade de organizar dados e acompanhamento.",
+    notas: "A loja sabe o que vende. Mas e o por quê? Nas visitas ao shopping, lojistas menores contaram que têm dificuldade de organizar dados e acompanhamento.",
   },
   {
     titulo: "O problema",
