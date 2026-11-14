@@ -17,7 +17,8 @@ env = environ.Env(
 )
 environ.Env.read_env(BASE_DIR / ".env")
 
-SECRET_KEY = env("SECRET_KEY")
+# dev e test têm chave própria; prod exige uma de verdade (ver prod.py)
+SECRET_KEY = env("SECRET_KEY", default="")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")

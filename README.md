@@ -173,7 +173,7 @@ Quem publica não conhece quem observa. Um observer com erro não derruba a oper
 python -m venv .venv
 .venv/Scripts/activate              # Linux/macOS: source .venv/bin/activate
 pip install ".[dev]"
-# crie o .env (fora do Git) com as variáveis da seção "Variáveis de ambiente"
+# .env é opcional em dev (SQLite e chave de dev); em produção a SECRET_KEY é obrigatória
 python manage.py migrate
 python manage.py seed_demo          # 2 lojas, 90 dias de vendas, demandas, estoque e base de clientes
 python manage.py runserver

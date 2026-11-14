@@ -107,7 +107,19 @@ container web ──socket unix──► ponte (systemd, usuário de serviço se
 - Saída de ferramenta passa por `ocultar()` antes de ir ao LLM; o LLM recebe agregados, não a base de clientes.
 - Prospecção: só consentidos, descanso de 14 dias, "Responda SAIR", medição de compra em 14 dias.
 
-## 7. Limites e observabilidade
+## 7. Conversas, avaliação e retenção
+
+| Recurso | Onde |
+| --- | --- |
+| Histórico do chat (P2-01) | `GET /api/agente/conversas`, `GET /conversas/{id}` (falas, passos em palavras de loja, propostas), `DELETE /conversas/{id}` (apaga o texto, rejeita pendentes). Só a própria pessoa, nesta loja |
+| Guardado × enviado ao LLM | Guarda até 100 falas (`MIDIA_AGENTE_HISTORICO_GUARDADO`, mascaradas); ao LLM vão as últimas 6, só `role` e `content` |
+| Passos na resposta | `POST /mensagens` devolve `passos` ("Buscou no catálogo › Preparou registro de procura") |
+| Frase que não é de balcão | "bom dia", "me ajuda", "quanto vendemos?" → resposta de ajuda, **nada é criado** |
+| Avaliação (P2-03) | `manage.py avaliar_agente --provedor offline|hermes|claude` · teste parametrizado com 53 frases (docs/09 §8) |
+| Retenção LGPD (P2-04) | `manage.py limpar_agente [--simular]`, todo dia no container de rotinas: conversa parada 90 dias, auditoria 180 dias, cadastro rejeitado 30 dias |
+| Confirmação | trava a proposta (duas confirmações simultâneas → um registro) e devolve `atualizar` |
+
+## 8. Limites e observabilidade
 
 | Item | Onde |
 | --- | --- |
@@ -117,7 +129,7 @@ container web ──socket unix──► ponte (systemd, usuário de serviço se
 | Auditoria | `ChamadaFerramenta` (entrada mascarada, resumo, ok, duração) |
 | Uso | `/api/agente/uso` (gerente): sessões, mensagens, quantas com LLM (Claude ou Hermes), quedas no offline, tokens (só Claude informa), tempo médio |
 
-## 8. Como estender
+## 9. Como estender
 
 - **Nova ferramenta:** skill [`.claude/skills/agente-nova-ferramenta`](../.claude/skills/agente-nova-ferramenta/SKILL.md).
 - **Novo provedor de LLM:** skill [`.claude/skills/agente-novo-provedor`](../.claude/skills/agente-novo-provedor/SKILL.md).

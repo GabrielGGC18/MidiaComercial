@@ -38,10 +38,34 @@ def palavras(t: str) -> list[str]:
     return re.findall(r"\[[a-z]+_\d+\]|[a-z0-9]+", sem_acento(t))
 
 
+_DEZENAS = {"vinte": 20, "trinta": 30, "quarenta": 40, "cinquenta": 50, "sessenta": 60,
+            "setenta": 70, "oitenta": 80, "noventa": 90}  # fmt: skip
+_UNIDADES = {"um": 1, "dois": 2, "tres": 3, "quatro": 4, "cinco": 5, "seis": 6, "sete": 7,
+             "oito": 8, "nove": 9}  # fmt: skip
+_EXTENSO = re.compile(
+    r"\b(" + "|".join(_DEZENAS) + r")(?:\s+e\s+(" + "|".join(_UNIDADES) + r"))?\b"
+)
+
+
+def numeros_por_extenso(t: str) -> str:
+    """'jeans quarenta e dois' → 'jeans 42' (voz transcrita costuma vir por extenso).
+    Devolve o texto em minúsculas e sem acento."""
+    return _EXTENSO.sub(
+        lambda m: str(_DEZENAS[m.group(1)] + _UNIDADES.get(m.group(2) or "", 0)), sem_acento(t)
+    )
+
+
+def _diminutivo(w: str) -> str:
+    """'bermudinha' → 'bermuda', 'cintinho' → 'cinto'."""
+    if len(w) > 6 and w.endswith(("inha", "inho")):
+        return w[:-4] + w[-1]
+    return w
+
+
 # ── extratores ────────────────────────────────────────────────────────────────
 def extrair_faixa(t: str) -> str | None:
     n = sem_acento(t)
-    m = re.search(r"(\d{1,2})\s*anos", n)
+    m = re.search(r"(\d{1,2})\s*anos", n) or re.search(r"\bu(?:ns|ma)\s+(\d{2})\b", n)
     if m:
         return faixa_da_idade(int(m.group(1)))
     if "meia idade" in n:
@@ -58,11 +82,12 @@ def extrair_faixa(t: str) -> str | None:
 def extrair_tamanhos(t: str, numericos: set[str]) -> list[str]:
     n = sem_acento(t)
     n = re.sub(r"\d{1,2}\s*anos", " ", n)  # idade não é tamanho
+    n = re.sub(r"\bu(?:ns|ma)\s+\d{2}\b", " ", n)  # "uns 30": idade aproximada
     achados = []
     for m in re.finditer(r"\b(?:tamanho|tam|numero|numeracao)\s+([a-z0-9]{1,3})\b", n):
         achados.append(m.group(1).upper())
     for w in palavras(n):
-        if w in TAMANHOS_LETRA or w in numericos:
+        if w in TAMANHOS_LETRA or w in numericos or (w.isdigit() and 33 <= int(w) <= 48):
             achados.append(w.upper())
     return list(dict.fromkeys(achados))
 
@@ -80,14 +105,23 @@ def extrair_cor(t: str, cores_catalogo: set[str]) -> str | None:
 
 def extrair_motivo(t: str) -> tuple[str, bool]:
     n = sem_acento(t)
-    if re.search(r"\b(caro|preco|valor|barato)\b", n):
+    if re.search(
+        r"\b(caros?|preco|valor|barato|salgad[oa]s?)\b"
+        r"|\b(achou|estava|tava|esta|ta|muito|meio|bem)\s+(\w+\s+){0,3}?car[ao]s?\b"
+        r"|\bcar[ao]s?\s+demais\b",
+        n,
+    ):  # "o cara de uns 30" não é preço
         return "preco", False
     if re.search(r"\b(prazo|demora|entrega|encomenda)\b", n):
         return "prazo", False
-    if re.search(r"(nao tinha|sem|faltou|nao achou)\s+(o |a )?(tamanho|numero|numeracao|cor)", n):
+    if re.search(
+        r"(nao tinha|sem|faltou|nao achou)\s+(o |a )?(tamanho|numero|numeracao|cor)|\bso tinha\b", n
+    ):
         return "variacao_ausente", False
     if re.search(
-        r"(nao tinha|sem estoque|acabou|esgotad|faltou|nao encontr|nao achou|em falta)", n
+        r"(nao tinha|tinha nao|nao tem|sem estoque|acabou|esgotad|faltou|nao encontr|nao achou"
+        r"|em falta|zerou|zerad)",
+        n,
     ):
         return "indisponivel", False
     return "outro", True
@@ -114,7 +148,7 @@ def extrair_nome(t: str) -> str | None:
 def intencao(t: str) -> str:
     n = sem_acento(t)
     if re.search(
-        r"(encalhad|parad[oa]s?|em baixa|nao (esta|ta) vendendo|vender mais|buscar clientes|quem (pode )?comprar|oferecer|prospect)",
+        r"(encalhad|parad[oa]s?|em baixa|nao (esta|ta) vendendo|vender mais|buscar clientes|quem (pode )?comprar|oferecer|prospect|desova|desencalh|girar (o )?estoque|queimar (o )?estoque)",
         n,
     ):
         return "prospeccao"
@@ -123,26 +157,38 @@ def intencao(t: str) -> str:
         n,
     ):
         return "cliente"
-    if re.search(r"(procur|queria|pediu|nao tinha|faltou|nao encontr|sem estoque|acabou|esgot)", n):
+    if re.search(
+        r"(procur|queria|pediu|nao tinha|tinha nao|faltou|nao encontr|sem estoque|acabou|esgot|zerou"
+        r"|em falta|caro|cara demais|salgad)",
+        n,
+    ):
         return "demanda"
     if re.search(
-        r"(faixa|idade|publico|quem compra|horario|periodo|melhor dia|que horas|quando vend)", n
+        r"(faixa|idade|publico|quem compra|horario|periodo|melhor dia|que horas|quando vend"
+        r"|vendem? mais|vendemos mais|dia da semana)",
+        n,
     ):
         return "publico"
-    return "demanda"
+    if re.search(r"(vend(emos|eu|i|as)|faturamento|faturei|receita|ticket)", n):
+        return "vendas"  # não há ferramenta de vendas: o agente aponta a tela certa
+    return "desconhecida"  # nada de procura no texto: planejar decide se dá para registrar
 
 
 def achar_produto(loja, t: str, extras: set[str]):
+    """Procura o produto por janelas de palavras, da maior para a menor. Antes só cortava do
+    fim, e "adolescente procurou bermuda" não achava a bermuda (palavra extra no começo)."""
     ws = [
-        w
+        _diminutivo(w)
         for w in palavras(t)
         if w not in STOP and w not in extras and not w.startswith("[") and not w.isdigit()
-    ]
-    while ws:
-        r = buscar_catalogo(loja, " ".join(ws), limite=3)
-        if r:
-            return r[0], ws
-        ws = ws[:-1]
+        and len(w) > 2
+    ]  # fmt: skip
+    for tam in range(min(4, len(ws)), 0, -1):
+        for i in range(len(ws) - tam + 1):
+            janela = ws[i : i + tam]
+            r = buscar_catalogo(loja, " ".join(janela), limite=3)
+            if r:
+                return r[0], janela
     return None, []
 
 
@@ -178,6 +224,10 @@ def planejar(ctx, texto: str) -> list[tuple[str, dict]]:
         return [("prospectar_produtos_em_baixa", {"termo": " ".join(termos) or None})]
     if tipo == "publico":
         return [("resumo_publico", {"dias": 30})]
+    if tipo == "vendas":
+        return []
+    if tipo != "cliente":
+        texto = numeros_por_extenso(texto)  # nome de cliente precisa da maiúscula original
 
     cores_cat = set(
         Variante.objects.da_loja(ctx.loja).exclude(cor="").values_list("cor", flat=True)
@@ -217,6 +267,11 @@ def planejar(ctx, texto: str) -> list[tuple[str, dict]]:
 
     motivo, motivo_incerto = extrair_motivo(texto)
     produto, _ = achar_produto(ctx.loja, texto, extras)
+    if tipo == "desconhecida" and produto is None and not (tamanhos or cor):
+        # "bom dia", "obrigado", "me ajuda": não vira registro de procura de "bom dia"
+        return []
+    if produto and cor and produto["cores"] and cor not in produto["cores"] and motivo == "outro":
+        motivo, motivo_incerto = "variacao_ausente", False  # pediu uma cor que não existe
     incertos = ["motivo"] if motivo_incerto else []
     tamanho = tamanhos[0] if tamanhos else None
     if produto is None:
@@ -303,4 +358,12 @@ def resposta_padrao(resultados) -> str:
                 )
                 + r["limitacao"]
             )
-    return " ".join(partes) or "Não entendi. Tente: “cliente procurou calça jeans 42 e não tinha”."
+    return " ".join(partes) or AJUDA
+
+
+AJUDA = (
+    "Não entendi. Eu registro o que o cliente procurou e não levou "
+    "(“cliente procurou calça jeans 42 e não tinha”), digo quem compra e quando "
+    "(“que horas vende mais?”) e acho clientes para produto parado (“quero vender a camisa parada”). "
+    "Vendas e receita ficam em Oportunidades e Meu público."
+)

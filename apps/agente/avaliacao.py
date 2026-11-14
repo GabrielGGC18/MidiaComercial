@@ -40,7 +40,10 @@ def _normalizar(loja, nome: str, args: dict) -> dict:
 
 def avaliar_offline(loja, texto: str) -> dict:
     ctx = Contexto(loja=loja, usuario=None, papel="gerente")
-    nome, args = planejar(ctx, texto)[0]
+    plano = planejar(ctx, texto)
+    if not plano:  # o agente respondeu que não entendeu (não criou nada)
+        return {"ferramenta": None}
+    nome, args = plano[0]
     return _normalizar(loja, nome, args)
 
 
@@ -74,14 +77,16 @@ def relatorio(loja, avaliar) -> dict:
     """Roda todas as frases e devolve acertos por campo e a lista de erros."""
     acertos, totais, erros = Counter(), Counter(), []
     lista = frases()
+    frases_ok = 0
     for f in lista:
-        obtido = avaliar(loja, f["texto"])
-        for campo, ok in conferir(f["esperado"], obtido).items():
+        obtido = avaliar(loja, f["texto"])  # uma chamada por frase (no LLM, custa tempo)
+        resultado = conferir(f["esperado"], obtido)
+        frases_ok += all(resultado.values())
+        for campo, ok in resultado.items():
             totais[campo] += 1
             acertos[campo] += ok
             if not ok:
                 erros.append((f["texto"], campo, f["esperado"][campo], obtido.get(campo)))
-    frases_ok = sum(1 for f in lista if all(conferir(f["esperado"], avaliar(loja, f["texto"])).values()))
     return {
         "frases": len(lista),
         "frases_ok": frases_ok,

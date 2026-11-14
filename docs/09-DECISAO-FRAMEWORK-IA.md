@@ -68,3 +68,29 @@ Se acontecer, o candidato é o **LangGraph**, que resolve orquestração e estad
 - A memória curta continua a conversa; a sessão de outra pessoa ou de outra loja dá 404.
 - Telefone vai ao LLM só como `[TELEFONE_1]`; cadastro de cliente não entra na memória lida pelo LLM.
 - `/api/agente/uso` só para gerente ou dono.
+
+## 8. Avaliação com frases reais de balcão (P2-03)
+
+`apps/agente/tests/frases_balcao.json`: 53 frases, incluindo gíria, voz transcrita sem pontuação, número e
+idade por extenso, diminutivo e frases que **não** são de balcão ("bom dia", "quanto vendemos ontem?").
+`python manage.py avaliar_agente [--provedor offline|hermes|claude]` mede por campo sem gravar nada.
+
+Resultado do offline (13/11/2026):
+
+| Campo | Acerto |
+| --- | --- |
+| Frases inteiras certas | 47/53 |
+| ferramenta | 53/53 (100%) |
+| produto (`sku_produto`) | 38/38 (100%) |
+| motivo | 35/36 (97%) |
+| faixa etária | 11/12 (92%) |
+| cor | 21/23 (91%) |
+| tamanho | 28/31 (90%) |
+
+As 6 frases que falham estão marcadas como `conhecida_falha` (xfail estrito): tamanho por extenso ("grande",
+"médio", "pequena"), cor e produto no plural e "senhorzinho". Oito frases novas foram escritas **sem** ajustar o
+parser a elas, para o número não ser inflado. A avaliação já pegou bugs reais: "cara" não era preço, o produto
+não era achado com palavras antes dele e cumprimentos viravam registro de procura.
+
+O número do Hermes sai rodando o comando na VPS (`--provedor hermes`); cada frase leva de 6 a 20 s.
+

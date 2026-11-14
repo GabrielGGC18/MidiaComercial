@@ -16,7 +16,9 @@ class Command(BaseCommand):
     help = "Acurácia do agente por campo, com as frases de balcão. Não grava nada."
 
     def add_arguments(self, parser):
-        parser.add_argument("--provedor", choices=["offline", "claude", "hermes"], default="offline")
+        parser.add_argument(
+            "--provedor", choices=["offline", "claude", "hermes"], default="offline"
+        )
         parser.add_argument("--loja", default="Loja Demo Centro")
 
     def handle(self, *args, provedor="offline", loja="Loja Demo Centro", **o):
@@ -36,7 +38,9 @@ class Command(BaseCommand):
             avaliar = lambda lj_, texto: avaliacao.avaliar_provedor(lj_, texto, P())  # noqa: E731
 
         r = avaliacao.relatorio(lj, avaliar)
-        self.stdout.write(f"Provedor: {provedor} · {r['frases']} frases · {r['frases_ok']} inteiras certas")
+        self.stdout.write(
+            f"Provedor: {provedor} · {r['frases']} frases · {r['frases_ok']} inteiras certas"
+        )
         for campo, (ok, total) in sorted(r["campos"].items()):
             self.stdout.write(f"  {campo:<14} {ok:>3}/{total:<3} {round(100 * ok / total):>4}%")
         if r["erros"]:

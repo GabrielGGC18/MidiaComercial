@@ -1,95 +1,486 @@
 [
-  {"texto": "cliente procurou calça jeans 42, uns 40 anos, não tinha",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CJE", "tamanho": "42", "motivo": "indisponivel", "faixa_etaria": "35_44"}},
-  {"texto": "achou caro a bermuda cinza 40",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "BER", "motivo": "preco", "tamanho": "40", "cor": "Cinza"}},
-  {"texto": "moça jovem queria camiseta azul m acabou",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CAM", "tamanho": "M", "cor": "Azul", "faixa_etaria": "18_24", "motivo": "indisponivel"}},
-  {"texto": "procurou camisa polo verde g e não tinha",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "POL", "tamanho": "G", "cor": "Verde", "motivo": "indisponivel"}},
-  {"texto": "senhor queria cinto marrom, esgotado",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CIN", "cor": "Marrom", "faixa_etaria": "60_mais", "motivo": "indisponivel"}},
-  {"texto": "procurou calça sarja bege 44 mas não tinha o tamanho",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CSA", "tamanho": "44", "cor": "Bege", "motivo": "variacao_ausente"}},
-  {"texto": "camisa social branca p faltou",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CSO", "tamanho": "P", "cor": "Branca", "motivo": "indisponivel"}},
-  {"texto": "achou a calça jeans cara demais",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CJE", "motivo": "preco"}},
-  {"texto": "queria bermuda azul 42, uns 25 anos, não encontrou",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "BER", "tamanho": "42", "cor": "Azul", "faixa_etaria": "25_34", "motivo": "indisponivel"}},
-  {"texto": "pediu camiseta preta gg, sem estoque",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CAM", "tamanho": "GG", "cor": "Preta", "motivo": "indisponivel"}},
-  {"texto": "procurou camiseta branca tamanho p, não tinha a cor",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CAM", "tamanho": "P", "cor": "Branca", "motivo": "variacao_ausente"}},
-  {"texto": "rapaz queria calça jeans 38, acabou",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CJE", "tamanho": "38", "faixa_etaria": "18_24", "motivo": "indisponivel"}},
-  {"texto": "cliente de uns 50 anos procurou camisa social azul m, não tinha",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CSO", "tamanho": "M", "cor": "Azul", "faixa_etaria": "45_59", "motivo": "indisponivel"}},
-  {"texto": "queria encomendar cinto preto, prazo de entrega longo",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CIN", "cor": "Preto", "motivo": "prazo"}},
-  {"texto": "adolescente procurou bermuda cinza 38, esgotada",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "BER", "tamanho": "38", "cor": "Cinza", "faixa_etaria": "ate_17", "motivo": "indisponivel"}},
-  {"texto": "procurou camisa polo azul p em falta",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "POL", "tamanho": "P", "cor": "Azul", "motivo": "indisponivel"}},
-  {"texto": "a calça sarja preta 40 estava cara",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CSA", "tamanho": "40", "cor": "Preta", "motivo": "preco"}},
-  {"texto": "senhora procurou camiseta azul g não tinha",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CAM", "tamanho": "G", "cor": "Azul", "faixa_etaria": "60_mais", "motivo": "indisponivel"}},
-  {"texto": "queria calça jeans 46 uns 35 anos acabou",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CJE", "tamanho": "46", "faixa_etaria": "35_44", "motivo": "indisponivel"}},
-  {"texto": "procurou bermuda azul 44, não achou",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "BER", "tamanho": "44", "cor": "Azul", "motivo": "indisponivel"}},
-  {"texto": "quero vender a camisa parada",
-   "esperado": {"ferramenta": "prospectar_produtos_em_baixa"}},
-  {"texto": "o cinto está encalhado, quem pode comprar?",
-   "esperado": {"ferramenta": "prospectar_produtos_em_baixa"}},
-  {"texto": "produtos em baixa, buscar clientes",
-   "esperado": {"ferramenta": "prospectar_produtos_em_baixa"}},
-  {"texto": "a bermuda não está vendendo",
-   "esperado": {"ferramenta": "prospectar_produtos_em_baixa"}},
-  {"texto": "que horas o público mais compra",
-   "esperado": {"ferramenta": "resumo_publico"}},
-  {"texto": "qual a faixa de idade de quem compra",
-   "esperado": {"ferramenta": "resumo_publico"}},
-  {"texto": "qual o melhor dia de venda",
-   "esperado": {"ferramenta": "resumo_publico"}},
-  {"texto": "quando vende mais camiseta",
-   "esperado": {"ferramenta": "resumo_publico"}},
-
-  {"texto": "o moço pediu a jeans quarenta e dois e não tinha",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CJE", "tamanho": "42", "motivo": "indisponivel"},
-   "dificil": "número por extenso e produto abreviado"},
-  {"texto": "veio uma senhora de uns sessenta anos atrás de cinto marrom e acabou",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CIN", "faixa_etaria": "60_mais", "motivo": "indisponivel"},
-   "dificil": "idade por extenso"},
-  {"texto": "tinha nao a polo verde no m",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "POL", "tamanho": "M", "cor": "Verde", "motivo": "indisponivel"},
-   "dificil": "ordem trocada da negação"},
-  {"texto": "faltou numeração 40 da sarja",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CSA", "tamanho": "40", "motivo": "variacao_ausente"},
-   "dificil": "produto só pelo tecido"},
-  {"texto": "cliente procurou um tênis branco 39 e a gente não vende",
-   "esperado": {"ferramenta": "propor_demanda", "tamanho": "39", "motivo": "outro"},
-   "dificil": "produto fora do catálogo"},
-  {"texto": "a camisa social achou salgada",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CSO", "motivo": "preco"},
-   "dificil": "gíria para caro"},
-  {"texto": "queria a camiseta em vermelho tamanho m",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CAM", "tamanho": "M", "motivo": "variacao_ausente"},
-   "dificil": "cor que a loja não tem implica variação ausente"},
-  {"texto": "bermudinha cinza quarenta zerou",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "BER", "tamanho": "40", "cor": "Cinza", "motivo": "indisponivel"},
-   "dificil": "diminutivo, número por extenso e 'zerou'"},
-  {"texto": "o cara de uns trinta procurou calça jeans 44 tava em falta",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "CJE", "tamanho": "44", "faixa_etaria": "25_34", "motivo": "indisponivel"},
-   "dificil": "idade sem a palavra anos"},
-  {"texto": "o que fazer pra desovar as camisetas",
-   "esperado": {"ferramenta": "prospectar_produtos_em_baixa"},
-   "dificil": "gíria para vender estoque parado"},
-  {"texto": "sábado ou domingo vende mais?",
-   "esperado": {"ferramenta": "resumo_publico"},
-   "dificil": "pergunta sobre período sem palavra-chave"},
-  {"texto": "procurou polo azul gg so tinha p e m",
-   "esperado": {"ferramenta": "propor_demanda", "sku_produto": "POL", "tamanho": "GG", "cor": "Azul", "motivo": "variacao_ausente"},
-   "dificil": "vários tamanhos na frase, o procurado é o primeiro"}
+ {
+  "texto": "cliente procurou calça jeans 42, uns 40 anos, não tinha",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CJE",
+   "tamanho": "42",
+   "motivo": "indisponivel",
+   "faixa_etaria": "35_44"
+  }
+ },
+ {
+  "texto": "achou caro a bermuda cinza 40",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "BER",
+   "motivo": "preco",
+   "tamanho": "40",
+   "cor": "Cinza"
+  }
+ },
+ {
+  "texto": "moça jovem queria camiseta azul m acabou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CAM",
+   "tamanho": "M",
+   "cor": "Azul",
+   "faixa_etaria": "18_24",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "procurou camisa polo verde g e não tinha",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "POL",
+   "tamanho": "G",
+   "cor": "Verde",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "senhor queria cinto marrom, esgotado",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CIN",
+   "cor": "Marrom",
+   "faixa_etaria": "60_mais",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "procurou calça sarja bege 44 mas não tinha o tamanho",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CSA",
+   "tamanho": "44",
+   "cor": "Bege",
+   "motivo": "variacao_ausente"
+  }
+ },
+ {
+  "texto": "camisa social branca p faltou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CSO",
+   "tamanho": "P",
+   "cor": "Branca",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "achou a calça jeans cara demais",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CJE",
+   "motivo": "preco"
+  }
+ },
+ {
+  "texto": "queria bermuda azul 42, uns 25 anos, não encontrou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "BER",
+   "tamanho": "42",
+   "cor": "Azul",
+   "faixa_etaria": "25_34",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "pediu camiseta preta gg, sem estoque",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CAM",
+   "tamanho": "GG",
+   "cor": "Preta",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "procurou camiseta branca tamanho p, não tinha a cor",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CAM",
+   "tamanho": "P",
+   "cor": "Branca",
+   "motivo": "variacao_ausente"
+  }
+ },
+ {
+  "texto": "rapaz queria calça jeans 38, acabou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CJE",
+   "tamanho": "38",
+   "faixa_etaria": "18_24",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "cliente de uns 50 anos procurou camisa social azul m, não tinha",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CSO",
+   "tamanho": "M",
+   "cor": "Azul",
+   "faixa_etaria": "45_59",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "queria encomendar cinto preto, prazo de entrega longo",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CIN",
+   "cor": "Preto",
+   "motivo": "prazo"
+  }
+ },
+ {
+  "texto": "adolescente procurou bermuda cinza 38, esgotada",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "BER",
+   "tamanho": "38",
+   "cor": "Cinza",
+   "faixa_etaria": "ate_17",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "procurou camisa polo azul p em falta",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "POL",
+   "tamanho": "P",
+   "cor": "Azul",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "a calça sarja preta 40 estava cara",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CSA",
+   "tamanho": "40",
+   "cor": "Preta",
+   "motivo": "preco"
+  }
+ },
+ {
+  "texto": "senhora procurou camiseta azul g não tinha",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CAM",
+   "tamanho": "G",
+   "cor": "Azul",
+   "faixa_etaria": "60_mais",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "queria calça jeans 46 uns 35 anos acabou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CJE",
+   "tamanho": "46",
+   "faixa_etaria": "35_44",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "procurou bermuda azul 44, não achou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "BER",
+   "tamanho": "44",
+   "cor": "Azul",
+   "motivo": "indisponivel"
+  }
+ },
+ {
+  "texto": "quero vender a camisa parada",
+  "esperado": {
+   "ferramenta": "prospectar_produtos_em_baixa"
+  }
+ },
+ {
+  "texto": "o cinto está encalhado, quem pode comprar?",
+  "esperado": {
+   "ferramenta": "prospectar_produtos_em_baixa"
+  }
+ },
+ {
+  "texto": "produtos em baixa, buscar clientes",
+  "esperado": {
+   "ferramenta": "prospectar_produtos_em_baixa"
+  }
+ },
+ {
+  "texto": "a bermuda não está vendendo",
+  "esperado": {
+   "ferramenta": "prospectar_produtos_em_baixa"
+  }
+ },
+ {
+  "texto": "que horas o público mais compra",
+  "esperado": {
+   "ferramenta": "resumo_publico"
+  }
+ },
+ {
+  "texto": "qual a faixa de idade de quem compra",
+  "esperado": {
+   "ferramenta": "resumo_publico"
+  }
+ },
+ {
+  "texto": "qual o melhor dia de venda",
+  "esperado": {
+   "ferramenta": "resumo_publico"
+  }
+ },
+ {
+  "texto": "quando vende mais camiseta",
+  "esperado": {
+   "ferramenta": "resumo_publico"
+  }
+ },
+ {
+  "texto": "o moço pediu a jeans quarenta e dois e não tinha",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CJE",
+   "tamanho": "42",
+   "motivo": "indisponivel"
+  },
+  "dificil": "número por extenso e produto abreviado"
+ },
+ {
+  "texto": "veio uma senhora de uns sessenta anos atrás de cinto marrom e acabou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CIN",
+   "faixa_etaria": "60_mais",
+   "motivo": "indisponivel"
+  },
+  "dificil": "idade por extenso"
+ },
+ {
+  "texto": "tinha nao a polo verde no m",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "POL",
+   "tamanho": "M",
+   "cor": "Verde",
+   "motivo": "indisponivel"
+  },
+  "dificil": "ordem trocada da negação"
+ },
+ {
+  "texto": "faltou numeração 40 da sarja",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CSA",
+   "tamanho": "40",
+   "motivo": "variacao_ausente"
+  },
+  "dificil": "produto só pelo tecido"
+ },
+ {
+  "texto": "cliente procurou um tênis branco 39 e a gente não vende",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "tamanho": "39",
+   "motivo": "outro"
+  },
+  "dificil": "produto fora do catálogo"
+ },
+ {
+  "texto": "a camisa social achou salgada",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CSO",
+   "motivo": "preco"
+  },
+  "dificil": "gíria para caro"
+ },
+ {
+  "texto": "queria a camiseta em vermelho tamanho m",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CAM",
+   "tamanho": "M",
+   "motivo": "variacao_ausente"
+  },
+  "dificil": "cor que a loja não tem implica variação ausente"
+ },
+ {
+  "texto": "bermudinha cinza quarenta zerou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "BER",
+   "tamanho": "40",
+   "cor": "Cinza",
+   "motivo": "indisponivel"
+  },
+  "dificil": "diminutivo, número por extenso e 'zerou'"
+ },
+ {
+  "texto": "o cara de uns trinta procurou calça jeans 44 tava em falta",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CJE",
+   "tamanho": "44",
+   "faixa_etaria": "25_34",
+   "motivo": "indisponivel"
+  },
+  "dificil": "idade sem a palavra anos"
+ },
+ {
+  "texto": "o que fazer pra desovar as camisetas",
+  "esperado": {
+   "ferramenta": "prospectar_produtos_em_baixa"
+  },
+  "dificil": "gíria para vender estoque parado"
+ },
+ {
+  "texto": "sábado ou domingo vende mais?",
+  "esperado": {
+   "ferramenta": "resumo_publico"
+  },
+  "dificil": "pergunta sobre período sem palavra-chave"
+ },
+ {
+  "texto": "procurou polo azul gg so tinha p e m",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "POL",
+   "tamanho": "GG",
+   "cor": "Azul",
+   "motivo": "variacao_ausente"
+  },
+  "dificil": "vários tamanhos na frase, o procurado é o primeiro"
+ },
+ {
+  "texto": "tem aquela camiseta lisa no tamanho grande? acabou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CAM",
+   "tamanho": "G",
+   "motivo": "indisponivel"
+  },
+  "dificil": "tamanho por extenso (grande)",
+  "conhecida_falha": true
+ },
+ {
+  "texto": "camiseta tamanho médio acabou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CAM",
+   "tamanho": "M",
+   "motivo": "indisponivel"
+  },
+  "dificil": "tamanho por extenso (médio)",
+  "conhecida_falha": true
+ },
+ {
+  "texto": "cliente queria polo azul pequena, não tinha",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "POL",
+   "tamanho": "P",
+   "cor": "Azul"
+  },
+  "dificil": "tamanho por extenso (pequena)",
+  "conhecida_falha": true
+ },
+ {
+  "texto": "quis dois cintos pretos mas não tinha",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CIN",
+   "cor": "Preto",
+   "motivo": "indisponivel"
+  },
+  "dificil": "cor no plural",
+  "conhecida_falha": true
+ },
+ {
+  "texto": "procurou camisas sociais brancas, esgotou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CSO",
+   "cor": "Branca",
+   "motivo": "indisponivel"
+  },
+  "dificil": "produto e cor no plural",
+  "conhecida_falha": true
+ },
+ {
+  "texto": "um senhorzinho queria cinto marrom e acabou",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CIN",
+   "faixa_etaria": "60_mais"
+  },
+  "dificil": "diminutivo de senhor",
+  "conhecida_falha": true
+ },
+ {
+  "texto": "pediu camisa social slim azul m e não tinha",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CSO",
+   "tamanho": "M",
+   "cor": "Azul",
+   "motivo": "indisponivel"
+  },
+  "dificil": "palavra de modelagem no meio"
+ },
+ {
+  "texto": "não tinha calça jeans quarenta e oito",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CJE",
+   "tamanho": "48",
+   "motivo": "indisponivel"
+  },
+  "dificil": "numeração fora da grade da loja, por extenso"
+ },
+ {
+  "texto": "bom dia",
+  "esperado": {
+   "ferramenta": null
+  }
+ },
+ {
+  "texto": "obrigado, valeu",
+  "esperado": {
+   "ferramenta": null
+  }
+ },
+ {
+  "texto": "me ajuda aqui",
+  "esperado": {
+   "ferramenta": null
+  }
+ },
+ {
+  "texto": "quanto vendemos ontem?",
+  "esperado": {
+   "ferramenta": null
+  }
+ },
+ {
+  "texto": "calça jeans 42 azul",
+  "esperado": {
+   "ferramenta": "propor_demanda",
+   "sku_produto": "CJE",
+   "tamanho": "42"
+  }
+ }
 ]
