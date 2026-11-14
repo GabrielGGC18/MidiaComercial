@@ -141,10 +141,17 @@ export default function OportunidadesPage() {
             }
           />
         )}
-        {p && !semAnalise && p.cartoes.length === 0 && (
+        {p && !semAnalise && p.cartoes.length === 0 && (p.tratadas ?? 0) > 0 && (
           <EmptyState
-            titulo="Nenhuma oportunidade nesta janela"
-            descricao="Isso pode ser bom sinal. Para a análise ficar mais rica, importe vendas recentes e peça ao balcão para registrar o que os clientes procuram e não encontram."
+            titulo="Você já tratou as sugestões desta análise"
+            descricao="Cada uma virou ação, foi descartada ou ficou para depois. Acompanhe no Plano de ação ou recalcule quando houver dados novos."
+            acao={<Link to="/acoes" className={buttonVariants({ size: "sm" })}>Ver ações</Link>}
+          />
+        )}
+        {p && !semAnalise && p.cartoes.length === 0 && !(p.tratadas ?? 0) && (
+          <EmptyState
+            titulo="Nenhuma sugestão nesta janela"
+            descricao={`Nenhuma regra encontrou algo para decidir entre ${janela}. Pode faltar dado: importe vendas e estoque recentes e peça ao balcão para registrar o que os clientes procuram e não encontram.${p.bloqueios.length ? " Veja abaixo o que não deu para calcular." : ""}`}
             acao={
               <div className="flex flex-wrap justify-center gap-2">
                 <AcaoPrincipal>
@@ -170,6 +177,7 @@ export default function OportunidadesPage() {
       <DescartarDialog oportunidade={descartar} onClose={() => setDescartar(null)} chavePainel={chave} />
       <DetalheDialog
         oportunidade={detalhe}
+        chavePainel={chave}
         onClose={() => setDetalhe(null)}
         onCriarAcao={(o) => {
           setDetalhe(null);

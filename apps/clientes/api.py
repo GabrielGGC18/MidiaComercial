@@ -77,7 +77,16 @@ def _buscar(loja, cliente_id: int) -> Cliente:
     return c
 
 
-@router.get("/", response=list[ClienteOut])
+class PaginaClientes(Schema):
+    itens: list[ClienteOut]
+    total: int
+    pagina: int
+    por_pagina: int
+    paginas: int
+    autorizados: int  # do total filtrado, não só da página
+
+
+@router.get("/", response=PaginaClientes)
 def listar(
     request,
     q: str = "",
@@ -86,12 +95,19 @@ def listar(
     tamanho: str = "",
     consentimento: bool | None = None,
     sem_compra_dias: int | None = None,
+    pagina: int = 1,
+    por_pagina: int = 30,
 ):
+    from apps.core.paginacao import paginar
+
     loja = loja_com_papel(request, "gerente")
-    return services.buscar(
+    achados = services.buscar(
         loja, q=q[:80], faixa=faixa, categoria=categoria, tamanho=tamanho,
         consentimento=consentimento, sem_compra_dias=sem_compra_dias,
+        limite=services.MAX_LINHAS,  # o total precisa contar todos, não só os 200 primeiros
     )  # fmt: skip
+    autorizados = sum(1 for c in achados if c["consentimento_contato"])
+    return paginar(achados, pagina, por_pagina) | {"autorizados": autorizados}
 
 
 @router.post("/", response={201: ClienteOut})

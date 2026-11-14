@@ -1,5 +1,5 @@
 // EvidenceList · OpportunityCard · BlockedRuleRow (§5.3)
-import { ArrowRight, CheckCircle2, ListChecks, Lock, Plus } from "lucide-react";
+import { ArrowRight, CheckCircle2, ListChecks, Lock, PackageCheck, Plus } from "lucide-react";
 import type { Bloqueio, Evidencia, Oportunidade } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { numero, periodo } from "@/lib/format";
@@ -18,6 +18,57 @@ export function ProximoPasso({ texto, className }: { texto: string; className?: 
         {texto}
       </p>
     </div>
+  );
+}
+
+/** Números grandes da decisão (UX-07): "6 registros de procura · 0 em estoque". */
+export function NumerosDecisao({ numeros, className }: { numeros: NonNullable<Oportunidade["numeros"]>; className?: string }) {
+  if (!numeros.length) return null;
+  return (
+    <dl className={cn("grid grid-cols-2 gap-2 sm:grid-cols-3", className)}>
+      {numeros.slice(0, 6).map((n, i) => (
+        <div key={i} className="rounded-md border border-border bg-muted/40 px-3 py-2.5">
+          <dd className="font-display text-h2 font-bold leading-none tabular">{n.valor}</dd>
+          <dt className="mt-1 text-xs text-muted-foreground">
+            {n.rotulo}
+            {n.detalhe && <span className="block">{n.detalhe}</span>}
+          </dt>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** Checklist curto do que fazer. */
+export function PassosDecisao({ passos }: { passos: string[] }) {
+  return (
+    <section>
+      <p className="sobretitulo mb-2 flex items-center gap-1.5 text-violeta-700 dark:text-violeta-100">
+        <ListChecks className="size-3.5" aria-hidden /> O que fazer
+      </p>
+      <ol className="flex flex-col gap-1.5">
+        {passos.map((p, i) => (
+          <li key={i} className="flex items-start gap-2 text-sm">
+            <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-sm bg-violeta-50 text-[11px] font-bold text-violeta-700 dark:bg-violeta-900/60 dark:text-violeta-100">
+              {i + 1}
+            </span>
+            {p}
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+/** Outras cores/tamanhos do mesmo produto com saldo recente: o que oferecer hoje. */
+export function AlternativasHoje({ alternativas }: { alternativas: NonNullable<Oportunidade["alternativas"]> }) {
+  if (!alternativas.length) return null;
+  return (
+    <p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md bg-sinal-ok-bg px-3 py-2.5 text-sm text-sinal-ok-tx dark:bg-sinal-ok/15 dark:text-sinal-ok">
+      <PackageCheck className="size-4 shrink-0" aria-hidden />
+      <span className="font-semibold">Para oferecer hoje:</span>
+      {alternativas.map((a) => `${a.rotulo} (${a.saldo})`).join(" · ")}
+    </p>
   );
 }
 
@@ -101,10 +152,10 @@ export function OpportunityCard({
         {o.titulo}
       </h3>
 
-      <ProximoPasso texto={o.acao_sugerida} className="mt-3" />
+      <ProximoPasso texto={o.passos?.length ? o.passos.join(" · ") : o.acao_sugerida} className="mt-3" />
 
       <p className="sobretitulo mt-4 mb-2 text-muted-foreground">Por quê</p>
-      <EvidenceList evidencias={o.evidencias} />
+      {o.resumo ? <p className="text-sm">{o.resumo}</p> : <EvidenceList evidencias={o.evidencias} />}
 
       <LimitationNote texto={o.limitacao} className="mt-4" />
 

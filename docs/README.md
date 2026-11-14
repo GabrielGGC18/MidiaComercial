@@ -18,6 +18,7 @@ Comece pelo **[11 · Problema e solução](11-PROBLEMA-E-SOLUCAO.md)**. Os docum
 | 10 | Adequação à pesquisa com lojistas: pós-venda, dados confiáveis e usabilidade (tasks PV e UX) | [10-POS-VENDA-E-ADEQUACAO-A-PESQUISA.md](10-POS-VENDA-E-ADEQUACAO-A-PESQUISA.md) |
 | 16 | Análise estratégica: pesquisa, sistemas das lojas (SETA/"UNIX"), integração, critérios de avaliação e pitch | [16-ANALISE-ESTRATEGICA.md](16-ANALISE-ESTRATEGICA.md) |
 | 17 | Design da apresentação na página inicial (balcão por voz, relógio único, Aero Shards) | [17-DESIGN-DA-APRESENTACAO.md](17-DESIGN-DA-APRESENTACAO.md) |
+| 18 | Backend de oportunidades: análises imutáveis, recálculo idempotente e contrato da decisão | [18-BACKEND-DE-OPORTUNIDADES.md](18-BACKEND-DE-OPORTUNIDADES.md) |
 | 11 | Problema e solução: o que a ferramenta entrega ao lojista | [11-PROBLEMA-E-SOLUCAO.md](11-PROBLEMA-E-SOLUCAO.md) |
 | 12 | Arquitetura atual (como está construído e no ar) | [12-ARQUITETURA-ATUAL.md](12-ARQUITETURA-ATUAL.md) |
 | 13 | Agente: estrutura, provedores (offline, Hermes, Claude), ferramentas e como estender | [13-AGENTE.md](13-AGENTE.md) |

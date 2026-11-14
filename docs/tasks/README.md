@@ -122,18 +122,18 @@ Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `
 
 | Task | Dono | Status |
 | --- | --- | --- |
-| P1-01 | Pessoa 1 | ⬜ a fazer |
-| P1-02 | Pessoa 1 | ⬜ |
-| P1-03 | Pessoa 1 | ⬜ |
-| P1-04 | Pessoa 1 | ⬜ |
-| P1-05 | Pessoa 1 | ⬜ |
-| P1-06 | Pessoa 1 | ⬜ |
+| P1-01 | Pessoa 1 | ✅ (dev sobe sem `.env`; prod recusa chave de dev) |
+| P1-02 | Pessoa 1 | ✅ (imagem sem deps de dev, usuário sem root, migrate no entrypoint) |
+| P1-03 | Pessoa 1 | ✅ (200/503 sem detalhe; healthcheck do compose usa a rota) |
+| P1-04 | Pessoa 1 | ✅ (login, agente e importação; IP pela Vercel com segredo) |
+| P1-05 | Pessoa 1 | ✅ (container de rotinas; HSTS, HTTPS, Referrer-Policy, sessão de 12 h) |
+| P1-06 | Pessoa 1 | ✅ (envelope `{itens,total,pagina,por_pagina,paginas}`; página na URL) |
 | P1-07 | Pessoa 1 | ⬜ |
 | P1-08 | Pessoa 1 | ✅ (Sair volta para a página inicial; teste em `api/sessao.test.tsx`) |
-| P2-01 | Pessoa 2 | ⬜ |
+| P2-01 | Pessoa 2 | ✅ (`/api/agente/conversas`; 100 guardadas, 6 ao LLM; passos com rótulo) |
 | P2-02 | Pessoa 2 | ⬜ |
-| P2-03 | Pessoa 2 | ⬜ |
-| P2-04 | Pessoa 2 | ⬜ |
+| P2-03 | Pessoa 2 | ✅ (53 frases; `avaliar_agente`; offline 47/53 — docs/09 §8) |
+| P2-04 | Pessoa 2 | ✅ (`limpar_agente`, diário no container de rotinas) |
 | P2-05 | Pessoa 2 | ⬜ |
 | P2-06 | Pessoa 2 | ⬜ |
 | P3-01 | Pessoa 3 | ⬜ |
@@ -158,6 +158,6 @@ Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `
 | UX-04 | Pessoa 1 | ⬜ |
 | UX-05 | Pessoa 2 | ⬜ |
 | UX-06 | Todos | ⬜ |
-| UX-07 | Pessoa 3 + 2 | 🟡 tela feita (data, ordem de decisão, sem SKU/regra fora de "Ver detalhes", selos novos, template sem repetição); backend pronto (`resumo`, `numeros`, `passos`, `alternativas`, `frescor`, `POST /adiar`; docs/18); falta a tela usar os campos novos |
+| UX-07 | Pessoa 3 + 2 | ✅ (tela usa `resumo`/`numeros`/`passos`/`alternativas`; "Lembrar depois"; docs/18) |
 
 Legenda: ⬜ a fazer · 🟨 fazendo · 🟦 em revisão (PR aberto) · ✅ feito

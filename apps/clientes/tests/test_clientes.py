@@ -64,12 +64,14 @@ def test_importa_xlsx(gerente):
 def test_busca_pelos_preenchimentos_e_isolamento(gerente, duas_lojas):
     _up(gerente, "base.csv", PLANILHA.encode())
     Cliente.objects.create(loja=duas_lojas["loja_b"], ref="B-1", nome="Outra Loja", tamanhos=["M"])
-    nomes = [c["nome"] for c in gerente.get("/api/clientes/?tamanho=M").json()]
+    nomes = [c["nome"] for c in gerente.get("/api/clientes/?tamanho=M").json()["itens"]]
     assert nomes == ["João Teste"]  # não vê cliente da loja B
-    assert [c["nome"] for c in gerente.get("/api/clientes/?consentimento=false").json()] == [
+    assert [
+        c["nome"] for c in gerente.get("/api/clientes/?consentimento=false").json()["itens"]
+    ] == ["Pedro Teste"]
+    assert [c["nome"] for c in gerente.get("/api/clientes/?q=pedro").json()["itens"]] == [
         "Pedro Teste"
     ]
-    assert [c["nome"] for c in gerente.get("/api/clientes/?q=pedro").json()] == ["Pedro Teste"]
     outro = Cliente.objects.get(ref="B-1")
     assert gerente.get(f"/api/clientes/{outro.id}").status_code == 404
 
@@ -100,3 +102,21 @@ def test_periodos_e_faixas_no_publico(db):
     assert len(p["periodos"]["fases_mes"]) == 3
     assert p["faixas"]["status"] in ("suficiente", "amostra_limitada")
     assert p["faixas"]["principal"]
+
+
+def test_paginacao_da_lista(db):
+    """P1-06: envelope {itens,total,pagina,por_pagina,paginas}; página fora do fim vira a última."""
+    from django.test import Client
+
+    from apps.core.demo import criar_demo
+    from conftest import api_login
+
+    criar_demo(log=lambda *_: None)
+    c = Client(enforce_csrf_checks=True)
+    api_login(c, "gerente.centro", "demo1234")
+    p = c.get("/api/clientes/?por_pagina=10").json()
+    assert len(p["itens"]) == 10 and p["total"] == 139 and p["paginas"] == 14 and p["pagina"] == 1
+    assert 0 < p["autorizados"] < p["total"]
+    ultima = c.get("/api/clientes/?por_pagina=10&pagina=999").json()
+    assert ultima["pagina"] == 14 and len(ultima["itens"]) == 9
+    assert c.get("/api/clientes/?por_pagina=1000").json()["por_pagina"] == 100

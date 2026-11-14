@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Download, FileSpreadsheet, Plus, Search, ShieldCheck, ShieldOff, Upload, UserRound } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, FileSpreadsheet, Plus, Search, ShieldCheck, ShieldOff, Upload, UserRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router";
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { api, json, mensagemErro } from "@/api/client";
 import { useChaveLoja } from "@/api/sessao";
-import type { Cliente } from "@/api/types";
+import type { Cliente, Pagina } from "@/api/types";
 import { CardSkeleton, EmptyState, ErrorState, PageHeader } from "@/components/midia/estado";
 import { LimitationNote } from "@/components/midia/sinais";
 import { Badge } from "@/components/ui/badge";
@@ -32,10 +32,12 @@ export default function ClientesPage() {
     tamanho: params.get("tamanho") ?? "",
     categoria: params.get("categoria") ?? "",
     consentimento: params.get("consentimento") ?? "",
+    pagina: params.get("pagina") ?? "",
   };
   const [q, setQ] = useState(filtros.q);
   const set = (k: string, v: string) => {
     const p = new URLSearchParams(params);
+    if (k !== "pagina") p.delete("pagina"); // mudou filtro: volta para a página 1
     if (v) p.set(k, v);
     else p.delete(k);
     setParams(p, { replace: true });
@@ -48,7 +50,12 @@ export default function ClientesPage() {
 
   const qs = new URLSearchParams(Object.entries(filtros).filter(([, v]) => v)).toString();
   const chave = useChaveLoja("clientes", qs);
-  const lista = useQuery({ queryKey: chave, queryFn: () => api<Cliente[]>(`/api/clientes/?${qs}`) });
+  const pag = useQuery({
+    queryKey: chave,
+    queryFn: () => api<Pagina<Cliente> & { autorizados: number }>(`/api/clientes/?${qs}`),
+    placeholderData: (prev) => prev, // a lista não pisca ao trocar de página
+  });
+  const lista = { ...pag, data: pag.data?.itens };
 
   const arquivo = useRef<HTMLInputElement>(null);
   const importar = useMutation({
@@ -75,7 +82,7 @@ export default function ClientesPage() {
     },
   });
 
-  const consentidos = lista.data?.filter((c) => c.consentimento_contato).length ?? 0;
+  const consentidos = pag.data?.autorizados ?? 0;
 
   return (
     <>
@@ -118,7 +125,7 @@ export default function ClientesPage() {
       </Card>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-        <span>{lista.data ? `${numero(lista.data.length)} clientes · ${numero(consentidos)} autorizaram contato` : " "}</span>
+        <span>{pag.data ? `${numero(pag.data.total)} clientes · ${numero(consentidos)} autorizaram contato` : " "}</span>
         <a href="/api/clientes/modelo" className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
           <FileSpreadsheet className="size-3.5" aria-hidden /> Modelo de planilha (CSV ou XLSX)
         </a>
@@ -225,6 +232,31 @@ export default function ClientesPage() {
               </li>
             ))}
           </ul>
+        )}
+        {pag.data && pag.data.paginas > 1 && (
+          <nav aria-label="Páginas de clientes" className="mt-4 flex items-center justify-between gap-2 text-sm">
+            <Button
+              variant="secondary"
+              className="h-11"
+              disabled={pag.data.pagina <= 1}
+              onClick={() => set("pagina", String(pag.data!.pagina - 1))}
+              aria-label="Página anterior"
+            >
+              <ChevronLeft aria-hidden /> Anterior
+            </Button>
+            <span className="tabular text-muted-foreground">
+              Página {pag.data.pagina} de {pag.data.paginas}
+            </span>
+            <Button
+              variant="secondary"
+              className="h-11"
+              disabled={pag.data.pagina >= pag.data.paginas}
+              onClick={() => set("pagina", String(pag.data!.pagina + 1))}
+              aria-label="Próxima página"
+            >
+              Próxima <ChevronRight aria-hidden />
+            </Button>
+          </nav>
         )}
       </section>
 

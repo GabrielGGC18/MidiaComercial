@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronRight, Lightbulb, Upload } from "lucide-react";
+import { BellRing, ChevronRight, Lightbulb, Upload } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { api, json, mensagemErro } from "@/api/client";
 import type { Oportunidade, Painel, Plano } from "@/api/types";
-import { EvidenceList, ProximoPasso } from "@/components/midia/oportunidade";
+import { AlternativasHoje, EvidenceList, NumerosDecisao, PassosDecisao, ProximoPasso } from "@/components/midia/oportunidade";
 import { LimitationNote, rotuloFonte, SignalBadge } from "@/components/midia/sinais";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -135,11 +135,25 @@ export function DetalheDialog({
   oportunidade: o,
   onClose,
   onCriarAcao,
+  chavePainel,
 }: {
   oportunidade: Oportunidade | null;
   onClose: () => void;
   onCriarAcao: (o: Oportunidade) => void;
+  chavePainel?: Chave;
 }) {
+  const qc = useQueryClient();
+  const adiar = useMutation({
+    mutationFn: (id: number) =>
+      api<Oportunidade>(`/api/oportunidades/${id}/adiar`, { method: "POST", body: json({ dias: 3 }) }),
+    onSuccess: () => {
+      if (chavePainel) void qc.invalidateQueries({ queryKey: chavePainel });
+      toast.success("Combinado: essa sugestão volta em 3 dias, se o sinal continuar.");
+      onClose();
+    },
+    onError: (e) => toast.error(mensagemErro(e)),
+  });
+  const podeAdiar = !!o?.acoes_disponiveis?.includes("adiar");
   return (
     <Dialog open={!!o} onOpenChange={(v) => !v && onClose()}>
       <DialogContent lado="direita" className="flex flex-col gap-5">
@@ -151,23 +165,44 @@ export function DetalheDialog({
               <div><SignalBadge status={o.status} /></div>
             </DialogHeader>
 
-            {/* Ordem de decisão (UX-07): o que fazer → por quê → limitação → ações → detalhes */}
-            <ProximoPasso texto={o.acao_sugerida} />
+            {/* Ordem de decisão (UX-07): por quê (resumo + números) → o que fazer → o que oferecer
+                hoje → limitação (uma vez) → ações → detalhes recolhidos */}
+            {o.resumo ? (
+              <section className="flex flex-col gap-3">
+                <p className="text-sm leading-relaxed">{o.resumo}</p>
+                <NumerosDecisao numeros={o.numeros ?? []} />
+              </section>
+            ) : null}
 
-            <section>
-              <p className="sobretitulo mb-2 flex items-center gap-1.5 text-muted-foreground">
-                <Lightbulb className="size-3.5" aria-hidden /> Por que estamos sugerindo isso
-              </p>
-              {/* Texto gerado antes do "Recalcular" ainda traz passo e limitação colados: corta para não repetir */}
-              <p className="mb-3 text-sm leading-relaxed">{o.explicacao.split(" Próximo passo:")[0]}</p>
-              <EvidenceList evidencias={o.evidencias} />
-            </section>
+            {o.passos?.length ? <PassosDecisao passos={o.passos} /> : <ProximoPasso texto={o.acao_sugerida} />}
+
+            <AlternativasHoje alternativas={o.alternativas ?? []} />
+
+            {!o.resumo && (
+              <section>
+                <p className="sobretitulo mb-2 flex items-center gap-1.5 text-muted-foreground">
+                  <Lightbulb className="size-3.5" aria-hidden /> Por que estamos sugerindo isso
+                </p>
+                {/* análise antiga: o texto ainda traz passo e limitação colados; corta para não repetir */}
+                <p className="mb-3 text-sm leading-relaxed">{o.explicacao.split(" Próximo passo:")[0]}</p>
+                <EvidenceList evidencias={o.evidencias} />
+              </section>
+            )}
 
             <LimitationNote texto={o.limitacao} />
 
-            <div className="flex flex-col gap-2 sm:flex-row">
+            {o.da_analise_vigente === false && (
+              <p className="text-xs text-muted-foreground">Esta sugestão é de uma análise anterior. Recalcule para ver a mais recente.</p>
+            )}
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
               {!o.plano_id && (
                 <Button className="flex-1" onClick={() => onCriarAcao(o)}>Criar ação</Button>
+              )}
+              {podeAdiar && (
+                <Button variant="secondary" className="flex-1" carregando={adiar.isPending} onClick={() => adiar.mutate(o.id)}>
+                  {!adiar.isPending && <BellRing aria-hidden />} Lembrar depois
+                </Button>
               )}
               {o.evidencias.some((e) => e.fonte === "estoque") && (
                 <Link to="/importar" className={buttonVariants({ variant: "secondary", className: "flex-1" })}>
@@ -181,6 +216,18 @@ export function DetalheDialog({
                 <ChevronRight className="size-4 transition-transform group-open:rotate-90" aria-hidden /> Ver detalhes
               </summary>
               <div className="flex flex-col gap-3 border-t border-border p-3">
+                {o.resumo && (
+                  <div>
+                    <p className="sobretitulo mb-1 text-muted-foreground">De onde vieram os números</p>
+                    <EvidenceList evidencias={o.evidencias} />
+                  </div>
+                )}
+                {o.frescor?.limite_horas != null && o.frescor.horas != null && (
+                  <p className="text-xs text-muted-foreground">
+                    Estoque contado há {Math.round(o.frescor.horas)} h · limite da loja {o.frescor.limite_horas} h
+                    {o.frescor.ok ? " ✓" : " · desatualizado"}
+                  </p>
+                )}
                 <div>
                   <p className="sobretitulo mb-1 text-muted-foreground">Como vamos medir</p>
                   <p>{o.medicao_sugerida || "—"}</p>

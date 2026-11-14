@@ -45,6 +45,16 @@ export interface Oportunidade {
   evidencias: Evidencia[];
   plano_id: number | null;
   descartada_em: string | null;
+  // UX-07 / docs/18 (opcionais: cartões de análises antigas não têm)
+  resumo?: string;
+  numeros?: { rotulo: string; valor: string; unidade?: string; detalhe?: string }[];
+  passos?: string[];
+  alternativas?: { sku: string; rotulo: string; saldo: number }[];
+  frescor?: { horas?: number; limite_horas?: number; ok?: boolean };
+  estado_decisao?: "aberta" | "com_acao" | "descartada" | "adiada";
+  acoes_disponiveis?: ("criar_acao" | "descartar" | "adiar")[];
+  adiada_ate?: string | null;
+  da_analise_vigente?: boolean;
 }
 
 export interface Bloqueio {
@@ -69,6 +79,13 @@ export interface Qualidade {
 export interface Painel {
   /** sem_execucao: loja nunca analisada (o GET só lê; quem calcula é o POST /gerar) */
   estado?: "pronto" | "sem_execucao";
+  fontes?: {
+    vendas?: { ultimo_pedido_em: string | null; pedidos: number };
+    estoque?: { capturado_em: string | null; horas: number | null; limite_horas: number; recente: boolean };
+    demandas?: { ultimo_registro_em: string | null };
+  };
+  tratadas?: number;
+  reaproveitada?: boolean;
   execucao: { id: number; janela_inicio: string; janela_fim: string; executado_em: string; desatualizada?: boolean } | null;
   qualidade: Qualidade;
   cartoes: Oportunidade[];
@@ -265,6 +282,15 @@ export interface FaixasPublico {
   limitacao: string;
 }
 
+/** P1-06: envelope de paginação da API */
+export interface Pagina<T> {
+  itens: T[];
+  total: number;
+  pagina: number;
+  por_pagina: number;
+  paginas: number;
+}
+
 export interface Cliente {
   id: number;
   ref: string;
@@ -302,6 +328,8 @@ export interface PropostaAgente {
   decidido_em: string | null;
   enviado_em: string | null;
   objeto_criado: string;
+  /** chaves de consulta que a tela recarrega depois de confirmar (ex.: "oportunidades") */
+  atualizar?: string[];
 }
 
 export interface RespostaAgente {
@@ -309,6 +337,30 @@ export interface RespostaAgente {
   provedor: string;
   resposta: string;
   propostas: PropostaAgente[];
+  /** o que o agente fez, em palavras de loja ("Buscou no catálogo") */
+  passos?: string[];
+}
+
+/** P2-01: histórico de conversas (só as minhas, desta loja) */
+export interface ConversaResumo {
+  id: number;
+  titulo: string;
+  turnos: number;
+  atualizado_em: string;
+  provedor: string;
+}
+
+export interface Fala {
+  papel: "voce" | "agente";
+  texto: string;
+  em: string | null;
+  passos: string[];
+  propostas: PropostaAgente[];
+}
+
+export interface Conversa {
+  id: number;
+  falas: Fala[];
 }
 
 export interface Campanha {
