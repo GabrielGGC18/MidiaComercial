@@ -4,29 +4,48 @@
 > Os comandos reais e os scripts de infraestrutura ficam fora do Git (pasta `deploy/` e um runbook local, os
 > dois no `.gitignore`).
 
-## 0. Fluxo de branches
+## 0. Fluxo de branches e ambientes
 
-| Branch | Papel | O que roda |
-| --- | --- | --- |
-| `feat/…`, `fix/…` | Trabalho do dia a dia, a partir da `develop` | CI no PR |
-| `develop` | Integração: junta o trabalho da equipe | CI a cada push |
-| `main` | **Produção** | CI + Vercel (front) + CD da VPS (API) |
+> **Regra:** todo trabalho entra **primeiro na `develop`**. Só depois a `develop` vai para a `main`.
+> Nada vai direto para a `main` (exceto `hotfix/…`, que depois volta para a `develop`).
+
+| Branch | Papel | Ambiente | Publicação |
+| --- | --- | --- | --- |
+| `feat/…`, `fix/…` | Trabalho, a partir da `develop` | — | CI no PR |
+| `develop` | Integração e **teste** | API de teste na VPS (projeto `midiacomercial-dev`, porta 8002, banco próprio com a demo) | CI + CD do teste, automáticos |
+| `main` | **Produção** | Front na Vercel + API na VPS (projeto `midiacomercial`, porta 8001) | CI + Vercel + CD da produção, automáticos |
 
 ```mermaid
 flowchart LR
-    F["feat/… · fix/…"] -->|"PR (CI)"| D["develop"]
-    D -->|"PR develop → main (CI)"| M["main"]
-    M -->|"CI verde → CD"| P["produção"]
+    F["feat/… · fix/…"] -->|"1. PR → develop (CI)"| D["develop"]
+    D -->|"CI verde → CD"| T["teste na VPS"]
+    D -->|"2. PR develop → main (CI)"| M["main"]
+    M -->|"CI verde → CD + Vercel"| P["produção"]
 ```
 
 1. Crie a branch a partir da `develop` e abra PR para a `develop`. O CI precisa passar.
-2. Quando a `develop` estiver pronta para ir ao ar, abra PR `develop → main`.
-3. Mergeou na `main`: a Vercel publica o front e a VPS publica a API (só com CI verde).
-4. Correção urgente: `hotfix/…` a partir da `main`, PR para a `main` e depois traga para a `develop`.
+2. Mergeou na `develop`: o CD publica a API de teste na VPS. Confira lá.
+3. Para ir ao ar: PR `develop → main`. Mergeou: a Vercel publica o front e o CD publica a API.
+4. Depois do merge na `main`, alinhe a `develop` com a `main` (fast-forward), para as duas não divergirem.
 
-Não há ambiente de teste publicado: a validação é o CI e o teste local (`docker compose up` ou `runserver` +
-`npm run dev`, com a demo). O `docker-compose.vps.yml` aceita `MC_PROJETO`/`MC_PORTA` para subir um segundo
-ambiente isolado na VPS, se um dia for preciso.
+### Antes de enviar para a `main` (obrigatório)
+
+Tudo é tratado na `develop` primeiro. Só abra o PR `develop → main` com:
+
+- [ ] CI verde na `develop` (segredos, ruff, migrações, pytest, typecheck, testes e build do front).
+- [ ] API de teste publicada pelo CD com o último commit da `develop` e conferida: `/api/saude`, login da demo
+      e o fluxo que mudou (ex.: agente, oportunidades, importação).
+- [ ] Erros e avisos tratados, sem "arrumo depois": teste quebrado, lint, conflito ou bug achado no teste.
+- [ ] Migrações revisadas: nada destrutivo sem backup e sem plano de volta.
+- [ ] Sem dado sensível no diff (IP, segredo, `.env`, domínio da API, planilha real).
+- [ ] Documentação e status das tasks atualizados quando o comportamento mudou.
+
+O CI recusa PR para a `main` que não venha da `develop` (ou de `hotfix/…`).
+
+O teste não tem domínio público nem preview configurado na Vercel: a API de teste responde só dentro da VPS
+(`127.0.0.1:8002`). Os dois ambientes usam o mesmo `docker-compose.vps.yml`; `MC_PROJETO` e `MC_PORTA` no `.env`
+de cada pasta separam projeto Docker (rede, volume do banco), imagem e porta. O teste tem segredos próprios e
+compartilha só a ponte do Hermes.
 
 ## 1. Desenho
 

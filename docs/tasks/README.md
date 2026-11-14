@@ -118,6 +118,14 @@ Dia 3  P1: UX-04 ─ PV-09(back)    P2: PV-05 ─ PV-10(back)            └─�
 
 Em `.claude/agents/` existem: `backend-django`, `frontend-react`, `agente-ia`, `infra-devops`, `design-thinking`, `product-owner` e **`chat-ui`** (novo, para a P3-04 e a responsividade). Peça para revisarem o seu código, não para escreverem a task por você.
 
+## Fluxo de trabalho (Git)
+
+1. Crie a branch a partir da `develop`: `feat/PV-02-mapeamento`, `fix/...`.
+2. PR para a **`develop`** (nunca direto para a `main`). Com CI verde, merge: o teste na VPS é atualizado.
+3. Trate tudo na `develop` antes de seguir: checklist "Antes de enviar para a `main`" em
+   [docs/14 §0](../14-DEPLOY-E-OPERACAO.md#0-fluxo-de-branches-e-ambientes).
+4. PR `develop → main`: produção. O CI recusa PR para a `main` vindo de outra branch.
+
 ## Status
 
 | Task | Dono | Status |
