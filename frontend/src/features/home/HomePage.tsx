@@ -1,8 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { ComoFunciona, RodapeLogin, SobreNos } from "@/components/midia/institucional";
-import { BlocosProduto, FaixaFatos, FeitoParaAuditar } from "@/components/midia/tecnico";
-import { EscadaProblema, SemanaNaLoja } from "@/components/midia/capitulos";
-import { Caminhos, Diferenciais, Hero, PainelSecao } from "@/components/midia/vitrine";
+import { RodapeLogin, SobreNos } from "@/components/midia/institucional";
+import { FilmeProduto, GradeBeneficios, ProblemaSecao, RotinaLoja } from "@/components/midia/roteiro";
+import { Caminhos, Hero, PainelSecao } from "@/components/midia/vitrine";
 import { CabecalhoPublico } from "./CabecalhoPublico";
 
 // Palco animado (motion + recharts) carrega depois do texto; a área fica reservada (ANIMACAO-Tela §19)
@@ -19,10 +18,9 @@ function PalcoReservado() {
 }
 
 /**
- * Página inicial pública (/), em painéis empilhados:
- * abertura com a demonstração → problema (escada) → por que → semana (sanfona) → parte técnica
- * (camadas, fatos, blocos com API, auditoria, modelo) → telas reais → quem somos → caminhos.
- * Movimento: ref. pibaru.com (components/efeitos/Revelar). Parte técnica: ref. helenacrm.com.
+ * Página inicial pública (/), conforme APRESENTACAO1 v2.0:
+ * abertura com a demonstração → problema → roteiro do filme → cards com exemplo e ação → rotina da loja
+ * → equipe → caminhos. Conteúdo técnico (rotas, JSON, contratos) fica fora da página pública.
  */
 export default function HomePage() {
   const [pedidoInicio, setPedidoInicio] = useState(0);
@@ -37,6 +35,12 @@ export default function HomePage() {
     setPedidoInicio((n) => n + 1);
     document.getElementById("percurso")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
+  // CTAs dos cards e da rotina: levam à demonstração, sem iniciar som (o som depende de um clique no player)
+  const verDemo = () => {
+    const palco = document.getElementById("percurso");
+    palco?.scrollIntoView({ behavior: "smooth", block: "center" });
+    palco?.querySelector<HTMLElement>("button")?.focus({ preventScroll: true });
+  };
   return (
     <div ref={raiz} className={`relative isolate min-h-dvh overflow-x-clip bg-background pb-3 ${esperaGsap ? "com-gsap" : ""}`}>
       <Suspense fallback={null}>
@@ -49,15 +53,10 @@ export default function HomePage() {
             <ApresentacaoProduto pedidoInicio={pedidoInicio} />
           </Suspense>
         </Hero>
-        <EscadaProblema />
-        <Diferenciais />
-        <SemanaNaLoja />
-        <FaixaFatos />
-        <BlocosProduto />
-        <FeitoParaAuditar />
-        <PainelSecao capitulo="violeta">
-          <ComoFunciona />
-        </PainelSecao>
+        <ProblemaSecao />
+        <FilmeProduto onExplorar={verDemo} />
+        <GradeBeneficios onVerDemo={verDemo} />
+        <RotinaLoja onVerDemo={verDemo} />
         <PainelSecao>
           <SobreNos />
         </PainelSecao>
