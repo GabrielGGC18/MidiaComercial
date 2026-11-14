@@ -93,71 +93,121 @@ export function Hero({ onComecar, children }: { onComecar: () => void; children?
 
 const TITULO_SECAO = "titulo-secao";
 
-/** Bento de diferenciais: cartões altos, cada um com sua atmosfera (noite, estrias, raios). */
+const TOQUES = ["Produto", "Tamanho", "Motivo", "Salvar"];
+const ARQUIVO = ["Planilha", "Prévia", "Conferência"];
+
+/** Bento de diferenciais em grade de 6 colunas: 4+2 · 2+2+2 · faixa inteira. Tudo alinhado pela mesma borda. */
 export function Diferenciais() {
+  const cartao = "flex h-full flex-col overflow-hidden rounded-2xl border p-6 sm:p-7";
+  const etiqueta = "text-xs font-semibold uppercase tracking-[0.14em]";
   return (
     <PainelSecao capitulo="claro">
-      <section id="diferenciais" aria-labelledby="dif-titulo" className="scroll-mt-24 px-3 py-14 sm:px-8 lg:px-12">
-        <h2 id="dif-titulo" className={cn(TITULO_SECAO, "text-center")}>
-          Por que o MídiaComercial?
-        </h2>
-        <div className="mt-10 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          <Entrada className="lg:row-span-2">
-            <article className="painel-noite flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl border border-white/10 p-6 text-white">
-              <h3 className="text-lg font-semibold">A conversa vira registro</h3>
-              <p className="mt-1 text-[15px] leading-6 text-tinta-300">
-                O funcionário fala no balcão. O assistente entende, mostra os campos e só grava depois da confirmação.
-              </p>
-              <div className="mt-auto flex flex-col gap-2 pt-8 text-sm" aria-hidden>
-                <span className="self-end rounded-2xl rounded-tr-sm bg-violeta-500 px-3 py-2">Procuraram calça 42 e não tinha.</span>
-                <span className="self-start rounded-2xl rounded-tl-sm border border-white/10 bg-white/5 px-3 py-2">Calça jeans azul, 42, sem estoque. Confere?</span>
-                <span className="inline-flex items-center gap-1.5 self-start rounded-lg bg-sinal-ok/15 px-2.5 py-1 text-xs font-semibold text-sinal-ok">
-                  <BadgeCheck className="size-3.5" /> Registrado depois de confirmar
-                </span>
+      <section id="diferenciais" aria-labelledby="dif-titulo" className="scroll-mt-24 px-4 py-14 sm:px-8 lg:px-12 lg:py-20">
+        <div className="grid items-end gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,27rem)] lg:gap-12">
+          <div className="min-w-0">
+            <p className={cn(etiqueta, "text-violeta-600 dark:text-violeta-300")}>Diferenciais</p>
+            <h2 id="dif-titulo" className={cn(TITULO_SECAO, "mt-2")}>
+              Por que o MídiaComercial?
+            </h2>
+          </div>
+          <p className="min-w-0 text-base leading-7 text-muted-foreground">
+            Feito para a rotina do balcão: registra rápido, mostra poucas decisões e nunca fala com o cliente sem uma pessoa conferir.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-3 md:grid-cols-2 lg:grid-cols-6">
+          {/* 1 · conversa vira registro (largo): texto à esquerda, conversa à direita */}
+          <Entrada className="md:col-span-2 lg:col-span-4">
+            <article className={cn(cartao, "painel-noite border-white/10 text-white")}>
+              <div className="grid h-full items-center gap-8 sm:grid-cols-2">
+                <div className="min-w-0">
+                  <p className={cn(etiqueta, "text-violeta-300")}>Voz ou toque</p>
+                  <h3 className="titulo-cartao mt-2">A conversa vira registro</h3>
+                  <p className="mt-3 text-[15px] leading-6 text-tinta-300">
+                    O funcionário fala no balcão. O assistente entende, mostra os campos e só grava depois da confirmação.
+                  </p>
+                </div>
+                <div className="flex min-w-0 flex-col gap-2 rounded-xl border border-white/10 bg-white/[0.04] p-4 text-sm" aria-hidden>
+                  <span className="max-w-[92%] self-end rounded-2xl rounded-tr-sm bg-violeta-500 px-3 py-2">Procuraram calça 42 e não tinha.</span>
+                  <span className="max-w-[92%] self-start rounded-2xl rounded-tl-sm border border-white/10 bg-white/5 px-3 py-2">
+                    Calça jeans azul, 42, sem estoque. Confere?
+                  </span>
+                  <span className="mt-1 inline-flex items-center gap-1.5 self-start rounded-lg border border-sinal-ok/30 bg-tinta-950/70 px-2.5 py-1 text-xs font-semibold text-sinal-ok">
+                    <BadgeCheck className="size-3.5 shrink-0" /> Registrado depois de confirmar
+                  </span>
+                </div>
               </div>
             </article>
           </Entrada>
-          <Entrada atraso={80}>
-            <article className="painel-estrias flex h-full min-h-[200px] flex-col justify-end overflow-hidden rounded-2xl border border-white/10 p-6 text-center text-white">
-              <p className="titulo-fino font-display text-6xl font-bold">4 toques</p>
-              <p className="mt-2 text-sm text-tinta-100/80">para registrar uma procura no balcão, ou uma frase falada</p>
+
+          {/* 2 · 4 toques: o número e os quatro passos */}
+          <Entrada atraso={80} className="lg:col-span-2">
+            <article className={cn(cartao, "painel-estrias min-h-[260px] justify-end border-white/10 text-white")}>
+              <p className="titulo-fino font-display text-6xl font-bold leading-none">4 toques</p>
+              <p className="mt-3 text-sm leading-6 text-tinta-100/85">para registrar uma procura no balcão, ou uma frase falada</p>
+              <ol className="mt-5 grid grid-cols-2 gap-1.5 text-xs" aria-label="Os quatro toques">
+                {TOQUES.map((t, i) => (
+                  <li key={t} className="flex min-w-0 items-center gap-1.5 rounded-full border border-white/15 bg-tinta-950/50 px-2.5 py-1 font-medium">
+                    <span className="tabular font-semibold text-violeta-300">{i + 1}</span> {t}
+                  </li>
+                ))}
+              </ol>
             </article>
           </Entrada>
-          <Entrada atraso={160} className="lg:row-span-2">
-            <article className="painel-raios flex h-full min-h-[400px] items-center justify-center overflow-hidden rounded-2xl p-6 text-center">
-              <p className="titulo-fino font-display text-[clamp(1.9rem,3vw,2.6rem)] font-bold leading-[1.05] text-[#fff1d6] [text-shadow:0_2px_24px_rgb(0_0_0/0.45)]">
+
+          {/* 3 · três cartões iguais */}
+          <Entrada className="lg:col-span-2">
+            <article className={cn(cartao, "min-h-[240px] border-border bg-card")}>
+              <p className="titulo-fino font-display text-6xl font-bold leading-none text-violeta-600 dark:text-violeta-300">3</p>
+              <h3 className="mt-auto pt-6 text-lg font-semibold">decisões por semana, no máximo</h3>
+              <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                Cada uma com evidência, limitação e próximo passo. Nada de painel cheio de números soltos.
+              </p>
+            </article>
+          </Entrada>
+          <Entrada atraso={80} className="lg:col-span-2">
+            <article className={cn(cartao, "painel-raios min-h-[240px] items-center justify-center border-transparent text-center")}>
+              <p className="titulo-fino font-display text-[clamp(1.75rem,2.6vw,2.3rem)] font-bold leading-[1.08] text-[#fff1d6] [text-shadow:0_2px_24px_rgb(0_0_0/0.45)]">
                 Nenhuma mensagem
                 <br />
                 sai sem revisão
               </p>
             </article>
           </Entrada>
-          <Entrada atraso={240}>
-            <article className="flex h-full min-h-[200px] flex-col rounded-2xl border border-border bg-card p-6">
-              <p className="titulo-fino font-display text-5xl font-bold text-violeta-600 dark:text-violeta-300">3</p>
-              <h3 className="mt-2 font-semibold">decisões por semana, no máximo</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Cada uma com evidência, limitação e próximo passo. Nada de painel cheio de números soltos.</p>
+          <Entrada atraso={160} className="md:col-span-2 lg:col-span-2">
+            <article className={cn(cartao, "min-h-[240px] border-border bg-card")}>
+              <span className="grid size-12 place-items-center rounded-xl bg-violeta-500/10 text-violeta-600 dark:text-violeta-300" aria-hidden>
+                <ShieldCheck className="size-6" />
+              </span>
+              <h3 className="mt-auto pt-6 text-lg font-semibold">Os dados ficam com a sua loja</h3>
+              <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                Cada loja vê só os próprios dados. Contato com cliente só com autorização (LGPD).
+              </p>
             </article>
           </Entrada>
-        </div>
-        <div className="mt-3 grid gap-3 md:grid-cols-2">
-          <Entrada>
-            <article className="flex h-full items-start gap-4 rounded-2xl border border-border bg-card p-6">
-              <ShieldCheck className="mt-0.5 size-6 shrink-0 text-violeta-500" aria-hidden />
-              <div>
-                <h3 className="font-semibold">Os dados ficam com a sua loja</h3>
-                <p className="mt-1 text-sm text-muted-foreground">Cada loja vê só os próprios dados. Contato com cliente só com autorização (LGPD).</p>
+
+          {/* 4 · faixa inteira: como os dados entram hoje, e o que ainda está em estudo */}
+          <Entrada className="md:col-span-2 lg:col-span-6">
+            <article className="flex h-full flex-col gap-5 rounded-2xl border border-border bg-card p-6 sm:p-7 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+              <div className="flex min-w-0 items-start gap-4">
+                <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-coral-500/10 text-coral-600 dark:text-coral-300" aria-hidden>
+                  <LayoutDashboard className="size-6" />
+                </span>
+                <div className="min-w-0">
+                  <h3 className="text-lg font-semibold">Entra por arquivo, hoje</h3>
+                  <p className="mt-1.5 max-w-[60ch] text-sm leading-6 text-muted-foreground">
+                    Vendas, estoque e clientes pela planilha do seu sistema. Conexão direta com o sistema da loja está em estudo com lojas piloto.
+                  </p>
+                </div>
               </div>
-            </article>
-          </Entrada>
-          <Entrada atraso={80}>
-            <article className="flex h-full items-start gap-4 rounded-2xl border border-border bg-card p-6">
-              <LayoutDashboard className="mt-0.5 size-6 shrink-0 text-coral-500" aria-hidden />
-              <div>
-                <h3 className="font-semibold">Entra por arquivo, hoje</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Vendas, estoque e clientes pela planilha do seu sistema. Conexão direta com o sistema da loja está em estudo com lojas piloto.
-                </p>
+              <div className="flex shrink-0 flex-wrap items-center gap-1.5 text-xs font-medium lg:justify-end">
+                {ARQUIVO.map((p, i) => (
+                  <span key={p} className="inline-flex items-center gap-1.5">
+                    <span className="rounded-full border border-border bg-background px-2.5 py-1">{p}</span>
+                    {i < ARQUIVO.length - 1 && <ChevronRight className="size-3.5 text-muted-foreground" aria-hidden />}
+                  </span>
+                ))}
+                <span className="rounded-full border border-dashed border-coral-500/50 px-2.5 py-1 text-coral-700 dark:text-coral-300">Conexão direta: em estudo</span>
               </div>
             </article>
           </Entrada>
